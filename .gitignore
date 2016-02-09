@@ -1,6 +1,7 @@
 # Files from IDE
 *.iml
 /.idea/
+.idea
 .DS_Store
 # Built application files
 *.apk
