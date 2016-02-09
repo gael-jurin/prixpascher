@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="2dip" >
+
+    <RatingBar
+        android:id="@+id/dialog_ratingbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:clickable="true"
+        android:isIndicator="false"
+        android:numStars="5"
+        android:stepSize="1.0"
+        style="@style/ratingBar" />
+
+    <TextView
+        android:id="@+id/rank_dialog_text1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_marginTop="5dp"
+    android:text="@string/leave_an_comment"
+    android:textSize="20dp" />
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/comment"
+        style="@style/common_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="5dp"
+        android:ems="10"
+        android:gravity="left|top"
+        android:inputType="textMultiLine"
+        android:lines="3"
+        android:singleLine="true"
+        app:met_primaryColor="@color/base_color"/>
+
+
+    <com.gc.materialdesign.views.ButtonRectangle
+        android:id="@+id/rank_dialog_button"
+        style="@style/common_button"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:text="@string/rate_it"
+        android:textColor="@color/white" />
+
+</LinearLayout>

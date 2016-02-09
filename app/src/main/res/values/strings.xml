@@ -1,0 +1,217 @@
+<resources>
+
+    <string name="facebook_app_id">1415384325424737</string>
+    <string name="app_name">PrixPasCher</string>
+    <string name="download_label">Download</string>
+    <string name="remove_label">Remove</string>
+    <string name="bookmark_label">Bookmark</string>
+    <string name="un_bookmark_label">Unbookmark</string>
+    <string name="channel_label">Channel</string>
+    <string name="feed_label">Feed</string>
+    <string name="share_label">Share</string>
+    <string name="content_descripton_logo_splash">prixpascher</string>
+    <string name="folder_save_photo">prixpascher</string>
+    <string name="send_enquiry">Send Enquiry</string>
+    <string name="your_message">Your message</string>
+    <string name="this_user_not_share_phone_number">This users not share phone number</string>
+    <string name="cannot_rating_for_yourself">You can not rating for your self</string>
+    <string name="rate_this_product">Rate this product</string>
+    <!-- Dialog msg -->
+    <!-- End dialog msg -->
+    <string name="ok_label">OK</string>
+    <string name="cancel_label">Cancel</string>
+    <string name="del_label">Delete</string>
+    <string name="dummy_text">Dummy text</string>
+    <string name="rate_it">Rate it</string>
+    <string name="rating">Rating</string>
+
+    <!-- DOWNLOAD MSG -->
+    <string name="download_ok">Download completion</string>
+    <string name="download_failed">Download failed, file not found</string>
+    <string name="open_network">Check your internet connection</string>
+    <string name="download_in_progress">Download in progress</string>
+    <string name="download_cancel">Download cancel</string>
+    <string name="please_wait_msg">Please wait...</string>
+    <string name="upload_product_msg">Please wait, this may take 1-2 minutes</string>
+    <!-- END -->
+
+
+    <!-- TEXT LABEL -->
+    <string name="shop_label">Shop</string>
+    <string name="categories_label">Categories</string>
+    <string name="city_label">City</string>
+    <string name="price_label">Price</string>
+    <string name="title_label">Title</string>
+    <string name="content_label">Content</string>
+    <string name="upload_label">Submit your product</string>
+    <string name="what_you_want">Select images</string>
+    <string name="incorrect_info">Please fill all information!</string>
+    <string name="type_message">Please type your message</string>
+    <string name="alert">Alert</string>
+    <string name="aim_label">Purpose</string>
+    <string name="confirm_take_photo">Please take an photo ?</string>
+    <string name="sell_label">Sell</string>
+    <string name="buy_label">Buy</string>
+    <string name="all_label">All</string>
+    <string name="tap_to_change_avt">Tap to change your avatar</string>
+    <string name="follow_label">Follow</string>
+    <string name="product">Products</string>
+    <string name="bookmarked_product">Mark Prodcuts</string>
+    <string name="logout">Logout</string>
+    <string name="close_label">Close</string>
+    <string name="filter_label">Filter</string>
+    <string name="home_label">Home</string>
+    <string name="profile_label">Profile</string>
+    <string name="update_profile_label">Change your profile</string>
+    <string name="choose_your_user_name">Choose your username</string>
+    <string name="skip_label">Skip</string>
+    <!-- END -->
+
+
+    <!-- USER PROFILE -->
+    <string name="full_name">Full Name</string>
+    <string name="email">Login email</string>
+    <string name="website">Website</string>
+    <string name="phone">Phone</string>
+    <string name="address">Address</string>
+    <string name="update_label">Update</string>
+    <string name="edit_label">Edit</string>
+    <string name="comment_label">Comment</string>
+    <string name="search_hint">Search</string>
+    <string name="user_name">User Name</string>
+    <string name="submit">Submit</string>
+    <string name="create_account">Create Account</string>
+    <string name="login_via_acc">Login via account</string>
+    <string name="verified_code">Verified Code</string>
+    <string name="resend">Resend</string>
+    <string name="email_or_user_name">Email or Username</string>
+    <!-- END -->
+
+
+    <!-- TOAST TIME OUT -->
+    <string name="toast_time_out">5000</string>
+    <string name="splash_time_out">1000</string>
+    <!-- END -->
+
+
+    <!-- VALID MSG -->
+    <string name="invalid_email">Invalid email</string>
+    <string name="email_exist">This email had exist on our system, please use another email</string>
+    <string name="user_name_exist">This username had exist on our system, please use another username</string>
+    <string name="invalid_full_name">Invalid FullName, need from 5 to 50 charactes</string>
+    <string name="invalid_user_name">Invalid UserName, need from 5 to 50 charactes, accept lower case, digits and "_-" symbols</string>
+    <!-- END -->
+
+
+    <!-- DRAWER MENU -->
+    <string-array name="drawer_menus">
+        <item>Home</item>
+        <item>Categories</item>
+        <item>County</item>
+        <item>City</item>
+        <item>Filter</item>
+        <item>Fan Page</item>
+        <item>About Us</item>
+    </string-array>
+    <string-array name="aim_id">
+        <item>1</item>
+        <item>0</item>
+    </string-array>
+    <string-array name="aim_name">
+        <item>Sell</item>
+        <item>Buy</item>
+    </string-array>
+    <!-- END -->
+
+    <string name="domain_url">http://www.prixpascher.ma/</string>
+    <string name="categories_json_url">http://www.prixpascher.ma/api/categories_api/</string>
+    <string name="county_json_url">http://www.prixpascher.ma/api/county_api/</string>
+    <string name="cities_json_url">http://www.prixpascher.ma/api/cities_api/</string>
+    <string name="products_json_url">http://www.prixpascher.ma/api/products/products/list</string>
+    <string name="images_json_url">http://www.prixpascher.ma/api/images_api/</string>
+    <string name="users_json_url">http://www.prixpascher.ma/api/users_api/</string>
+    
+    
+    <string name="admob_publisher_id">ca-app-pub-1074284300135896/6213979568</string>
+    <string name="admob_test_device_ids">TEST_EMULATOR</string>
+    <string name="copyright">Developed by Nuvola</string>
+    <string name="loading">Loading...</string>
+    <string name="about_us_label">About us</string>
+    <string name="login_label">Login</string>
+    <string name="change_pass">Change password</string>
+    <string name="old_pass">Old password</string>
+    <string name="new_pass">New passsword</string>
+    <string name="confirm_pass">Confirm password</string>
+    <string name="confirm_pass_alert">Password incorrect</string>
+    <string name="error_alert">Error, try again</string>
+    <string name="update_success_label">Update successfull</string>
+    <string name="update_failed_label">Error, please check your password</string>
+    <string name="update_profile_failed_label">Error, this phone had exist</string>
+    <string name="login_failed">Login failed, please check again</string>
+    <string name="fb_login_failed">Login failed, have an user have an account same your email and facebook id you supply in our system</string>
+    <string name="verified_code_failed">Your verified code incorrect, please check again</string>
+    <string name="verified_code_success">Congrulation!!! you have been create account successfull, please login now !!!</string>
+    <string name="password">Password</string>
+    <string name="loging">Login, please wait ...</string>
+    <string name="result_label">Search result</string>
+    <string name="about_us_content">
+    <![CDATA[
+   		<center>Copyright &copy; Nuvola Org.</center>
+   		<center>
+   		   All Rights Reserved.
+   		</center>
+    ]]>
+    </string>
+    <string name="negotiate_label">negotiate</string>
+    <string name="product_label">Products</string>
+    <string name="detail_label">Detail</string>
+    <string name="update_products">Renew my products</string>
+    <string name="update_products_msg">One day, your products will renew once and go to top</string>
+    <string name="verified_msg">One verified code have been send to your email, please check it and fill in the next form</string>
+    <string name="success_action">Successfully</string>
+    <string name="failed_action">Failed</string>
+    <string name="seller">Seller</string>
+    <string name="update_at">Update At</string>
+    <string name="use_facebook_account">Login via facebook account</string>
+    <string name="use_exist_account">Use exist account</string>
+    <string name="pull_to_refresh">Pull to refresh ...</string>
+    <string name="drop_to_refresh">Drop to refresh ...</string>
+    <string name="fan_page">Fanpage</string>
+    <string name="fan_page_link">https://m.facebook.com/prixpascherMa</string>
+    <string name="spam_msg">You can not send email after 2 minutes remind</string>
+    <string name="delete_successfull">Delete successfully</string>
+    <string name="confirm_del">Are you sure you want delete this ?</string>
+    <string name="enquiry_alert">You cannot send enquiry to your self !</string>
+    <string name="set_as_thumbnail">Set As Thumbnail</string>
+    <string name="update_description">Update Description</string>
+    <string name="leave_an_comment">Leave an comment</string>
+
+    <string-array name="choose_photo">
+        <item>SD card</item>
+        <item>Camera</item>
+    </string-array>
+
+    <!--update 10-5-2015-->
+    <string name="condition_msg">Condition</string>
+    <string name="contact">Contact</string>
+    <string name="infomation">infomation</string>
+    <string name="gallery">Gallery</string>
+    <string-array name="condition_name">
+        <item>New</item>
+        <item>Second Hand</item>
+    </string-array>
+    <string-array name="condition_id">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string-array name="purpose_id">
+        <item>1</item>
+        <item>0</item>
+    </string-array>
+    <string-array name="purpose_name">
+        <item>Sell</item>
+        <item>Buy</item>
+    </string-array>
+    <string name="location">Location</string>
+    <string name="google_map_api">AIzaSyCzaEPMEdEUqilBO4GpGKZWlJqzXO40-u4</string>
+</resources>
