@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_label" />
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/title"
+            style="@style/common_text"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            app:met_primaryColor="@color/base_color" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/categories_label" />
+
+        <fr.ganfra.materialspinner.MaterialSpinner
+            android:id="@+id/categories_spinner"
+            app:ms_baseColor="@color/base_color"
+            app:ms_highlightColor="@color/base_color"
+            app:ms_arrowColor="@color/base_color"
+            app:ms_arrowSize="16dp"
+            app:ms_thickness="0.8dp"
+            app:ms_alignLabels="false"
+            android:layout_width="fill_parent"
+            android:layout_height="90dp"  />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/shop_label" />
+
+        <fr.ganfra.materialspinner.MaterialSpinner
+            android:id="@+id/county_spinner"
+            app:ms_baseColor="@color/base_color"
+            app:ms_highlightColor="@color/base_color"
+            app:ms_arrowColor="@color/base_color"
+            app:ms_arrowSize="16dp"
+            app:ms_thickness="0.8dp"
+            app:ms_alignLabels="false"
+            android:layout_width="fill_parent"
+            android:layout_height="90dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/city_label" />
+
+        <fr.ganfra.materialspinner.MaterialSpinner
+            android:id="@+id/cities_spinner"
+            app:ms_baseColor="@color/base_color"
+            app:ms_highlightColor="@color/base_color"
+            app:ms_arrowColor="@color/base_color"
+            app:ms_arrowSize="16dp"
+            app:ms_thickness="0.8dp"
+            app:ms_alignLabels="false"
+            android:layout_width="fill_parent"
+            android:layout_height="90dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="vertical" >
+
+        <com.gc.materialdesign.views.ButtonRectangle
+            android:id="@+id/btn_filter"
+            style="@style/common_button"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:text="@string/filter_label" />
+    </LinearLayout>
+
+</LinearLayout>

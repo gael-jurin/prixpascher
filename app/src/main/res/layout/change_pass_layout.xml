@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+    <include layout="@layout/toolbar"/>
+
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="10dp" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/old_pass"
+                style="@style/common_text_view" />
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/old_pass"
+                style="@style/common_text"
+                android:layout_width="match_parent"
+                android:layout_height="40dp" 
+                android:inputType="textPassword"
+                app:met_primaryColor="@color/base_color"
+               />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/new_pass"
+                style="@style/common_text_view" />
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/new_pass"
+                style="@style/common_text"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:inputType="textPassword"
+                app:met_primaryColor="@color/base_color"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/confirm_pass"
+                style="@style/common_text_view" />
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/cfm_pass"
+                style="@style/common_text"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:inputType="textPassword"
+                app:met_primaryColor="@color/base_color"
+                />
+
+            <com.gc.materialdesign.views.ButtonRectangle
+                android:id="@+id/btn_update"
+                style="@style/common_button"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:text="@string/update_label" />
+        </LinearLayout>
+    </LinearLayout>
+
+</ScrollView>
+    </LinearLayout>
