@@ -27,6 +27,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginRight="16dp"
                 android:src="@drawable/no_photo"
+                android:background="@android:color/transparent"
                 />
 
             <TextView
@@ -57,6 +58,7 @@
                     android:layout_alignParentBottom="true"
                     android:layout_marginRight="16dp"
                     android:src="@drawable/no_photo"
+                    android:background="@android:color/transparent"
                     />
 
         </RelativeLayout>

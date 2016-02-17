@@ -12,17 +12,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.nuvola.mobile.prixpascher.R;
+import org.nuvola.mobile.prixpascher.dto.ProductVO;
 import org.nuvola.mobile.prixpascher.models.Products;
 import com.koushikdutta.ion.Ion;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ProductsViewHolder> {
     private Context context;
-    private ArrayList<Products> products;
+    private ArrayList<ProductVO> products;
     OnItemClickListener mItemClickListener;
 
-    public ProductsAdapter(Context context, ArrayList<Products> products){
+    public ProductsAdapter(Context context, ArrayList<ProductVO> products){
         this.context=context;
         this.products=products;
     }
@@ -48,7 +50,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
         }
 
         if (products.get(position).getPrice() != null
-                && !products.get(position).getPrice().equalsIgnoreCase("")) {
+                && !products.get(position).getPrice().toString().equalsIgnoreCase("")) {
             holder.price.setText(products.get(position).getPrice() + " Dhs");
         } else {
             holder.price.setText(
