@@ -346,14 +346,6 @@ public class SearchActivity extends ActionBarParentActivity {
                     HttpMethod.POST,
                     requestEntity, PagedResponse.class);
 
-            /*ObjectMapper mapper = new ObjectMapper();
-
-            List<Products> accountList = mapper.readValue(
-                    mapper.treeAsTokens(products.getBody().getPayload()),
-                    new TypeReference<List<Products>>() {
-                    }
-            );*/
-
             products_list.addAll(products.getBody().getPayload());
         } catch (Exception e) {
             e.printStackTrace();

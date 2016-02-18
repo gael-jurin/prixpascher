@@ -22,6 +22,11 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="PriceTextAppearance" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">#ff2eb671</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="common_text">
         <item name="android:paddingLeft">5dp</item>
         <item name="android:paddingRight">5dp</item>

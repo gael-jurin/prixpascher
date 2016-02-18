@@ -1,27 +1,23 @@
 package org.nuvola.mobile.prixpascher;
 
-import java.util.Iterator;
-import java.util.LinkedHashSet;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 import com.gc.materialdesign.widgets.Dialog;
-
-import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.business.UserSessionManager;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
+import org.nuvola.mobile.prixpascher.business.Utils;
 
-public class ActionBarParentActivity extends ActionBarActivity {
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+
+public class ActionBarParentActivity extends AppCompatActivity {
 	private LinkedHashSet<Integer> enableItems = new LinkedHashSet<Integer>();
 	private LinkedHashSet<Integer> disableItems = new LinkedHashSet<Integer>();
 	private Iterator<Integer> iter;
@@ -118,13 +114,13 @@ public class ActionBarParentActivity extends ActionBarActivity {
 	}
 
 	public void loadAd() {
-		AdView adView = (AdView) findViewById(R.id.adView);
+		/*AdView adView = (AdView) findViewById(R.id.adView);
 		AdRequest adRequest = new AdRequest.Builder()
 				.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
 				.addTestDevice(
 						getResources()
 								.getString(R.string.admob_test_device_ids))
 				.build();
-		adView.loadAd(adRequest);
+		adView.loadAd(adRequest);*/
 	}
 }

@@ -1,6 +1,33 @@
 package org.nuvola.mobile.prixpascher;
-import java.util.ArrayList;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RatingBar;
+import android.widget.TextView;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.gc.materialdesign.views.ButtonRectangle;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -9,51 +36,18 @@ import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
 import org.json.JSONObject;
-
-import com.afollestad.materialdialogs.MaterialDialog;
 import org.nuvola.mobile.prixpascher.adapters.FullScreenImageAdapter;
-import org.nuvola.mobile.prixpascher.business.JSONFetchTask;
+import org.nuvola.mobile.prixpascher.business.ProductFetchTask;
 import org.nuvola.mobile.prixpascher.business.RoundedAvatarDrawable;
-import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.business.UserSessionManager;
+import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.confs.constants;
-import org.nuvola.mobile.prixpascher.fragments.DetailContentFragment;
-import org.nuvola.mobile.prixpascher.models.Products;
+import org.nuvola.mobile.prixpascher.dto.ProductVO;
 import org.nuvola.mobile.prixpascher.models.User;
-import com.gc.materialdesign.views.ButtonRectangle;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.Window;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RatingBar;
-import android.widget.TextView;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 @SuppressLint({ "NewApi", "HandlerLeak" })
 public class DetailActivity extends ActionBarParentActivity {
@@ -62,26 +56,18 @@ public class DetailActivity extends ActionBarParentActivity {
     ProgressDialog dialog;
     public static final String IMAGES_RESPONSE = "images_feed";
     ArrayList<String> paths;
-    int product_id;
+    ProductVO product;
+    String productId;
     String user_id;
-    ImageButton btnEmail, btnSMS, btnCall, btnDelete, btnUpdateDesc;
+    ImageButton btnAddToCart, btnDelete, btnUpdateDesc;
     String email, phoneText;
     EditText message, comment;
+    ImageView shop;
     User logedUser;
     Toolbar toolbar;
 
-    // private void initGallery() {
-    // Resources r = getResources();
-    // float padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-    // constants.GRID_PADDING, r.getDisplayMetrics());
-    // columnWidth = (int) ((Ultils.getScreenWidth(DetailActivity.this) -
-    // ((constants.NUM_OF_COLUMNS + 1) * padding)) / constants.NUM_OF_COLUMNS);
-    // gallery.setNumColumns(constants.NUM_OF_COLUMNS);
-    // gallery.setColumnWidth(columnWidth);
-    // gallery.setStretchMode(GridView.NO_STRETCH);
-    // gallery.setHorizontalSpacing((int) padding);
-    // gallery.setVerticalSpacing((int) padding);
-    // }
+    private FullScreenImageAdapter adapter;
+    private ViewPager viewPager;
 
     RatingBar ratingBar;
 
@@ -102,7 +88,7 @@ public class DetailActivity extends ActionBarParentActivity {
                     // TODO Auto-generated method stub
                     Intent intent = new Intent(DetailActivity.this,
                             UpdateGalleryActivity.class);
-                    intent.putExtra(constants.COMMON_KEY, product_id);
+                    intent.putExtra(constants.COMMON_KEY, productId);
                     startActivity(intent);
                 }
             });
@@ -111,20 +97,20 @@ public class DetailActivity extends ActionBarParentActivity {
             updateButtonWrapper.setVisibility(LinearLayout.INVISIBLE);
             updateButtonWrapper.setLayoutParams(new LinearLayout.LayoutParams(
                     0, 0));
-        };
+        }
 
-        // gallery = (ImageView) findViewById(R.id.gallery);
         // initGallery();
         fullName = (TextView) findViewById(R.id.full_name);
         address = (TextView) findViewById(R.id.address);
         price = (TextView) findViewById(R.id.price);
         title = (TextView) findViewById(R.id.title);
-        avt = (ImageView) findViewById(R.id.avt);
+        shop = (ImageView) findViewById(R.id.shop);
+        // avt = (ImageView) findViewById(R.id.avt);
         // condition = (TextView) findViewById(R.id.condition);
         phone = (TextView) findViewById(R.id.phone);
-        btnEmail = (ImageButton) findViewById(R.id.btnEmail);
-        btnSMS = (ImageButton) findViewById(R.id.btnSmS);
-        btnCall = (ImageButton) findViewById(R.id.btnPhone);
+        btnAddToCart = (ImageButton) findViewById(R.id.btnAddToCart);
+        // btnSMS = (ImageButton) findViewById(R.id.btnSmS);
+        // btnCall = (ImageButton) findViewById(R.id.btnPhone);
         btnDelete = (ImageButton) findViewById(R.id.btn_delete);
 
         btnDelete.setOnClickListener(new View.OnClickListener() {
@@ -144,17 +130,17 @@ public class DetailActivity extends ActionBarParentActivity {
                 // TODO Auto-generated method stub
                 Intent intent = new Intent(DetailActivity.this,
                         UpdateProductActivity.class);
-                intent.putExtra(constants.COMMON_KEY, product_id);
+                intent.putExtra(constants.COMMON_KEY, productId);
                 startActivity(intent);
             }
         });
 
         if (getIntent().getExtras() != null
                 && getIntent().getExtras().containsKey(constants.COMMON_KEY)) {
-            product_id = getIntent().getExtras().getInt(constants.COMMON_KEY);
-            new JSONFetchTask(getResources().getString(
-                    R.string.products_json_url)
-                    + "products?product_id=" + product_id, handler).execute();
+            productId = getIntent().getExtras().getString(constants.COMMON_KEY);
+            new ProductFetchTask(getResources().getString(
+                    R.string.products_root_json_url)
+                    + productId, handler).execute();
         }
 
         ratingBar = (RatingBar) findViewById(R.id.ratingBarClick);
@@ -195,114 +181,6 @@ public class DetailActivity extends ActionBarParentActivity {
                         comment = (EditText) rankDialog
                                 .findViewById(R.id.comment);
 
-
-                        updateButton
-                                .setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        // if have rating and user<>user
-                                        if (ratingBar.getRating() > 0) {
-
-                                            if((logedUser.getId() != Integer
-                                                    .parseInt(user_id))){
-                                            dialogPrg.show();
-                                            new Thread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    String handleInserUrl = getResources()
-                                                            .getString(
-                                                                    R.string.products_json_url)
-                                                            + "rate";
-                                                    try {
-                                                        HttpClient client = new DefaultHttpClient();
-                                                        HttpPost post = new HttpPost(
-                                                                handleInserUrl);
-                                                        MultipartEntity reqEntity = new MultipartEntity();
-                                                        reqEntity
-                                                                .addPart(
-                                                                        "user_id",
-                                                                        new StringBody(
-                                                                                logedUser
-                                                                                        .getId()
-                                                                                        + ""));
-                                                        reqEntity
-                                                                .addPart(
-                                                                        "product_id",
-                                                                        new StringBody(
-                                                                                product_id
-                                                                                        + ""));
-                                                        reqEntity
-                                                                .addPart(
-                                                                        "point",
-                                                                        new StringBody(
-                                                                                ratingBar
-                                                                                        .getRating()
-                                                                                        + ""));
-                                                        reqEntity
-                                                                .addPart(
-                                                                        "comment",
-                                                                        new StringBody(
-                                                                                comment.getText()
-                                                                                        .toString()));
-
-                                                        reqEntity
-                                                                .addPart(
-                                                                        "product_user_id",
-                                                                        new StringBody(
-                                                                                user_id));
-                                                        post.setEntity(reqEntity);
-                                                        HttpResponse response = client
-                                                                .execute(post);
-                                                        HttpEntity resEntity = response
-                                                                .getEntity();
-                                                        final String response_str = EntityUtils
-                                                                .toString(resEntity);
-                                                        if (resEntity != null) {
-                                                            Log.i("RESPONSE_DETAIL",
-                                                                    response_str);
-                                                            runOnUiThread(new Runnable() {
-                                                                public void run() {
-                                                                    try {
-                                                                        dialogPrg
-                                                                                .dismiss();
-                                                                        rankDialog
-                                                                                .dismiss();
-
-                                                                        new JSONFetchTask(
-                                                                                getResources()
-                                                                                        .getString(
-                                                                                                R.string.products_json_url)
-                                                                                        + "avg_rate/product_id/"
-                                                                                        + product_id,
-                                                                                handlerRate,
-                                                                                "rate")
-                                                                                .execute();
-                                                                    } catch (Exception e) {
-                                                                        e.printStackTrace();
-                                                                    }
-                                                                }
-                                                            });
-                                                        }
-                                                    } catch (Exception ex) {
-                                                        Log.e("Debug",
-                                                                "error: "
-                                                                        + ex.getMessage(),
-                                                                ex);
-                                                    }
-                                                }
-                                            }).start();
-                                            rankDialog.dismiss();
-                                        }else{
-                                               ///login activity
-                                                Intent intent=new Intent(DetailActivity.this,AuthenticationActivity.class);
-                                                startActivity(intent);
-                                            }
-                                    }else{
-                                            //pls rate
-                                        }
-
-                                    }
-                                });
                         rankDialog.show();
                     }
 
@@ -316,7 +194,7 @@ public class DetailActivity extends ActionBarParentActivity {
         dialog.setMessage(getResources().getString(R.string.loading));
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
-        paths = new ArrayList<String>();
+        paths = new ArrayList<>();
 
         toolbar=(Toolbar)findViewById(R.id.toolbar);
         toolbar.setTitle(getResources().getString(R.string.detail_label));
@@ -330,24 +208,15 @@ public class DetailActivity extends ActionBarParentActivity {
     Handler handler = new Handler() {
         public void handleMessage(android.os.Message msg) {
             Bundle bundle = msg.getData();
-            if (bundle.containsKey(JSONFetchTask.KEY_RESPONSE)) {
+            if (bundle.containsKey(productId)) {
                 dialog.dismiss();
-                String jsonString = bundle
-                        .getString(JSONFetchTask.KEY_RESPONSE);
-               new JSONFetchTask(getResources().getString(
+                product = (ProductVO) bundle
+                        .getSerializable(productId);
+               /*new JSONFetchTask(getResources().getString(
                  R.string.products_json_url)
-                 + "avg_rate/product_id/" + product_id, handlerRate,
-                 "rate").execute();
-                try {
-                    JSONArray jsonArray = new JSONArray(jsonString);
-                    if (jsonArray.length() == 1) {
-                        JSONObject obj = jsonArray.getJSONObject(0);
-                        parseProduct(obj);
-                    }
-                } catch (Exception e) {
-                    Log.e(TAG, "error parse");
-                    // TODO: handle exception
-                }
+                 + "avg_rate/product_id/" + productId, handlerRate,
+                 "rate").execute();*/
+                parseProduct(product);
             }
         };
     };
@@ -376,63 +245,18 @@ public class DetailActivity extends ActionBarParentActivity {
         };
     };
 
-    private FullScreenImageAdapter adapter;
-    private ViewPager viewPager;
-    Handler handlerImages = new Handler() {
-        public void handleMessage(android.os.Message msg) {
-            Bundle bundle = msg.getData();
-            if (bundle.containsKey(IMAGES_RESPONSE)) {
-                String jsonString = bundle.getString(IMAGES_RESPONSE);
-                try {
-                    JSONArray jsonArray = new JSONArray(jsonString);
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject jsonObj = jsonArray.getJSONObject(i);
-                        String path = getResources().getString(
-                                R.string.domain_url)
-                                + jsonObj.getString("path");
-                        paths.add(path);
-                    }
-                    if (paths.size() != 0) {
-                        adapter = new FullScreenImageAdapter(DetailActivity.this, paths);
-                        viewPager = (ViewPager) findViewById(R.id.pager);
-                        viewPager.setAdapter(adapter);
-                        viewPager.setCurrentItem(0);
-                    }
-                } catch (Exception e) {
-                    LinearLayout pagerWrapper=(LinearLayout)findViewById(R.id.pager_wrapper);
-                    pagerWrapper.setVisibility(View.GONE);
-                }
-            }
-        };
-    };
-
-    public void parseProduct(JSONObject jsonObj) {
+    public void parseProduct(ProductVO jsonObj) {
         try {
-            // int id = jsonObj.getInt(Products.TAG_ID);
-            new JSONFetchTask(getResources()
-                    .getString(R.string.images_json_url)
-                    + "images/product_id/"
-                    + product_id, handlerImages, IMAGES_RESPONSE).execute();
+            paths.add(jsonObj.getImage());
+            adapter = new FullScreenImageAdapter(DetailActivity.this, paths);
+            viewPager = (ViewPager) findViewById(R.id.pager);
+            viewPager.setAdapter(adapter);
+            viewPager.setCurrentItem(0);
 
-           //// ImageView btnShowMap = (ImageView) findViewById(R.id.map);
-            /* final String lat = jsonObj.getString("lat");
-            final String lng = jsonObj.getString("lng");*/
-           // btnShowMap.setOnClickListener(new View.OnClickListener() {
+            shop.setImageResource(getDrawable(this, product.getShopName() + "_large"));
 
-                //@Override
-              /*  public void onClick(View arg0) {
-                    // TODO Auto-generated method stub
-                    *//*    Intent intent = new Intent(DetailActivity.this,
-                    LocationActivity.class);
-                    intent.putExtra("lat", lat);
-                    intent.putExtra("lng", lng);
-                    Log.i("Location", "lat: " + lat + ",lng: " + lng);
-                    startActivity(intent);*//*
-                }
-            });*/
-
-            String fullNameText = jsonObj.getString(User.TAG_FULL_NAME);
-            fullName.setText(fullNameText);
+            // String fullNameText = jsonObj.getString(User.TAG_FULL_NAME);
+            fullName.setText("");
             fullName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -444,157 +268,23 @@ public class DetailActivity extends ActionBarParentActivity {
                 }
             });
 
-            user_id = jsonObj.getString("user_id");
-            email = jsonObj.getString("email");
-            phoneText = jsonObj.getString("phone");
-            Log.i(TAG, email);
-            btnSMS.setOnClickListener(new View.OnClickListener() {
+            user_id = "";
+            email = "";
+            phoneText = "";
+
+            btnAddToCart.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    if (!Utils.isConnectingToInternet(DetailActivity.this)) {
-                        showMsg(getResources().getString(R.string.open_network));
-                        return;
-                    }
-
-                    UserSessionManager userSession = new UserSessionManager(
-                            DetailActivity.this);
-
-                    if (userSession.getUserSession() == null) {
-                        Intent intent = new Intent(DetailActivity.this,
-                                AuthenticationActivity.class);
-                        startActivity(intent);
-                    } else {
-                        if (phoneText == null || phoneText.equals("")) {
-                            showDialog(getResources().getString(
-                                    R.string.this_user_not_share_phone_number));
-                        } else {
-                            startActivity(new Intent(Intent.ACTION_VIEW, Uri
-                                    .parse("sms:" + phoneText)));
-                        }
-                    }
                 }
 
             });
 
-            btnCall.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    if (!Utils.isConnectingToInternet(DetailActivity.this)) {
-                        showMsg(getResources().getString(R.string.open_network));
-                        return;
-                    }
-
-                    UserSessionManager userSession = new UserSessionManager(
-                            DetailActivity.this);
-
-                    if (userSession.getUserSession() == null) {
-                        Intent intent = new Intent(DetailActivity.this,
-                                AuthenticationActivity.class);
-                        startActivity(intent);
-                    } else {
-                        if (phoneText == null || phoneText.equals("")) {
-                            showDialog(getResources().getString(
-                                    R.string.this_user_not_share_phone_number));
-                        } else {
-                            startActivity(new Intent(Intent.ACTION_CALL, Uri
-                                    .parse("tel:" + phoneText)));
-                        }
-                    }
-                }
-
-            });
-
-            btnEmail.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    if (!Utils.isConnectingToInternet(DetailActivity.this)) {
-                        showMsg(getResources().getString(R.string.open_network));
-                        return;
-                    }
-
-                    UserSessionManager userSession = new UserSessionManager(
-                            DetailActivity.this);
-
-                    if (userSession.getUserSession() == null) {
-                        Intent intent = new Intent(DetailActivity.this,
-                                AuthenticationActivity.class);
-                        startActivity(intent);
-                    } else {
-                        logedUser = userSession.getUserSession();
-                        if (logedUser.getId() == Integer.parseInt(user_id)) {
-                            showDialog(getResources().getString(
-                                    R.string.enquiry_alert));
-                            return;
-                        }
-
-                        LayoutInflater inflater = LayoutInflater
-                                .from(DetailActivity.this);
-                        View promptsView = inflater.inflate(
-                                R.layout.enquiry_prompts_layout, null);
-
-                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                                DetailActivity.this);
-
-                        // set prompts.xml to alertdialog builder
-                        alertDialogBuilder.setView(promptsView);
-
-                        message = (EditText) promptsView
-                                .findViewById(R.id.editTextDialogUserInput);
-                        alertDialogBuilder.setMessage(getResources().getString(
-                                R.string.send_enquiry));
-                        // set dialog message
-                        alertDialogBuilder
-                                .setCancelable(false)
-                                .setPositiveButton(
-                                        getResources().getString(
-                                                R.string.ok_label),
-                                        new DialogInterface.OnClickListener() {
-                                            public void onClick(
-
-                                                    DialogInterface dialog, int id) {
-                                                if (message.getText()
-                                                        .toString()
-                                                        .equalsIgnoreCase("")) {
-                                                    showDialog(getResources()
-                                                            .getString(
-                                                                    R.string.type_message));
-                                                    return;
-                                                }
-                                                new SendEnquiry().execute();
-                                            }
-                                        })
-                                .setNegativeButton(
-                                        getResources().getString(
-                                                R.string.cancel_label),
-                                        new DialogInterface.OnClickListener() {
-                                            public void onClick(
-                                                    DialogInterface dialog,
-                                                    int id) {
-                                                dialog.cancel();
-                                            }
-                                        });
-
-                        // create alert dialog
-                        AlertDialog alertDialog = alertDialogBuilder.create();
-
-                        // show it
-                        alertDialog.show();
-                    }
-
-                }
-            });
-
-            String titleText = jsonObj.getString(Products.TAG_TITLE);
+            String titleText = jsonObj.getTitle();
             title.setText(titleText);
-            String addressText = jsonObj.getString("cities_name");
+            String addressText = jsonObj.getViews() + " nombres de vues";
             address.setText(addressText);
-            String phoneText = jsonObj.getString("phone");
+            String phoneText = "Mis à jour le " + new SimpleDateFormat("dd/MM/yyyy").format(jsonObj.getTrackingDate());
             phone.setText(phoneText);
             
             /*            String conditionText = jsonObj.getString("condition");
@@ -609,17 +299,17 @@ public class DetailActivity extends ActionBarParentActivity {
                 }
             }*/
 
-            String priceText = jsonObj.getString(Products.TAG_PRICE);
+            String priceText = jsonObj.getPrice().toString();
             if (priceText != null && !priceText.equalsIgnoreCase("")) {
-                price.setText(priceText);
+                price.setText(priceText + " Dhs");
             } else {
-                price.setText(" "
-                        + getResources().getString(R.string.negotiate_label));
+                // price.setText(" " + getResources().getString(R.string.negotiate_label));
+                price.setText("0 Dhs");
             }
 
-            String avtPath = jsonObj.getString(User.TAG_AVT);
+            String avtPath = null; // jsonObj.getString(User.TAG_AVT);
             if (avtPath != null && !avtPath.equalsIgnoreCase("")) {
-                Log.i(TAG, "Khac null");
+                Log.i(TAG, " no tag");
                 String avtString = "";
                 if (Utils.checkFacebookAvt(avtPath)) {
                     avtString = avtPath;
@@ -649,14 +339,14 @@ public class DetailActivity extends ActionBarParentActivity {
 
             }
 
-            String content = jsonObj.getString(Products.TAG_PRODUCT_CATEGORY);
+            /*String content = jsonObj.getProductCategory().toUpperCase(); // jsonObj.getString(Products.TAG_PRODUCT_CATEGORY);
             DetailContentFragment fragment = DetailContentFragment
                     .newInstance();
             Bundle bundle = new Bundle();
             bundle.putString(DetailContentFragment.DETAIL_KEY, content);
             fragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.content, fragment).commit();
+                    .replace(R.id.content, fragment).commit();*/
 
             WebView comment = (WebView) findViewById(R.id.comment);
             comment.getSettings().setJavaScriptEnabled(true);
@@ -668,8 +358,8 @@ public class DetailActivity extends ActionBarParentActivity {
             comment.getSettings().setDomStorageEnabled(true);
             //comment.getSettings().setPluginState(PluginState.ON);
 
-            comment.loadUrl(getResources().getString(R.string.domain_url)
-                    + "api/products_api/comment?id=" + product_id);
+            /*comment.loadUrl(getResources().getString(R.string.domain_url)
+                    + "api/products_api/comment?id=" + productId);*/
         } catch (Exception e) {
             // TODO: handle exception
             e.printStackTrace();
@@ -699,7 +389,7 @@ public class DetailActivity extends ActionBarParentActivity {
                 HttpClient client = new DefaultHttpClient();
                 HttpPost post = new HttpPost(handleInsertUser);
                 MultipartEntity reqEntity = new MultipartEntity();
-                reqEntity.addPart("id", new StringBody(product_id + ""));
+                reqEntity.addPart("id", new StringBody(productId + ""));
                 post.setEntity(reqEntity);
                 HttpResponse res = client.execute(post);
                 HttpEntity resEntity = res.getEntity();
@@ -773,6 +463,12 @@ public class DetailActivity extends ActionBarParentActivity {
                 });
         AlertDialog dialog = buidler.create();
         dialog.show();
+    }
+
+    private int getDrawable(Context context, String name)
+    {
+        return context.getResources().getIdentifier(name,
+                "drawable", context.getPackageName());
     }
 
     private class SendEnquiry extends AsyncTask<Void, Void, Boolean> {

@@ -16,8 +16,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.nuvola.mobile.prixpascher.DetailActivity;
 import org.nuvola.mobile.prixpascher.R;
 import org.nuvola.mobile.prixpascher.adapters.ProductsAdapter;
@@ -33,19 +31,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProductFragment extends Fragment{
+    static String jsonString = "";
+
     ArrayList<ProductVO> products_list = new ArrayList<>();
     SearchFilterVO searchFilter = new SearchFilterVO();
     ProductsAdapter adapter;
-    String TAG = "ProductsFragment";
-    static InputStream is = null;
-    static String jsonString = "";
     String query = null, tmpQuery = null;
     int COUNT_ITEM_LOAD_MORE = 40;
     int first = 0;
@@ -139,7 +135,6 @@ public class ProductFragment extends Fragment{
                     }
             }
         } );
-
 
 
         if (getArguments() != null) {
@@ -287,56 +282,8 @@ public class ProductFragment extends Fragment{
         return view;
     }
 
-    private void parse(JSONObject jsonObj, boolean append) {
-        /*try {
-            String id = jsonObj.getString(Products.TAG_ID);
-            String name = jsonObj.getString(Products.TAG_TITLE);
-            String link = jsonObj.getString(Products.TAG_LINK);
-            String price = jsonObj.getString(Products.TAG_PRICE);
-            String category = jsonObj.getString(Products.TAG_CATEGORY);
-            String shopType = jsonObj.getString(Products.TAG_SHOP_TYPE);
-            String shopName = jsonObj.getString(Products.TAG_SHOP_NAME);
-            String thumb = jsonObj.getString(Products.TAG_IMAGE);
-            String dateViewed = jsonObj.getString(Products.TAG_DATE_VIEWED);
-            String dateTracking = jsonObj.getString(Products.TAG_DATE_TRACKING);
-            String subCategory = jsonObj.getString(Products.TAG_SUB_CATEGORY);
-            String productCategory = jsonObj.getString(Products.TAG_PRODUCT_CATEGORY);
-            int views = jsonObj.getInt(Products.TAG_VIEWS);
-            String promoted = jsonObj.getString(Products.TAG_PROMOTED);
-            Products product = new Products();
-            product.setId(id);
-            product.setTitle(name);
-            product.setLink(link);
-            product.setPrice(price);
-            product.setCategory(category);
-            product.setProductCategory(productCategory);
-            product.setShopName(shopName);
-            product.setShopType(shopType);
-            product.setImage(thumb);
-            product.setViews(views);
-            product.setViewed(dateViewed);
-            product.setTrackingDate(dateTracking);
-            product.setSubCategory(subCategory);
-            product.setPromoted(promoted);
-            if (append) {
-                products_list.add(product);
-            } else {
-                products_list.add(0, product);
-            }
-        } catch (Exception e) {
-            // TODO: handle exception
-            loadingMore = false;
-        }*/
-    }
-
     private void parseAndAppend(String jsonString) {
         try {
-            /*JSONObject jObj = new JSONObject(jsonString);
-            JSONArray jsonArray = jObj.getJSONArray("payload");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObj = jsonArray.getJSONObject(i);
-                parse(jsonObj, true);
-            }*/
             loadingMore = false;
             adapter.notifyDataSetChanged();
             loadMorePrg.setVisibility(View.GONE);
@@ -365,7 +312,7 @@ public class ProductFragment extends Fragment{
         }*/
     }
 
-    private List<ProductVO> feedJson(String pullQuery) {
+    private List<ProductVO> feedJson() {
         HttpHeaders requestHeaders = new HttpHeaders();
 
         // Sending a JSON or XML object i.e. "application/json" or "application/xml"
@@ -390,14 +337,6 @@ public class ProductFragment extends Fragment{
                 HttpMethod.POST,
                 requestEntity, PagedResponse.class);
 
-            /*ObjectMapper mapper = new ObjectMapper();
-
-            List<Products> accountList = mapper.readValue(
-                    mapper.treeAsTokens(products.getBody().getPayload()),
-                    new TypeReference<List<Products>>() {
-                    }
-            );*/
-
         products_list.addAll(products.getBody().getPayload());
 
         return products_list;
@@ -410,7 +349,7 @@ public class ProductFragment extends Fragment{
             if (isCancelled()) {
                 return null;
             }
-            return feedJson(null);
+            return feedJson();
         }
 
         @Override
@@ -436,11 +375,9 @@ public class ProductFragment extends Fragment{
 
 
     private class PullToRefreshDataTask extends AsyncTask<Void, Void, List<ProductVO>> {
-        String pullQuery = null;
 
         public PullToRefreshDataTask(String pullQuery) {
             // TODO Auto-generated constructor stub
-            this.pullQuery = pullQuery;
         }
 
         @Override
@@ -448,7 +385,7 @@ public class ProductFragment extends Fragment{
             if (isCancelled()) {
                 return null;
             }
-            return feedJson(pullQuery);
+            return feedJson();
         }
 
         @Override
