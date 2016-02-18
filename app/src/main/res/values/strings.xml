@@ -50,8 +50,8 @@
     <string name="alert">Alert</string>
     <string name="aim_label">Purpose</string>
     <string name="confirm_take_photo">Please take an photo ?</string>
-    <string name="sell_label">Sell</string>
-    <string name="buy_label">Buy</string>
+    <string name="sell_label">Best</string>
+    <string name="buy_label">Promos</string>
     <string name="all_label">All</string>
     <string name="tap_to_change_avt">Tap to change your avatar</string>
     <string name="follow_label">Follow</string>
@@ -127,9 +127,9 @@
     <string name="categories_json_url">http://www.prixpascher.ma/api/categories_api/</string>
     <string name="county_json_url">http://www.prixpascher.ma/api/county_api/</string>
     <string name="cities_json_url">http://www.prixpascher.ma/api/cities_api/</string>
-    <string name="products_json_url">http://www.prixpascher.ma/api/products/products/list</string>
+    <string name="products_json_url">https://www.prixpascher.ma/api/products/products/list</string>
     <string name="images_json_url">http://www.prixpascher.ma/api/images_api/</string>
-    <string name="users_json_url">http://www.prixpascher.ma/api/users_api/</string>
+    <string name="users_json_url">https://www.prixpascher.ma/api/users_api/</string>
     
     
     <string name="admob_publisher_id">ca-app-pub-1074284300135896/6213979568</string>
@@ -213,5 +213,5 @@
         <item>Buy</item>
     </string-array>
     <string name="location">Location</string>
-    <string name="google_map_api">AIzaSyCzaEPMEdEUqilBO4GpGKZWlJqzXO40-u4</string>
+    <string name="google_map_api">AIzaSyAyAY85G59yDZ6WyDyBPfQ7_s9Ar4G0mD4</string>
 </resources>

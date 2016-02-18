@@ -1,25 +1,5 @@
 package org.nuvola.mobile.prixpascher.fragments;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -36,21 +16,38 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.nuvola.mobile.prixpascher.DetailActivity;
 import org.nuvola.mobile.prixpascher.R;
 import org.nuvola.mobile.prixpascher.adapters.ProductsAdapter;
 import org.nuvola.mobile.prixpascher.confs.constants;
-import org.nuvola.mobile.prixpascher.models.Products;
+import org.nuvola.mobile.prixpascher.dto.ProductVO;
+import org.nuvola.mobile.prixpascher.dto.SearchFilterVO;
+import org.nuvola.mobile.prixpascher.models.PagedResponse;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
+
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProductFragment extends Fragment{
-    ArrayList<Products> products_list = new ArrayList<Products>();
+    ArrayList<ProductVO> products_list = new ArrayList<>();
+    SearchFilterVO searchFilter = new SearchFilterVO();
     ProductsAdapter adapter;
     String TAG = "ProductsFragment";
     static InputStream is = null;
     static String jsonString = "";
-    JSONObject searchFilter = new JSONObject();
     String query = null, tmpQuery = null;
-    int COUNT_ITEM_LOAD_MORE = 5;
+    int COUNT_ITEM_LOAD_MORE = 40;
     int first = 0;
     LinearLayout loadMorePrg;
     boolean loadingMore = true;
@@ -129,12 +126,9 @@ public class ProductFragment extends Fragment{
                         Log.v("...", "Last Item Wow !");
                         first += COUNT_ITEM_LOAD_MORE;
                         // tmpQuery += "&first=" + first + "&offset=" + COUNT_ITEM_LOAD_MORE;
-                        try {
-                            searchFilter.put("page", first);
-                            searchFilter.put("size", COUNT_ITEM_LOAD_MORE);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+
+                        searchFilter.setPage(first);
+                        searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                             new LoadMoreDataTask()
@@ -160,11 +154,8 @@ public class ProductFragment extends Fragment{
                         e.printStackTrace();
                     }
 
-                    try {
-                        searchFilter.put("searchText", title);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    searchFilter.setSearchText(title);
+
                 }
             }
 
@@ -222,12 +213,9 @@ public class ProductFragment extends Fragment{
                 setButtonFocus(btnBuy, R.drawable.tab_categories_normal);
                 first = 0;
                 tmpQuery = query; // + "&first=" + first + "&offset=" + COUNT_ITEM_LOAD_MORE;
-                try {
-                    searchFilter.put("page", first);
-                    searchFilter.put("size", COUNT_ITEM_LOAD_MORE);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+
+                searchFilter.setPage(first);
+                searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
 
                 loadingMore = false;
                 products_list.clear();
@@ -245,12 +233,9 @@ public class ProductFragment extends Fragment{
                 setButtonFocus(btnSell, R.drawable.tab_categories_normal);
                 first = 0;
                 tmpQuery = query; // + "&first=" + first + "&offset=" + COUNT_ITEM_LOAD_MORE + "&aim=" + constants.BUY_VALUE;
-                try {
-                    searchFilter.put("page", first);
-                    searchFilter.put("size", COUNT_ITEM_LOAD_MORE);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+
+                searchFilter.setPage(first);
+                searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
 
                 loadingMore = false;
                 products_list.clear();
@@ -268,12 +253,9 @@ public class ProductFragment extends Fragment{
                 setButtonFocus(btnBuy, R.drawable.tab_categories_normal);
                 first = 0;
                 tmpQuery = query; // + "&first=" + first + "&offset=" + COUNT_ITEM_LOAD_MORE + "&aim=" + constants.SELL_VALUE;
-                try {
-                    searchFilter.put("page", first);
-                    searchFilter.put("size", COUNT_ITEM_LOAD_MORE);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+
+                searchFilter.setPage(first);
+                searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
 
                 loadingMore = false;
                 products_list.clear();
@@ -306,7 +288,7 @@ public class ProductFragment extends Fragment{
     }
 
     private void parse(JSONObject jsonObj, boolean append) {
-        try {
+        /*try {
             String id = jsonObj.getString(Products.TAG_ID);
             String name = jsonObj.getString(Products.TAG_TITLE);
             String link = jsonObj.getString(Products.TAG_LINK);
@@ -344,17 +326,17 @@ public class ProductFragment extends Fragment{
         } catch (Exception e) {
             // TODO: handle exception
             loadingMore = false;
-        }
+        }*/
     }
 
     private void parseAndAppend(String jsonString) {
         try {
-            JSONObject jObj = new JSONObject(jsonString);
+            /*JSONObject jObj = new JSONObject(jsonString);
             JSONArray jsonArray = jObj.getJSONArray("payload");
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObj = jsonArray.getJSONObject(i);
                 parse(jsonObj, true);
-            }
+            }*/
             loadingMore = false;
             adapter.notifyDataSetChanged();
             loadMorePrg.setVisibility(View.GONE);
@@ -367,7 +349,7 @@ public class ProductFragment extends Fragment{
     }
 
     private void parseAndPrepend(String jsonString) {
-        try {
+        /*try {
             JSONObject jObj = new JSONObject(jsonString);
             JSONArray jsonArray = jObj.getJSONArray("payload");
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -380,69 +362,51 @@ public class ProductFragment extends Fragment{
         } catch (Exception e) {
             // TODO: handle exception
             e.printStackTrace();
-        }
+        }*/
     }
 
-    private String feedJson(String pullQuery) {
-        try {
-            searchFilter.put("searchText", "*");
-            searchFilter.put("page", first);
-            searchFilter.put("size", COUNT_ITEM_LOAD_MORE);
-            searchFilter.put("type", null);
-            searchFilter.put("userId", null);
-            searchFilter.put("brand", null);
-            searchFilter.put("city", null);
+    private List<ProductVO> feedJson(String pullQuery) {
+        HttpHeaders requestHeaders = new HttpHeaders();
 
-            HttpPost httpPost;
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-            if (pullQuery != null && !pullQuery.equalsIgnoreCase("")) {
-                httpPost = new HttpPost(pullQuery);
-            } else {
-                httpPost = new HttpPost(tmpQuery);
-            }
+        // Sending a JSON or XML object i.e. "application/json" or "application/xml"
+        requestHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-            httpPost.setHeader("Accept", "*/*");
-            httpPost.setHeader("content-type", "application/json");
-            httpPost.setHeader("Accept-language", "fr-FR,fr;q=0.8,en-US;q=0.6,en;q=0.4");
+        searchFilter.setSearchText("*");
+        searchFilter.setPage(first);
+        searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
+        searchFilter.setType(null);
+        searchFilter.setUserId(null);
+        searchFilter.setBrand(null);
+        searchFilter.setCity(null);
 
-            StringEntity params = new StringEntity(searchFilter.toString());
-            httpPost.setEntity(params);
+        // Populate the Message object to serialize and headers in an
+        // HttpEntity object to use for the request
+        HttpEntity<SearchFilterVO> requestEntity = new HttpEntity<>(searchFilter, requestHeaders);
 
-            HttpResponse httpResponse = httpClient.execute(httpPost);
-            HttpEntity httpEntity = httpResponse.getEntity();
-            is = httpEntity.getContent();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        ResponseEntity<PagedResponse> products = restTemplate.exchange(
+                getResources().getString(R.string.products_json_url),
+                HttpMethod.POST,
+                requestEntity, PagedResponse.class);
 
-        try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    is, constants.STREAM_READER_CHARSET), 8);
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-            is.close();
-            jsonString = sb.toString();
-            Log.i("JSON_FETCH_TAG", jsonString);
-        } catch (Exception e) {
-            Log.e("Buffer Error", "Error converting result " + e.toString());
-        }
-        ;
-        return jsonString.replaceAll("\\\\'", "'");
+            /*ObjectMapper mapper = new ObjectMapper();
+
+            List<Products> accountList = mapper.readValue(
+                    mapper.treeAsTokens(products.getBody().getPayload()),
+                    new TypeReference<List<Products>>() {
+                    }
+            );*/
+
+        products_list.addAll(products.getBody().getPayload());
+
+        return products_list;
     }
 
-    private class LoadMoreDataTask extends AsyncTask<Void, Void, String> {
+    private class LoadMoreDataTask extends AsyncTask<Void, Void, List<ProductVO>> {
 
         @Override
-        protected String doInBackground(Void... params) {
+        protected List<ProductVO> doInBackground(Void... params) {
             if (isCancelled()) {
                 return null;
             }
@@ -450,7 +414,7 @@ public class ProductFragment extends Fragment{
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(List<ProductVO> result) {
             parseAndAppend(jsonString);
             super.onPostExecute(result);
         }
@@ -471,7 +435,7 @@ public class ProductFragment extends Fragment{
     }
 
 
-    private class PullToRefreshDataTask extends AsyncTask<Void, Void, String> {
+    private class PullToRefreshDataTask extends AsyncTask<Void, Void, List<ProductVO>> {
         String pullQuery = null;
 
         public PullToRefreshDataTask(String pullQuery) {
@@ -480,7 +444,7 @@ public class ProductFragment extends Fragment{
         }
 
         @Override
-        protected String doInBackground(Void... params) {
+        protected List<ProductVO> doInBackground(Void... params) {
             if (isCancelled()) {
                 return null;
             }
@@ -488,9 +452,9 @@ public class ProductFragment extends Fragment{
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(List<ProductVO> result) {
             super.onPostExecute(result);
-            parseAndPrepend(result);
+            // parseAndPrepend(result);
             swipeRefreshLayout.setRefreshing(false);
         }
 

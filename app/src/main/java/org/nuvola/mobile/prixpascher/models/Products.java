@@ -117,7 +117,6 @@ public class Products implements Parcelable {
     }
 
     public Products() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public Products(Parcel in) {
