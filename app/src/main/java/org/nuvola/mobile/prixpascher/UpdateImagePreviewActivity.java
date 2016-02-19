@@ -76,7 +76,7 @@ public class UpdateImagePreviewActivity extends Activity {
 							HttpClient client = new DefaultHttpClient();
 							HttpPost post = new HttpPost(handleInserUrl);
 							MultipartEntity reqEntity = new MultipartEntity();
-							reqEntity.addPart("product_id", new StringBody(
+							reqEntity.addPart("productId", new StringBody(
 									product_id + ""));
 							reqEntity.addPart("thumb_path", new StringBody(
 									thumbPaths));
@@ -140,7 +140,7 @@ public class UpdateImagePreviewActivity extends Activity {
 											HttpPost post = new HttpPost(
 													handleInserUrl);
 											MultipartEntity reqEntity = new MultipartEntity();
-											reqEntity.addPart("product_id",
+											reqEntity.addPart("productId",
 													new StringBody(product_id
 															+ ""));
 											reqEntity.addPart("data_id",

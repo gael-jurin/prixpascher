@@ -21,7 +21,7 @@
     <string name="ok_label">OK</string>
     <string name="cancel_label">Cancel</string>
     <string name="del_label">Delete</string>
-    <string name="dummy_text">Dummy text</string>
+    <string name="dummy_text">...</string>
     <string name="rate_it">Rate it</string>
     <string name="rating">Rating</string>
 
@@ -37,11 +37,11 @@
 
 
     <!-- TEXT LABEL -->
-    <string name="shop_label">Shop</string>
+    <string name="shop_label">Magasin</string>
     <string name="categories_label">Categories</string>
-    <string name="city_label">City</string>
-    <string name="price_label">Price</string>
-    <string name="title_label">Title</string>
+    <string name="city_label">Ville</string>
+    <string name="price_label">Prix</string>
+    <string name="title_label">Titre</string>
     <string name="content_label">Content</string>
     <string name="upload_label">Submit your product</string>
     <string name="what_you_want">Select images</string>
@@ -50,21 +50,22 @@
     <string name="alert">Alert</string>
     <string name="aim_label">Purpose</string>
     <string name="confirm_take_photo">Please take an photo ?</string>
-    <string name="sell_label">Best</string>
+    <string name="sell_label">Meilleurs</string>
     <string name="buy_label">Promos</string>
-    <string name="all_label">All</string>
+    <string name="all_label">Tout</string>
     <string name="tap_to_change_avt">Tap to change your avatar</string>
-    <string name="follow_label">Follow</string>
-    <string name="product">Products</string>
-    <string name="bookmarked_product">Mark Prodcuts</string>
-    <string name="logout">Logout</string>
-    <string name="close_label">Close</string>
-    <string name="filter_label">Filter</string>
-    <string name="home_label">Home</string>
+    <string name="follow_label">Suivre</string>
+    <string name="product">Produits</string>
+    <string name="bookmarked_product">Mark Products</string>
+    <string name="logout">Deconnexion</string>
+    <string name="close_label">Fermer</string>
+    <string name="filter_label">Filtre</string>
+    <string name="home_label">Accueil</string>
     <string name="profile_label">Profile</string>
     <string name="update_profile_label">Change your profile</string>
     <string name="choose_your_user_name">Choose your username</string>
     <string name="skip_label">Skip</string>
+    <string name="addToCart">Acheter IcI</string>
     <!-- END -->
 
 
@@ -76,7 +77,7 @@
     <string name="address">Address</string>
     <string name="update_label">Update</string>
     <string name="edit_label">Edit</string>
-    <string name="comment_label">Comment</string>
+    <string name="comment_label">Avis</string>
     <string name="search_hint">Search</string>
     <string name="user_name">User Name</string>
     <string name="submit">Submit</string>
@@ -105,13 +106,13 @@
 
     <!-- DRAWER MENU -->
     <string-array name="drawer_menus">
-        <item>Home</item>
+        <item>Accueil</item>
         <item>Categories</item>
-        <item>County</item>
-        <item>City</item>
-        <item>Filter</item>
+        <item>Magasin</item>
+        <item>Ville</item>
+        <item>Filtre</item>
         <item>Fan Page</item>
-        <item>About Us</item>
+        <item>A Propos</item>
     </string-array>
     <string-array name="aim_id">
         <item>1</item>
@@ -128,6 +129,7 @@
     <string name="county_json_url">http://www.prixpascher.ma/api/county_api/</string>
     <string name="cities_json_url">http://www.prixpascher.ma/api/cities_api/</string>
     <string name="products_json_url">https://www.prixpascher.ma/api/products/products/list</string>
+    <string name="products_root_json_url">https://www.prixpascher.ma/api/products/</string>
     <string name="images_json_url">http://www.prixpascher.ma/api/images_api/</string>
     <string name="users_json_url">https://www.prixpascher.ma/api/users_api/</string>
     

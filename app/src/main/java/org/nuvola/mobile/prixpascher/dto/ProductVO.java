@@ -4,10 +4,11 @@ import org.nuvola.mobile.prixpascher.models.Category;
 import org.nuvola.mobile.prixpascher.models.ProductSource;
 import org.nuvola.mobile.prixpascher.models.ShopType;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class ProductVO {
+public class ProductVO implements Serializable {
     private String id;
     private ShopType shopType;
     private String age;

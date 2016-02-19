@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.nuvola.mobile.prixpascher.R;
+import org.nuvola.mobile.prixpascher.business.ImageDownloaderTask;
 import org.nuvola.mobile.prixpascher.dto.ProductVO;
 import org.nuvola.mobile.prixpascher.models.Products;
 import com.koushikdutta.ion.Ion;
@@ -38,15 +39,19 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
 
     @Override
     public void onBindViewHolder(ProductsViewHolder holder, int position) {
-      Ion.with(
+      /*Ion.with(
               context,
               products.get(position).getImage()).withBitmap()
               .resize(250, 250)
               .centerCrop().error(R.drawable.no_photo)
-              .placeholder(R.drawable.no_photo).intoImageView(holder.thumb);
+              .placeholder(R.drawable.no_photo).intoImageView(holder.thumb);*/
+
+        if (holder.thumb != null) {
+            new ImageDownloaderTask(holder.thumb).execute(products.get(position).getImage());
+        }
 
         if (holder.title != null) {
-            holder.title.setText(" " + products.get(position).getTitle());
+            holder.title.setText(products.get(position).getTitle());
         }
 
         if (products.get(position).getPrice() != null
@@ -56,10 +61,10 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
             holder.price.setText(
                     context.getResources()
                     .getString(R.string.negotiate_label));
-        };
+        }
 
         if (holder.shop != null) {
-            holder.shop.setImageResource(getDrawable(context, products.get(position).getShopName()));
+            holder.shop.setImageResource(getDrawable(context, products.get(position).getShopName() + "_large"));
         }
     }
 
@@ -88,7 +93,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
         }
     }
 
-    public int getDrawable(Context context, String name)
+    private int getDrawable(Context context, String name)
     {
         return context.getResources().getIdentifier(name,
                 "drawable", context.getPackageName());
