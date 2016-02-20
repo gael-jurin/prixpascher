@@ -310,13 +310,13 @@ public class UpdateProfileActivity extends ActionBarParentActivity {
                 String addressText = address.getText().toString();
                 String phoneText = phone.getText().toString();
 
-                reqEntity.addPart("id", new StringBody(user.getId() + ""));
-                reqEntity.addPart("fb_id", new StringBody(user.getFbId()));
-                reqEntity.addPart("website", new StringBody(websiteText));
-                reqEntity.addPart("address", new StringBody(addressText));
-                reqEntity.addPart("phone", new StringBody(phoneText));
+                // reqEntity.addPart("id", new StringBody(user.getId() + ""));
+                // reqEntity.addPart("fb_id", new StringBody(user.getFbId()));
+                // reqEntity.addPart("website", new StringBody(websiteText));
+                // reqEntity.addPart("address", new StringBody(addressText));
+                // reqEntity.addPart("phone", new StringBody(phoneText));
                 if (avtPath != null && !avtPath.equalsIgnoreCase("")) {
-                    reqEntity.addPart("avt", new FileBody(new File(avtPath)));
+                    // reqEntity.addPart("avt", new FileBody(new File(avtPath)));
                 }
 
                 post.setEntity(reqEntity);

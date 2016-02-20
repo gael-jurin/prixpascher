@@ -156,7 +156,7 @@ public class AuthenticationFragment extends Fragment {
 				HttpClient client = new DefaultHttpClient();
 				HttpPost post = new HttpPost(handleInsertUser);
 				MultipartEntity reqEntity = new MultipartEntity();
-				reqEntity.addPart("fb_id", new StringBody(user.getId()));
+				// reqEntity.addPart("fb_id", new StringBody(user.getId()));
 				post.setEntity(reqEntity);
 				HttpResponse res = client.execute(post);
 				HttpEntity resEntity = res.getEntity();
@@ -268,11 +268,10 @@ public class AuthenticationFragment extends Fragment {
 				HttpClient client = new DefaultHttpClient();
 				HttpPost post = new HttpPost(handleInsertUser);
 				MultipartEntity reqEntity = new MultipartEntity();
-				reqEntity.addPart("fb_id", new StringBody(user.getId()));
-				reqEntity.addPart("fullname", new StringBody(user.getName()));
-				reqEntity.addPart("email",
-						new StringBody(user.asMap().get("email").toString()));
-				reqEntity.addPart("username", new StringBody(userName));
+				// reqEntity.addPart("fb_id", new StringBody(user.getId()));
+				// reqEntity.addPart("fullname", new StringBody(user.getName()));
+				// reqEntity.addPart("email",new StringBody(user.asMap().get("email").toString()));
+				// reqEntity.addPart("username", new StringBody(userName));
 				post.setEntity(reqEntity);
 				HttpResponse res = client.execute(post);
 				HttpEntity resEntity = res.getEntity();

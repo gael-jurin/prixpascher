@@ -1,7 +1,5 @@
 package org.nuvola.mobile.prixpascher.adapters;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -10,22 +8,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-
-import org.nuvola.mobile.prixpascher.DetailActivity;
+import com.koushikdutta.ion.Ion;
 import org.nuvola.mobile.prixpascher.ImagePreviewActivity;
 import org.nuvola.mobile.prixpascher.R;
 import org.nuvola.mobile.prixpascher.business.TouchImageView;
 import org.nuvola.mobile.prixpascher.confs.constants;
-import com.koushikdutta.ion.Ion;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FullScreenImageAdapter extends PagerAdapter {
 	private Activity activity;
-	private ArrayList<String> paths;
+	private List<String> paths;
 	private LayoutInflater inflater;
 
 	// constructor
 	public FullScreenImageAdapter(Activity activity,
-			ArrayList<String> imagePaths) {
+			List<String> imagePaths) {
 		this.activity = activity;
 		this.paths = imagePaths;
 	}
@@ -63,7 +62,7 @@ public class FullScreenImageAdapter extends PagerAdapter {
                 Intent intent = new Intent(activity,
                         ImagePreviewActivity.class);
                 intent.putStringArrayListExtra(
-                        constants.IMAGES_PATH, paths);
+                        constants.IMAGES_PATH, (ArrayList<String>) paths);
                 intent.putExtra(constants.IMAGE_POSITION, position);
                 activity.startActivity(intent);
             }

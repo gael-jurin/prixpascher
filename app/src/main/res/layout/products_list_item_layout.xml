@@ -27,7 +27,6 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginRight="16dp"
-                android:src="@drawable/no_photo"
                 android:background="@android:color/transparent"
                 />
 
@@ -49,7 +48,7 @@
                 android:layout_below="@+id/title"
                 android:text="@string/dummy_text"
                 android:layout_marginLeft="1dp"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="40dp"
                 android:textAppearance="@style/PriceTextAppearance"
                 />
 

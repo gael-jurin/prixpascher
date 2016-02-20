@@ -642,24 +642,22 @@ public class UploadActivity extends ActionBarParentActivity {
 				FileBody fileUpload = null;
 				if (photoPath1 != null) {
 					fileUpload = new FileBody(new File(photoPath1));
-					reqEntity.addPart("photo1", fileUpload);
+					// reqEntity.addPart("photo1", fileUpload);
 				}
 
 
 				String titleText = title.getText().toString();
 				String priceText = price.getText().toString();
 				String contentText = content.getText().toString();
-				reqEntity.addPart("user_id", new StringBody(user_id + ""));
-				reqEntity.addPart("fb_id", new StringBody(fb_id));
-				reqEntity.addPart("title", new StringBody(titleText));
-				reqEntity.addPart("price", new StringBody(priceText));
-				reqEntity.addPart("content", new StringBody(contentText));
-				reqEntity.addPart("city", new StringBody(city_selected + ""));
-				reqEntity.addPart("categories", new StringBody(
-						categories_selected + ""));
-				reqEntity.addPart("county",
-						new StringBody(county_selected + ""));
-				reqEntity.addPart("aim", new StringBody(aim_selected + ""));
+				// reqEntity.addPart("user_id", new StringBody(user_id + ""));
+				// reqEntity.addPart("fb_id", new StringBody(fb_id));
+				// reqEntity.addPart("title", new StringBody(titleText));
+				// reqEntity.addPart("price", new StringBody(priceText));
+				// reqEntity.addPart("content", new StringBody(contentText));
+				// reqEntity.addPart("city", new StringBody(city_selected + ""));
+				// reqEntity.addPart("categories", new StringBody(categories_selected + ""));
+				// reqEntity.addPart("county",new StringBody(county_selected + ""));
+				// reqEntity.addPart("aim", new StringBody(aim_selected + ""));
 				post.setEntity(reqEntity);
 				HttpResponse response = client.execute(post);
 				HttpEntity resEntity = response.getEntity();

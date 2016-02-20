@@ -187,9 +187,8 @@ public class UpdateGalleryActivity extends ActionBarParentActivity {
 
 								FileBody fileUpload = new FileBody(new File(
 										photoPath));
-								reqEntity.addPart("photo", fileUpload);
-								reqEntity.addPart("id", new StringBody(
-										product_id + ""));
+								// reqEntity.addPart("photo", fileUpload);
+								// reqEntity.addPart("id", new StringBody(product_id + ""));
 								post.setEntity(reqEntity);
 								HttpResponse response = client.execute(post);
 								HttpEntity resEntity = response.getEntity();

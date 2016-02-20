@@ -56,6 +56,7 @@
     <string name="tap_to_change_avt">Tap to change your avatar</string>
     <string name="follow_label">Suivre</string>
     <string name="product">Produits</string>
+    <string name="similar_products">Produits Similaires</string>
     <string name="bookmarked_product">Mark Products</string>
     <string name="logout">Deconnexion</string>
     <string name="close_label">Fermer</string>
@@ -155,7 +156,7 @@
     <string name="verified_code_success">Congrulation!!! you have been create account successfull, please login now !!!</string>
     <string name="password">Password</string>
     <string name="loging">Login, please wait ...</string>
-    <string name="result_label">Search result</string>
+    <string name="result_label">Articles trouvés</string>
     <string name="about_us_content">
     <![CDATA[
    		<center>Copyright &copy; Nuvola Org.</center>

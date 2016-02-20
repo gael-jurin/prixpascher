@@ -8,10 +8,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,6 +29,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.gc.materialdesign.views.ButtonRectangle;
 import com.koushikdutta.async.future.FutureCallback;
@@ -38,45 +45,67 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 import org.nuvola.mobile.prixpascher.adapters.FullScreenImageAdapter;
+import org.nuvola.mobile.prixpascher.adapters.ProductsAdapter;
 import org.nuvola.mobile.prixpascher.business.ProductFetchTask;
 import org.nuvola.mobile.prixpascher.business.RoundedAvatarDrawable;
 import org.nuvola.mobile.prixpascher.business.UserSessionManager;
 import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.dto.ProductVO;
+import org.nuvola.mobile.prixpascher.dto.SearchFilterVO;
 import org.nuvola.mobile.prixpascher.models.User;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @SuppressLint({ "NewApi", "HandlerLeak" })
 public class DetailActivity extends ActionBarParentActivity {
-    TextView fullName, address, dateUpdated, phone, price, title;
-    ImageView avt;
-    ProgressDialog dialog;
-    public static final String IMAGES_RESPONSE = "images_feed";
-    ArrayList<String> paths;
-    ProductVO product;
-    String productId;
-    String user_id;
-    ImageButton btnAddToCart, btnDelete, btnUpdateDesc;
-    String email, phoneText;
-    EditText message, comment;
-    ImageView shop;
-    User logedUser;
-    Toolbar toolbar;
 
-    private FullScreenImageAdapter adapter;
-    private ViewPager viewPager;
+    @Bind(R.id.btn_edit_desc) ImageButton btnUpdateDesc;
+    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.full_name) TextView fullName;
+    @Bind(R.id.address) TextView address;
+    @Bind(R.id.price) TextView price;
+    @Bind(R.id.title) TextView title;
+    @Bind(R.id.shop) ImageView shop;
+    @Bind(R.id.phone) TextView phone;
+    @Bind(R.id.btnAddToCart) ImageButton btnAddToCart;
+    @Bind(R.id.pager) ViewPager viewPager;
+    @Bind(R.id.btn_delete) ImageButton btnDelete;
+    @Bind(R.id.ratingBarClick) RatingBar ratingBar;
+    @Bind(R.id.similarProducts) RecyclerView similarProducts;
+    @Bind(R.id.activity_main_swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
 
-    RatingBar ratingBar;
+    private FullScreenImageAdapter imageAdapter;
+    private ProductsAdapter productsAdapter;
+    private ProgressDialog dialog;
+    private List<String> paths;
+    private List<ProductVO> productsList = new ArrayList<>();
+    private ProductVO product;
+    private String productId;
+    private String user_id;
+    private String email, phoneText;
+    private User logedUser;
+    private EditText message, comment;
+    private ImageView avt;
+    private Integer pastVisiblesItems, visibleItemCount, totalItemCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
+        
         setContentView(R.layout.detail_layout);
+        ButterKnife.bind(this);
+        
         Bundle bundle = getIntent().getExtras();
         if (bundle.containsKey(constants.USER_ID_KEY)) {
             // int user_id=bundle.getInt(constants.USER_ID_KEY);
@@ -95,24 +124,10 @@ public class DetailActivity extends ActionBarParentActivity {
         } else {
             LinearLayout updateButtonWrapper = (LinearLayout) findViewById(R.id.update_button_wrapper);
             updateButtonWrapper.setVisibility(LinearLayout.INVISIBLE);
-            updateButtonWrapper.setLayoutParams(new LinearLayout.LayoutParams(
-                    0, 0));
+            updateButtonWrapper.setLayoutParams(new LinearLayout.LayoutParams(0, 0));
         }
 
         // initGallery();
-        fullName = (TextView) findViewById(R.id.full_name);
-        address = (TextView) findViewById(R.id.address);
-        price = (TextView) findViewById(R.id.price);
-        title = (TextView) findViewById(R.id.title);
-        shop = (ImageView) findViewById(R.id.shop);
-        // avt = (ImageView) findViewById(R.id.avt);
-        // condition = (TextView) findViewById(R.id.condition);
-        phone = (TextView) findViewById(R.id.phone);
-        btnAddToCart = (ImageButton) findViewById(R.id.btnAddToCart);
-        // btnSMS = (ImageButton) findViewById(R.id.btnSmS);
-        // btnCall = (ImageButton) findViewById(R.id.btnPhone);
-        btnDelete = (ImageButton) findViewById(R.id.btn_delete);
-
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,7 +137,6 @@ public class DetailActivity extends ActionBarParentActivity {
             }
         });
 
-        btnUpdateDesc = (ImageButton) findViewById(R.id.btn_edit_desc);
         btnUpdateDesc.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -143,7 +157,6 @@ public class DetailActivity extends ActionBarParentActivity {
                     + productId, handler).execute();
         }
 
-        ratingBar = (RatingBar) findViewById(R.id.ratingBarClick);
         ratingBar.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
@@ -166,20 +179,16 @@ public class DetailActivity extends ActionBarParentActivity {
                         dialogPrg.setCanceledOnTouchOutside(false);
                         logedUser = userSession.getUserSession();
 
-                        MaterialDialog.Builder rankDialogBuilder=new MaterialDialog.Builder(DetailActivity.this);
-                        rankDialogBuilder.customView(R.layout.rating_layout,true);
+                        MaterialDialog.Builder rankDialogBuilder = new MaterialDialog.Builder(DetailActivity.this);
+                        rankDialogBuilder.customView(R.layout.rating_layout, true);
 
-                        final MaterialDialog rankDialog= rankDialogBuilder.build();
+                        final MaterialDialog rankDialog = rankDialogBuilder.build();
                         rankDialog.show();
 
+                        final RatingBar ratingBar = (RatingBar) rankDialog.findViewById(R.id.dialog_ratingbar);
+                        ButtonRectangle updateButton = (ButtonRectangle) rankDialog.findViewById(R.id.rank_dialog_button);
 
-                        final RatingBar ratingBar = (RatingBar) rankDialog
-                                .findViewById(R.id.dialog_ratingbar);
-                        ButtonRectangle updateButton = (ButtonRectangle) rankDialog
-                                .findViewById(R.id.rank_dialog_button);
-
-                        comment = (EditText) rankDialog
-                                .findViewById(R.id.comment);
+                        comment = (EditText) rankDialog.findViewById(R.id.comment);
 
                         rankDialog.show();
                     }
@@ -189,6 +198,37 @@ public class DetailActivity extends ActionBarParentActivity {
             }
         });
 
+        final LinearLayoutManager llm = new LinearLayoutManager(DetailActivity.this);
+        similarProducts.setLayoutManager(llm);
+        productsAdapter = new ProductsAdapter(this, productsList);
+        productsAdapter.SetOnItemClickListener(new ProductsAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent(DetailActivity.this, DetailActivity.class);
+                intent.putExtra(constants.COMMON_KEY, productsList.get(position)
+                        .getId());
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+        });
+
+        similarProducts.setAdapter(productsAdapter);
+        similarProducts.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                visibleItemCount = llm.getChildCount();
+                totalItemCount = llm.getItemCount();
+                pastVisiblesItems = llm.findFirstVisibleItemPosition();
+                if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                        new LoadSimilarDataTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    } else {
+                        new LoadSimilarDataTask().execute();
+                    }
+                }
+            }
+        });
 
         dialog = new ProgressDialog(this);
         dialog.setMessage(getResources().getString(R.string.loading));
@@ -196,11 +236,11 @@ public class DetailActivity extends ActionBarParentActivity {
         dialog.show();
         paths = new ArrayList<>();
 
-        toolbar=(Toolbar)findViewById(R.id.toolbar);
         toolbar.setTitle(getResources().getString(R.string.detail_label));
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setLogo(R.drawable.ic_logo);
         loadAd();
     }
 
@@ -212,17 +252,11 @@ public class DetailActivity extends ActionBarParentActivity {
                 dialog.dismiss();
                 product = (ProductVO) bundle
                         .getSerializable(productId);
-               /*new JSONFetchTask(getResources().getString(
-                 R.string.products_json_url)
-                 + "avg_rate/product_id/" + productId, handlerRate,
-                 "rate").execute();*/
                 parseProduct(product);
+                new LoadSimilarDataTask().execute();
             }
         };
     };
-
-
-
 
     Handler handlerRate = new Handler() {
         public void handleMessage(android.os.Message msg) {
@@ -245,12 +279,75 @@ public class DetailActivity extends ActionBarParentActivity {
         };
     };
 
+    private class LoadSimilarDataTask extends AsyncTask<Void, Void, List<ProductVO>> {
+
+        @Override
+        protected List<ProductVO> doInBackground(Void... params) {
+            if (isCancelled()) {
+                return null;
+            }
+            return feedSimilar();
+        }
+
+        @Override
+        protected void onPostExecute(List<ProductVO> result) {
+            parseAndAppend();
+            super.onPostExecute(result);
+        }
+
+        @Override
+        protected void onPreExecute() {
+
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onCancelled() {
+
+        }
+    }
+
+    private List<ProductVO> feedSimilar() {
+        try {
+            HttpHeaders requestHeaders = new HttpHeaders();
+
+            // Sending a JSON or XML object i.e. "application/json" or "application/xml"
+            requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+            // Populate the Message object to serialize and headers in an
+            // HttpEntity object to use for the request
+            org.springframework.http.HttpEntity<SearchFilterVO> requestEntity =
+                    new org.springframework.http.HttpEntity<>(requestHeaders);
+
+            RestTemplate restTemplate = new RestTemplate();
+            byte[] encodedId = Base64.encode(productId.getBytes(), Base64.DEFAULT);
+            restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+            ResponseEntity<ProductVO[]> products = restTemplate.exchange(
+                    getResources().getString(R.string.products_root_json_url) + new String(encodedId) + "/similar",
+                    HttpMethod.POST,
+                    requestEntity, ProductVO[].class);
+
+            productsList.addAll(Arrays.asList(products.getBody()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return productsList;
+    }
+
+    private void parseAndAppend() {
+        try {
+            productsAdapter.notifyDataSetChanged();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void parseProduct(ProductVO jsonObj) {
         try {
             paths.add(jsonObj.getImage());
-            adapter = new FullScreenImageAdapter(DetailActivity.this, paths);
-            viewPager = (ViewPager) findViewById(R.id.pager);
-            viewPager.setAdapter(adapter);
+            imageAdapter = new FullScreenImageAdapter(DetailActivity.this, paths);
+            viewPager.setAdapter(imageAdapter);
             viewPager.setCurrentItem(0);
 
             shop.setImageResource(getDrawable(this, product.getShopName() + "_large"));
@@ -299,11 +396,10 @@ public class DetailActivity extends ActionBarParentActivity {
                 }
             }*/
 
-            String priceText = jsonObj.getPrice().toString();
+            String priceText = NumberFormat.getInstance().format(jsonObj.getPrice());
             if (priceText != null && !priceText.equalsIgnoreCase("")) {
                 price.setText(priceText + " Dhs");
             } else {
-                // price.setText(" " + getResources().getString(R.string.negotiate_label));
                 price.setText("0 Dhs");
             }
 
@@ -338,15 +434,6 @@ public class DetailActivity extends ActionBarParentActivity {
                         });
 
             }
-
-            /*String content = jsonObj.getProductCategory().toUpperCase(); // jsonObj.getString(Products.TAG_PRODUCT_CATEGORY);
-            DetailContentFragment fragment = DetailContentFragment
-                    .newInstance();
-            Bundle bundle = new Bundle();
-            bundle.putString(DetailContentFragment.DETAIL_KEY, content);
-            fragment.setArguments(bundle);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.content, fragment).commit();*/
 
             WebView comment = (WebView) findViewById(R.id.comment);
             comment.getSettings().setJavaScriptEnabled(true);
@@ -389,7 +476,7 @@ public class DetailActivity extends ActionBarParentActivity {
                 HttpClient client = new DefaultHttpClient();
                 HttpPost post = new HttpPost(handleInsertUser);
                 MultipartEntity reqEntity = new MultipartEntity();
-                reqEntity.addPart("id", new StringBody(productId + ""));
+                // reqEntity.addPart("id", new StringBody(productId + ""));
                 post.setEntity(reqEntity);
                 HttpResponse res = client.execute(post);
                 HttpEntity resEntity = res.getEntity();
@@ -505,13 +592,13 @@ public class DetailActivity extends ActionBarParentActivity {
                 HttpClient client = new DefaultHttpClient();
                 HttpPost post = new HttpPost(handleInserUrl);
                 MultipartEntity reqEntity = new MultipartEntity();
-                reqEntity.addPart("email", new StringBody(email));
+                /*reqEntity.addPart("email", new StringBody(email));
                 reqEntity.addPart("message", new StringBody(message.getText()
                         .toString()));
                 reqEntity.addPart("reply_to",
                         new StringBody(logedUser.getEmail()));
                 reqEntity.addPart("user_name",
-                        new StringBody(logedUser.getUserName()));
+                        new StringBody(logedUser.getUserName()));*/
                 post.setEntity(reqEntity);
                 HttpResponse response = client.execute(post);
                 HttpEntity resEntity = response.getEntity();

@@ -91,8 +91,8 @@ public class LoginActivity extends ActionBarParentActivity {
 				MultipartEntity reqEntity = new MultipartEntity();
 				String emailText = email.getText().toString();
 				String pwdText = pwd.getText().toString();
-				reqEntity.addPart("email", new StringBody(emailText));
-				reqEntity.addPart("pwd", new StringBody(pwdText));
+				// reqEntity.addPart("email", new StringBody(emailText));
+				// reqEntity.addPart("pwd", new StringBody(pwdText));
 				//post.setEntity(reqEntity);
 				//HttpResponse res = client.execute(post);
 				//HttpEntity resEntity = res.getEntity();
