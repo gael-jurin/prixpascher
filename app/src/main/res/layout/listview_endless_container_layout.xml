@@ -56,7 +56,7 @@
             android:textSize="12dp" />
 
         <Button
-            android:id="@+id/btnSell"
+            android:id="@+id/btnBest"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -67,7 +67,7 @@
             android:textSize="12dp" />
 
         <Button
-            android:id="@+id/btnBuy"
+            android:id="@+id/btnPromo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"

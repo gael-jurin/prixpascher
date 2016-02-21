@@ -209,7 +209,7 @@
                             <ImageView
                                     android:id="@+id/shop"
                                     android:layout_width="80dp"
-                                    android:layout_height="30dp"
+                                    android:layout_height="25dp"
                                     android:scaleType="fitXY"
                                     android:layout_alignParentRight="true"
                                     android:layout_alignParentBottom="true"
@@ -294,15 +294,34 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/comment_label"
+                            android:text="@string/similar_products"
                             android:textAllCaps="true"
                             android:textColor="@color/white" />
                     </LinearLayout>
 
-                    <WebView
+                    <android.support.v4.widget.SwipeRefreshLayout
+                            android:id="@+id/activity_main_swipe_refresh_layout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="4">
+
+                        <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="200dp"
+                                android:orientation="vertical">
+
+                            <android.support.v7.widget.RecyclerView
+                                    android:id="@+id/similarProducts"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:dividerHeight="5dp" />
+                        </LinearLayout>
+                    </android.support.v4.widget.SwipeRefreshLayout>
+
+                    <!--<WebView
                         android:id="@+id/comment"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent" />-->
                 </LinearLayout>
                 <!-- end -->
 

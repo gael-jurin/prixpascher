@@ -1,15 +1,5 @@
 package org.nuvola.mobile.prixpascher;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -20,14 +10,20 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.nuvola.mobile.prixpascher.business.Utils;
-import org.nuvola.mobile.prixpascher.business.UserSessionManager;
-import org.nuvola.mobile.prixpascher.models.User;
 import com.gc.materialdesign.views.ButtonRectangle;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
+import org.nuvola.mobile.prixpascher.business.UserSessionManager;
+import org.nuvola.mobile.prixpascher.business.Utils;
+import org.nuvola.mobile.prixpascher.models.User;
 
 @SuppressLint({ "NewApi", "ShowToast" })
 public class ChangePassActivity extends ActionBarParentActivity {
@@ -139,9 +135,9 @@ public class ChangePassActivity extends ActionBarParentActivity {
 				String oldPassText = oldPass.getText().toString();
 				String newPassText = newPass.getText().toString();
 				// String cfmPassText=cfmPass.getText().toString();
-				reqEntity.addPart("id", new StringBody(user.getId() + ""));
+				/*reqEntity.addPart("id", new StringBody(user.getId() + ""));
 				reqEntity.addPart("old_pass", new StringBody(oldPassText));
-				reqEntity.addPart("new_pass", new StringBody(newPassText));
+				reqEntity.addPart("new_pass", new StringBody(newPassText));*/
 				post.setEntity(reqEntity);
 				HttpResponse response = client.execute(post);
 				HttpEntity resEntity = response.getEntity();

@@ -555,22 +555,19 @@ public class UpdateProductActivity extends ActionBarParentActivity {
 				String priceText = price.getText().toString();
 				String contentText = content.getText().toString();
 
-				reqEntity.addPart("county",
-						new StringBody(county_selected + ""));
+				// reqEntity.addPart("county",new StringBody(county_selected + ""));
 
-				reqEntity.addPart("id", new StringBody(product_id + ""));
-				reqEntity.addPart("title", new StringBody(titleText));
-				reqEntity.addPart("price", new StringBody(priceText));
-				reqEntity.addPart("content", new StringBody(contentText));
-				reqEntity.addPart("cities", new StringBody(city_selected + ""));
-				reqEntity.addPart("categories", new StringBody(
-						categories_selected + ""));
-				reqEntity.addPart("condition", new StringBody(
-						condition_selected + ""));
-				reqEntity.addPart("purpose", new StringBody(aim_selected + ""));
+				// reqEntity.addPart("id", new StringBody(product_id + ""));
+				// reqEntity.addPart("title", new StringBody(titleText));
+				// reqEntity.addPart("price", new StringBody(priceText));
+				// reqEntity.addPart("content", new StringBody(contentText));
+				// reqEntity.addPart("cities", new StringBody(city_selected + ""));
+				// reqEntity.addPart("categories", new StringBody(categories_selected + ""));
+				// reqEntity.addPart("condition", new StringBody(condition_selected + ""));
+				// reqEntity.addPart("purpose", new StringBody(aim_selected + ""));
 
-				reqEntity.addPart("lat", new StringBody(lat));
-				reqEntity.addPart("lng", new StringBody(lng));
+				// reqEntity.addPart("lat", new StringBody(lat));
+				// reqEntity.addPart("lng", new StringBody(lng));
 				post.setEntity(reqEntity);
 				HttpResponse response = client.execute(post);
 				HttpEntity resEntity = response.getEntity();

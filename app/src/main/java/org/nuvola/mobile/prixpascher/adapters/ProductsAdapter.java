@@ -7,25 +7,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
-
+import com.squareup.picasso.Picasso;
 import org.nuvola.mobile.prixpascher.R;
-import org.nuvola.mobile.prixpascher.business.ImageDownloaderTask;
 import org.nuvola.mobile.prixpascher.dto.ProductVO;
-import org.nuvola.mobile.prixpascher.models.Products;
-import com.koushikdutta.ion.Ion;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ProductsViewHolder> {
     private Context context;
-    private ArrayList<ProductVO> products;
+    private List<ProductVO> products;
     OnItemClickListener mItemClickListener;
 
-    public ProductsAdapter(Context context, ArrayList<ProductVO> products){
+    public ProductsAdapter(Context context, List<ProductVO> products){
         this.context=context;
         this.products=products;
     }
@@ -39,15 +34,11 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
 
     @Override
     public void onBindViewHolder(ProductsViewHolder holder, int position) {
-      /*Ion.with(
-              context,
-              products.get(position).getImage()).withBitmap()
-              .resize(250, 250)
-              .centerCrop().error(R.drawable.no_photo)
-              .placeholder(R.drawable.no_photo).intoImageView(holder.thumb);*/
-
         if (holder.thumb != null) {
-            new ImageDownloaderTask(holder.thumb).execute(products.get(position).getImage());
+            Picasso.with(context)
+                    .load(products.get(position).getImage())
+                    .placeholder(R.drawable.no_photo)
+                    .into(holder.thumb);
         }
 
         if (holder.title != null) {

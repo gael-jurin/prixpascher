@@ -299,8 +299,7 @@ public class ProfileFragment extends Fragment {
 				HttpClient client = new DefaultHttpClient();
 				HttpPost post = new HttpPost(handleInserUrl);
 				MultipartEntity reqEntity = new MultipartEntity();
-				reqEntity.addPart("user_id", new StringBody(userProfile.getId()
-						+ ""));
+				// reqEntity.addPart("user_id", new StringBody(userProfile.getId()+ ""));
 				post.setEntity(reqEntity);
 				HttpResponse response = client.execute(post);
 				HttpEntity resEntity = response.getEntity();

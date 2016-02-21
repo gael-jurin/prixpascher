@@ -1,6 +1,6 @@
 package org.nuvola.mobile.prixpascher.fragments;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -16,6 +16,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import org.nuvola.mobile.prixpascher.DetailActivity;
 import org.nuvola.mobile.prixpascher.R;
 import org.nuvola.mobile.prixpascher.adapters.ProductsAdapter;
@@ -36,30 +38,28 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductFragment extends Fragment{
-    static String jsonString = "";
-
-    ArrayList<ProductVO> products_list = new ArrayList<>();
+public class ProductFragment extends Fragment {
+    List<ProductVO> productsList = new ArrayList<>();
     SearchFilterVO searchFilter = new SearchFilterVO();
-    ProductsAdapter adapter;
-    String query = null, tmpQuery = null;
     int COUNT_ITEM_LOAD_MORE = 40;
     int first = 0;
-    LinearLayout loadMorePrg;
     boolean loadingMore = true;
-    SwipeRefreshLayout swipeRefreshLayout;
-    Button btnAll, btnSell, btnBuy;
-    RecyclerView rv;
     int user_id = 0, user_post = 0, pastVisiblesItems, visibleItemCount, totalItemCount;
 
+    @Bind(R.id.activity_main_swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
+    @Bind(R.id.rv) RecyclerView rv;
+    @Bind(R.id.btnAll) Button btnAll;
+    @Bind(R.id.btnBest) Button btnBest;
+    @Bind(R.id.btnPromo) Button btnPromo;
+    @Bind(R.id.prgLoadMore) LinearLayout loadMorePrg;
+    ProductsAdapter adapter;
+
     @Override
-    public void onAttach(Activity activity) {
-        // TODO Auto-generated method stub
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
     }
 
     public static final ProductFragment newInstance() {
-        // TODO Auto-generated constructor stub
         ProductFragment fragment = new ProductFragment();
         return fragment;
     }
@@ -78,31 +78,24 @@ public class ProductFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = null;
-        // TODO Auto-generated method stub
-        query = getResources().getString(R.string.products_json_url);
-        Log.i("QUERY", query);
-        view = inflater.inflate(
-                R.layout.listview_endless_container_layout, null);
-        rv = (RecyclerView) view.findViewById(R.id.rv);
+        View view;
+        view = inflater.inflate(R.layout.listview_endless_container_layout, null);
+        ButterKnife.bind(this, view);
         final LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
 
-
-        loadMorePrg = (LinearLayout) view
-                .findViewById(R.id.prgLoadMore);
-        adapter = new ProductsAdapter(getActivity(), products_list);
+        adapter = new ProductsAdapter(getActivity(), productsList);
         adapter.SetOnItemClickListener(new ProductsAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 if (user_id == 0) {
                     Intent intent = new Intent(getActivity(), DetailActivity.class);
-                    intent.putExtra(constants.COMMON_KEY, products_list.get(position)
+                    intent.putExtra(constants.COMMON_KEY, productsList.get(position)
                             .getId());
                     startActivity(intent);
                 } else {
                     Intent intent = new Intent(getActivity(), DetailActivity.class);
-                    intent.putExtra(constants.COMMON_KEY, products_list.get(position)
+                    intent.putExtra(constants.COMMON_KEY, productsList.get(position)
                             .getId());
                     intent.putExtra(constants.USER_ID_KEY, user_id);
                     startActivity(intent);
@@ -110,31 +103,28 @@ public class ProductFragment extends Fragment{
             }
         });
         rv.setAdapter(adapter);
-        rv.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 visibleItemCount = llm.getChildCount();
                 totalItemCount = llm.getItemCount();
                 pastVisiblesItems = llm.findFirstVisibleItemPosition();
-                    if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
-                        loadingMore = false;
-                        Log.v("...", "Last Item Wow !");
-                        first += COUNT_ITEM_LOAD_MORE;
-                        // tmpQuery += "&first=" + first + "&offset=" + COUNT_ITEM_LOAD_MORE;
+                if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                    loadingMore = false;
+                    first += COUNT_ITEM_LOAD_MORE;
 
-                        searchFilter.setPage(first);
-                        searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
+                    searchFilter.setPage(first);
+                    searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
 
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                            new LoadMoreDataTask()
-                                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                        } else {
-                            new LoadMoreDataTask().execute();
-                        }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                        new LoadMoreDataTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    } else {
+                        new LoadMoreDataTask().execute();
                     }
+                }
             }
-        } );
+        });
 
 
         if (getArguments() != null) {
@@ -145,40 +135,37 @@ public class ProductFragment extends Fragment{
                     try {
                         title = URLEncoder.encode(title, "utf-8");
                     } catch (UnsupportedEncodingException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-
                     searchFilter.setSearchText(title);
-
                 }
             }
 
             if (bundle.containsKey(constants.CATEGORIES_ID_KEY)) {
                 int id = bundle.getInt(constants.CATEGORIES_ID_KEY);
                 if (id != 0) {
-                    query += "&categories_id=" + id;
+                    // query += "&categories_id=" + id;
                 }
             }
 
             if (bundle.containsKey(constants.COUNTY_ID_KEY)) {
                 int id = bundle.getInt(constants.COUNTY_ID_KEY);
                 if (id != 0) {
-                    query += "&county_id=" + id;
+                    // query += "&county_id=" + id;
                 }
             }
 
             if (bundle.containsKey(constants.CITY_ID_KEY)) {
                 int id = bundle.getInt(constants.CITY_ID_KEY);
                 if (id != 0) {
-                    query += "&cities_id=" + id;
+                    // query += "&cities_id=" + id;
                 }
             }
 
             if (bundle.containsKey(constants.USER_ID_KEY)) {
                 int id = bundle.getInt(constants.USER_ID_KEY);
                 if (id != 0) {
-                    query += "&user_id=" + id;
+                    // query += "&user_id=" + id;
                     user_id = id;
 
                 }
@@ -187,16 +174,13 @@ public class ProductFragment extends Fragment{
             if (bundle.containsKey(constants.USER_POST_KEY)) {
                 int id = bundle.getInt(constants.USER_POST_KEY);
                 if (id != 0) {
-                    query += "&user_id=" + id;
+                    // query += "&user_id=" + id;
                     user_post = id;
                 }
             }
 
         }
 
-        btnAll = (Button) view.findViewById(R.id.btnAll);
-        btnSell = (Button) view.findViewById(R.id.btnSell);
-        btnBuy = (Button) view.findViewById(R.id.btnBuy);
         setButtonFocus(btnAll, R.drawable.tab_categories_pressed);
 
         btnAll.setOnClickListener(new OnClickListener() {
@@ -204,75 +188,69 @@ public class ProductFragment extends Fragment{
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 setButtonFocus(btnAll, R.drawable.tab_categories_pressed);
-                setButtonFocus(btnSell, R.drawable.tab_categories_normal);
-                setButtonFocus(btnBuy, R.drawable.tab_categories_normal);
+                setButtonFocus(btnBest, R.drawable.tab_categories_normal);
+                setButtonFocus(btnPromo, R.drawable.tab_categories_normal);
                 first = 0;
-                tmpQuery = query; // + "&first=" + first + "&offset=" + COUNT_ITEM_LOAD_MORE;
 
                 searchFilter.setPage(first);
                 searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
 
                 loadingMore = false;
-                products_list.clear();
+                productsList.clear();
                 adapter.notifyDataSetChanged();
                 new LoadMoreDataTask().execute();
             }
         });
 
-        btnBuy.setOnClickListener(new OnClickListener() {
+        btnPromo.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                setButtonFocus(btnBuy, R.drawable.tab_categories_pressed);
+                setButtonFocus(btnPromo, R.drawable.tab_categories_pressed);
                 setButtonFocus(btnAll, R.drawable.tab_categories_normal);
-                setButtonFocus(btnSell, R.drawable.tab_categories_normal);
+                setButtonFocus(btnBest, R.drawable.tab_categories_normal);
                 first = 0;
-                tmpQuery = query; // + "&first=" + first + "&offset=" + COUNT_ITEM_LOAD_MORE + "&aim=" + constants.BUY_VALUE;
 
                 searchFilter.setPage(first);
                 searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
 
                 loadingMore = false;
-                products_list.clear();
+                productsList.clear();
                 adapter.notifyDataSetChanged();
                 new LoadMoreDataTask().execute();
             }
         });
 
-        btnSell.setOnClickListener(new OnClickListener() {
+        btnBest.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                setButtonFocus(btnSell, R.drawable.tab_categories_pressed);
+                setButtonFocus(btnBest, R.drawable.tab_categories_pressed);
                 setButtonFocus(btnAll, R.drawable.tab_categories_normal);
-                setButtonFocus(btnBuy, R.drawable.tab_categories_normal);
+                setButtonFocus(btnPromo, R.drawable.tab_categories_normal);
                 first = 0;
-                tmpQuery = query; // + "&first=" + first + "&offset=" + COUNT_ITEM_LOAD_MORE + "&aim=" + constants.SELL_VALUE;
 
                 searchFilter.setPage(first);
                 searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
 
                 loadingMore = false;
-                products_list.clear();
+                productsList.clear();
                 adapter.notifyDataSetChanged();
                 new LoadMoreDataTask().execute();
             }
         });
 
-        tmpQuery = query; // + "&first=" + first + "&offset=" + COUNT_ITEM_LOAD_MORE;
         new LoadMoreDataTask().execute();
-        swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.activity_main_swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (products_list != null && products_list.size() != 0) {
-                    String pullQuery = query; // + "&sort_by=asc" + "&pull=" + products_list.get(0).getId();
+                if (productsList != null && productsList.size() != 0) {
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                        new PullToRefreshDataTask(pullQuery)
+                        new PullToRefreshDataTask()
                                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     } else {
-                        new PullToRefreshDataTask(pullQuery).execute();
+                        new PullToRefreshDataTask().execute();
                     }
                 } else {
                     swipeRefreshLayout.setRefreshing(false);
@@ -282,34 +260,25 @@ public class ProductFragment extends Fragment{
         return view;
     }
 
-    private void parseAndAppend(String jsonString) {
+    private void parseAndAppend() {
         try {
             loadingMore = false;
             adapter.notifyDataSetChanged();
             loadMorePrg.setVisibility(View.GONE);
         } catch (Exception e) {
-            // TODO: handle exception
-            e.printStackTrace();
             loadingMore = true;
             loadMorePrg.setVisibility(View.GONE);
         }
     }
 
-    private void parseAndPrepend(String jsonString) {
-        /*try {
-            JSONObject jObj = new JSONObject(jsonString);
-            JSONArray jsonArray = jObj.getJSONArray("payload");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObj = jsonArray.getJSONObject(i);
-                parse(jsonObj, false);
-            }
+    private void parseAndPrepend() {
+        try {
             loadingMore = false;
             adapter.notifyDataSetChanged();
             loadMorePrg.setVisibility(View.GONE);
         } catch (Exception e) {
-            // TODO: handle exception
             e.printStackTrace();
-        }*/
+        }
     }
 
     private List<ProductVO> feedJson() {
@@ -337,9 +306,9 @@ public class ProductFragment extends Fragment{
                 HttpMethod.POST,
                 requestEntity, PagedResponse.class);
 
-        products_list.addAll(products.getBody().getPayload());
+        productsList.addAll(products.getBody().getPayload());
 
-        return products_list;
+        return productsList;
     }
 
     private class LoadMoreDataTask extends AsyncTask<Void, Void, List<ProductVO>> {
@@ -354,7 +323,7 @@ public class ProductFragment extends Fragment{
 
         @Override
         protected void onPostExecute(List<ProductVO> result) {
-            parseAndAppend(jsonString);
+            parseAndAppend();
             super.onPostExecute(result);
         }
 
@@ -376,8 +345,8 @@ public class ProductFragment extends Fragment{
 
     private class PullToRefreshDataTask extends AsyncTask<Void, Void, List<ProductVO>> {
 
-        public PullToRefreshDataTask(String pullQuery) {
-            // TODO Auto-generated constructor stub
+        public PullToRefreshDataTask() {
+            
         }
 
         @Override
@@ -391,7 +360,7 @@ public class ProductFragment extends Fragment{
         @Override
         protected void onPostExecute(List<ProductVO> result) {
             super.onPostExecute(result);
-            // parseAndPrepend(result);
+            parseAndPrepend();
             swipeRefreshLayout.setRefreshing(false);
         }
 

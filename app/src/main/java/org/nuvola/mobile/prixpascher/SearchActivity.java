@@ -20,13 +20,13 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ListView;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import org.nuvola.mobile.prixpascher.adapters.ProductsAdapter;
 import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.dto.ProductVO;
 import org.nuvola.mobile.prixpascher.dto.SearchFilterVO;
 import org.nuvola.mobile.prixpascher.models.PagedResponse;
-import org.nuvola.mobile.prixpascher.models.Products;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -35,31 +35,30 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 @SuppressLint("NewApi")
 public class SearchActivity extends ActionBarParentActivity {
-    ArrayList<ProductVO> products_list = new ArrayList<>();
+    List<ProductVO> productsList = new ArrayList<>();
     SearchFilterVO searchFilter = new SearchFilterVO();
-    ListView list;
     ProductsAdapter adapter;
     String TAG = "ProductsActivity";
-    static String jsonString = "";
-    String query = null, tmpQuery = null;
+
     int COUNT_ITEM_LOAD_MORE = 40;
     int first = 0, pastVisiblesItems, visibleItemCount, totalItemCount;
     boolean loadingMore = true;
-    SwipeRefreshLayout swipeRefreshLayout;
-    RecyclerView rv;
-    Button btnAll, btnSell, btnBuy;
-    LinearLayout loadMorePrg;
-    Toolbar toolbar;
 
-    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+    @Bind(R.id.activity_main_swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
+    @Bind(R.id.rv) RecyclerView rv;
+    @Bind(R.id.btnAll) Button btnAll;
+    @Bind(R.id.btnBest) Button btnBest;
+    @Bind(R.id.btnPromo) Button btnPromo;
+    @Bind(R.id.prgLoadMore) LinearLayout loadMorePrg;
+    @Bind(R.id.toolbar) Toolbar toolbar;
+
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     @SuppressWarnings("deprecation")
     private void setButtonFocus(Button btn, int drawable) {
@@ -72,22 +71,21 @@ public class SearchActivity extends ActionBarParentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
+        
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_endless_container_layout);
+        ButterKnife.bind(this);
         setTitle(getResources().getString(R.string.result_label));
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        query = getResources().getString(R.string.products_json_url);
         handleIntent(getIntent());
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        // TODO Auto-generated method stub
         MenuItem item = menu.findItem(R.id.btn_action_search);
         item.setVisible(false);
         return super.onPrepareOptionsMenu(menu);
@@ -95,15 +93,12 @@ public class SearchActivity extends ActionBarParentActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
-        // TODO Auto-generated method stub
         super.onNewIntent(intent);
-        query = getResources().getString(R.string.products_json_url);
         handleIntent(intent);
     }
 
     @Override
     protected void onStart() {
-        // TODO Auto-generated method stub
         super.onStart();
     }
 
@@ -111,23 +106,13 @@ public class SearchActivity extends ActionBarParentActivity {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String title = intent.getStringExtra(SearchManager.QUERY);
             Log.i(TAG, title);
-            try {
-                title = URLEncoder.encode(title, "utf-8");
-                Log.i(TAG, title);
-                if (title != null && title != "") {
-                    searchFilter.setSearchText(title);
-                }
-            } catch (UnsupportedEncodingException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            if (title != null && title != "") {
+                searchFilter.setSearchText(title);
             }
         }
-        btnAll = (Button) findViewById(R.id.btnAll);
-        btnSell = (Button) findViewById(R.id.btnSell);
-        btnBuy = (Button) findViewById(R.id.btnBuy);
+
         setButtonFocus(btnAll, R.drawable.tab_categories_pressed);
 
-        rv = (RecyclerView) findViewById(R.id.rv);
         final LinearLayoutManager llm = new LinearLayoutManager(SearchActivity.this);
         rv.setLayoutManager(llm);
 
@@ -136,13 +121,7 @@ public class SearchActivity extends ActionBarParentActivity {
             if (bundle.containsKey(constants.TITLE_KEY)) {
                 String title = bundle.getString(constants.TITLE_KEY);
                 if (title != null && title != "") {
-                    try {
-                        title = URLEncoder.encode(title, "utf-8");
-                    } catch (UnsupportedEncodingException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                    query += "&title=" + title;
+                    searchFilter.setSearchText(title);
                 }
             }
         }
@@ -150,74 +129,71 @@ public class SearchActivity extends ActionBarParentActivity {
         btnAll.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
+                
                 setButtonFocus(btnAll, R.drawable.tab_categories_pressed);
-                setButtonFocus(btnSell, R.drawable.tab_categories_normal);
-                setButtonFocus(btnBuy, R.drawable.tab_categories_normal);
+                setButtonFocus(btnBest, R.drawable.tab_categories_normal);
+                setButtonFocus(btnPromo, R.drawable.tab_categories_normal);
                 first = 0;
-                tmpQuery = query; // + "&page=" + first + "&size=" + COUNT_ITEM_LOAD_MORE;
+
                 searchFilter.setPage(first);
                 searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
 
                 loadingMore = false;
-                products_list.clear();
+                productsList.clear();
                 adapter.notifyDataSetChanged();
                 new LoadMoreDataTask().execute();
             }
         });
 
-        btnBuy.setOnClickListener(new OnClickListener() {
+        btnPromo.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                setButtonFocus(btnBuy, R.drawable.tab_categories_pressed);
+                
+                setButtonFocus(btnPromo, R.drawable.tab_categories_pressed);
                 setButtonFocus(btnAll, R.drawable.tab_categories_normal);
-                setButtonFocus(btnSell, R.drawable.tab_categories_normal);
+                setButtonFocus(btnBest, R.drawable.tab_categories_normal);
                 first = 0;
-                tmpQuery = query; // + "&page=" + first + "&size=" + COUNT_ITEM_LOAD_MORE + "&aim=" + constants.BUY_VALUE;
                 searchFilter.setPage(first);
                 searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
 
                 loadingMore = false;
-                products_list.clear();
+                productsList.clear();
                 adapter.notifyDataSetChanged();
                 new LoadMoreDataTask().execute();
             }
         });
 
-        btnSell.setOnClickListener(new OnClickListener() {
+        btnBest.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                setButtonFocus(btnSell, R.drawable.tab_categories_pressed);
+                
+                setButtonFocus(btnBest, R.drawable.tab_categories_pressed);
                 setButtonFocus(btnAll, R.drawable.tab_categories_normal);
-                setButtonFocus(btnBuy, R.drawable.tab_categories_normal);
+                setButtonFocus(btnPromo, R.drawable.tab_categories_normal);
                 first = 0;
-                tmpQuery = query; // + "&page=" + first + "&size=" + COUNT_ITEM_LOAD_MORE + "&aim=" + constants.SELL_VALUE;
 
                 searchFilter.setPage(first);
                 searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
 
                 loadingMore = false;
-                products_list.clear();
+                productsList.clear();
                 adapter.notifyDataSetChanged();
                 new LoadMoreDataTask().execute();
             }
         });
 
-        loadMorePrg = (LinearLayout) findViewById(R.id.prgLoadMore);
-        adapter = new ProductsAdapter(this, products_list); // products_list
+        adapter = new ProductsAdapter(this, productsList); // productsList
         adapter.SetOnItemClickListener(new ProductsAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(SearchActivity.this, DetailActivity.class);
-                intent.putExtra(constants.COMMON_KEY, products_list.get(position)
+                intent.putExtra(constants.COMMON_KEY, productsList.get(position)
                         .getId());
                 startActivity(intent);
             }
         });
         rv.setAdapter(adapter);
-        rv.setOnScrollListener(new RecyclerView.OnScrollListener() {
+        rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -226,7 +202,6 @@ public class SearchActivity extends ActionBarParentActivity {
                 pastVisiblesItems = llm.findFirstVisibleItemPosition();
                 if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
                     loadingMore = false;
-                    Log.v("...", "Last Item Wow !");
                     first += COUNT_ITEM_LOAD_MORE;
 
                     searchFilter.setPage(first);
@@ -242,27 +217,19 @@ public class SearchActivity extends ActionBarParentActivity {
             }
         });
 
-        tmpQuery = query + "&page=" + first + "&size="
-                + COUNT_ITEM_LOAD_MORE;
         new LoadMoreDataTask().execute();
-
-
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.activity_main_swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (products_list != null && products_list.size() != 0) {
-                    String pullQuery = query; //+ "&page=" + 0 + "&size="
-                            //+ COUNT_ITEM_LOAD_MORE + "&sort_by=asc" + "&pull="
-                            //+ products_list.get(0).getId();
+                if (productsList != null && productsList.size() != 0) {
+
                     searchFilter.setPage(first);
                     searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                        new PullToRefreshDataTask(pullQuery)
-                                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        new PullToRefreshDataTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     } else {
-                        new PullToRefreshDataTask(pullQuery).execute();
+                        new PullToRefreshDataTask().execute();
                     }
                 } else {
                     swipeRefreshLayout.setRefreshing(false);
@@ -271,56 +238,33 @@ public class SearchActivity extends ActionBarParentActivity {
         });
     }
 
-    /*private void parse(JSONObject jsonObj, boolean append) {
+    private void parseAndAppend() {
         try {
-            Log.i("x", "xxxxxxxxxxx");
-        } catch (Exception e) {
-            // TODO: handle exception
-            e.printStackTrace();
-            loadingMore = true;
-        }
-    }*/
-
-    private void parseAndAppend(String jsonString) {
-        try {
-            /*JSONObject jObj = new JSONObject(jsonString);
-            JSONArray jsonArray = jObj.getJSONArray("payload");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObj = jsonArray.getJSONObject(i);
-                parse(jsonObj, true);
-            }*/
             loadingMore = false;
             adapter.notifyDataSetChanged();
             loadMorePrg.setVisibility(View.GONE);
         } catch (Exception e) {
-            // TODO: handle exception
+            
             e.printStackTrace();
             loadingMore = true;
             loadMorePrg.setVisibility(View.GONE);
         }
     }
 
-    private void parseAndPrepend(List<Products> productsList) {
+    private void parseAndPrepend() {
         try {
-            /*JSONObject jObj = new JSONObject(jsonString);
-            JSONArray jsonArray = jObj.getJSONArray("payload");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObj = jsonArray.getJSONObject(i);
-                parse(jsonObj, false);
-            }*/
             loadingMore = false;
             adapter.notifyDataSetChanged();
             loadMorePrg.setVisibility(View.GONE);
         } catch (Exception e) {
-            // TODO: handle exception
             loadingMore = false;
             e.printStackTrace();
-            //mPullToRefreshLayout.setRefreshComplete();
+            // mPullToRefreshLayout.setRefreshComplete();
             swipeRefreshLayout.setRefreshing(false);
         }
     }
 
-    private List<ProductVO> feedJson(String pullQuery) {
+    private List<ProductVO> feedJson() {
         try {
             HttpHeaders requestHeaders = new HttpHeaders();
 
@@ -335,8 +279,6 @@ public class SearchActivity extends ActionBarParentActivity {
             searchFilter.setBrand(null);
             searchFilter.setCity(null);
 
-            // Populate the Message object to serialize and headers in an
-            // HttpEntity object to use for the request
             HttpEntity<SearchFilterVO> requestEntity = new HttpEntity<>(searchFilter, requestHeaders);
 
             RestTemplate restTemplate = new RestTemplate();
@@ -346,12 +288,12 @@ public class SearchActivity extends ActionBarParentActivity {
                     HttpMethod.POST,
                     requestEntity, PagedResponse.class);
 
-            products_list.addAll(products.getBody().getPayload());
+            productsList.addAll(products.getBody().getPayload());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return products_list;
+        return productsList;
     }
 
     private class LoadMoreDataTask extends AsyncTask<Void, Void, List<ProductVO>> {
@@ -361,18 +303,18 @@ public class SearchActivity extends ActionBarParentActivity {
             if (isCancelled()) {
                 return null;
             }
-            return feedJson(null);
+            return feedJson();
         }
 
         @Override
         protected void onPostExecute(List<ProductVO> result) {
-            parseAndAppend(jsonString);
+            parseAndAppend();
             super.onPostExecute(result);
         }
 
         @Override
         protected void onPreExecute() {
-            // TODO Auto-generated method stub
+            
             super.onPreExecute();
             loadMorePrg.setVisibility(View.VISIBLE);
             loadingMore = true;
@@ -389,36 +331,33 @@ public class SearchActivity extends ActionBarParentActivity {
         @Override
         public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                 long arg3) {
-            // TODO Auto-generated method stub
+            
             Intent intent = new Intent(SearchActivity.this, DetailActivity.class);
-            intent.putExtra(constants.COMMON_KEY, products_list.get(arg2)
+            intent.putExtra(constants.COMMON_KEY, productsList.get(arg2)
                     .getId());
             startActivity(intent);
         }
     };
 
 
-    private class PullToRefreshDataTask extends AsyncTask<Void, Void, List<Products>> {
-        String pullQuery = null;
+    private class PullToRefreshDataTask extends AsyncTask<Void, Void, List<ProductVO>> {
 
-        public PullToRefreshDataTask(String pullQuery) {
-            // TODO Auto-generated constructor stub
-            this.pullQuery = pullQuery;
+        public PullToRefreshDataTask() {
         }
 
         @Override
-        protected List<Products> doInBackground(Void... params) {
+        protected List<ProductVO> doInBackground(Void... params) {
             if (isCancelled()) {
                 return null;
             }
-            return null; // feedJson(pullQuery);
+            return feedJson();
         }
 
         @Override
-        protected void onPostExecute(List<Products> result) {
-            parseAndPrepend(result);
+        protected void onPostExecute(List<ProductVO> result) {
+            parseAndPrepend();
             swipeRefreshLayout.setRefreshing(false);
-            //mPullToRefreshLayout.setRefreshComplete();
+            // mPullToRefreshLayout.setRefreshComplete();
             super.onPostExecute(result);
         }
 

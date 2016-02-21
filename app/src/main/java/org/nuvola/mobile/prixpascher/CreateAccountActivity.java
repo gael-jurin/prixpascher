@@ -161,12 +161,12 @@ public class CreateAccountActivity extends ActionBarParentActivity {
 				HttpClient client = new DefaultHttpClient();
 				HttpPost post = new HttpPost(handleInserUrl);
 				MultipartEntity reqEntity = new MultipartEntity();
-				reqEntity.addPart("email", new StringBody(email + ""));
+				/*reqEntity.addPart("email", new StringBody(email + ""));
 				reqEntity.addPart("user_name", new StringBody(userName));
 				reqEntity.addPart("full_name", new StringBody(fullName));
 				reqEntity.addPart("address", new StringBody(address));
 				reqEntity.addPart("phone", new StringBody(phone));
-				reqEntity.addPart("pwd", new StringBody(pwd));
+				reqEntity.addPart("pwd", new StringBody(pwd));*/
 				post.setEntity(reqEntity);
 				HttpResponse response = client.execute(post);
 				HttpEntity resEntity = response.getEntity();
