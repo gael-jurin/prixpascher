@@ -12,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -23,12 +22,7 @@ import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RatingBar;
-import android.widget.TextView;
+import android.widget.*;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -40,12 +34,12 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 import org.nuvola.mobile.prixpascher.adapters.FullScreenImageAdapter;
 import org.nuvola.mobile.prixpascher.adapters.ProductsAdapter;
+import org.nuvola.mobile.prixpascher.adapters.SimilarProductsAdapter;
 import org.nuvola.mobile.prixpascher.business.ProductFetchTask;
 import org.nuvola.mobile.prixpascher.business.RoundedAvatarDrawable;
 import org.nuvola.mobile.prixpascher.business.UserSessionManager;
@@ -83,10 +77,9 @@ public class DetailActivity extends ActionBarParentActivity {
     @Bind(R.id.btn_delete) ImageButton btnDelete;
     @Bind(R.id.ratingBarClick) RatingBar ratingBar;
     @Bind(R.id.similarProducts) RecyclerView similarProducts;
-    @Bind(R.id.activity_main_swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
 
     private FullScreenImageAdapter imageAdapter;
-    private ProductsAdapter productsAdapter;
+    private SimilarProductsAdapter productsAdapter;
     private ProgressDialog dialog;
     private List<String> paths;
     private List<ProductVO> productsList = new ArrayList<>();
@@ -200,8 +193,8 @@ public class DetailActivity extends ActionBarParentActivity {
 
         final LinearLayoutManager llm = new LinearLayoutManager(DetailActivity.this);
         similarProducts.setLayoutManager(llm);
-        productsAdapter = new ProductsAdapter(this, productsList);
-        productsAdapter.SetOnItemClickListener(new ProductsAdapter.OnItemClickListener() {
+        productsAdapter = new SimilarProductsAdapter(this, productsList);
+        productsAdapter.SetOnItemClickListener(new SimilarProductsAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(DetailActivity.this, DetailActivity.class);
@@ -213,22 +206,6 @@ public class DetailActivity extends ActionBarParentActivity {
         });
 
         similarProducts.setAdapter(productsAdapter);
-        similarProducts.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                visibleItemCount = llm.getChildCount();
-                totalItemCount = llm.getItemCount();
-                pastVisiblesItems = llm.findFirstVisibleItemPosition();
-                if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                        new LoadSimilarDataTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    } else {
-                        new LoadSimilarDataTask().execute();
-                    }
-                }
-            }
-        });
 
         dialog = new ProgressDialog(this);
         dialog.setMessage(getResources().getString(R.string.loading));
