@@ -21,8 +21,8 @@
 
             <ImageView
                 android:id="@+id/thumb"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
                 android:scaleType="fitXY"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@+id/thumb"
                 android:layout_alignParentTop="true"
-                android:textSize="15sp"
+                android:textSize="11sp"
                 android:text="@string/dummy_text"
                 />
 
@@ -49,14 +49,14 @@
                 android:layout_below="@+id/title"
                 android:text="@string/dummy_text"
                 android:layout_marginLeft="1dp"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="35dp"
                 android:textAppearance="@style/PriceTextAppearance"
                 />
 
             <ImageView
                     android:id="@+id/shop"
                     android:layout_width="70dp"
-                    android:layout_height="20dp"
+                    android:layout_height="21dp"
                     android:scaleType="fitXY"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentBottom="true"

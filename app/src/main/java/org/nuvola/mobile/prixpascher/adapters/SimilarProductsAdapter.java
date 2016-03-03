@@ -15,19 +15,19 @@ import org.nuvola.mobile.prixpascher.dto.ProductVO;
 
 import java.util.List;
 
-public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ProductsViewHolder> {
+public class SimilarProductsAdapter extends RecyclerView.Adapter<SimilarProductsAdapter.ProductsViewHolder> {
     private Context context;
     private List<ProductVO> products;
     OnItemClickListener mItemClickListener;
 
-    public ProductsAdapter(Context context, List<ProductVO> products){
+    public SimilarProductsAdapter(Context context, List<ProductVO> products){
         this.context=context;
         this.products=products;
     }
 
     @Override
     public ProductsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.products_list_item_layout, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.products_similar_layout, parent, false);
         ProductsViewHolder pvh = new ProductsViewHolder(v);
         return pvh;
     }
@@ -91,7 +91,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
     }
 
     public interface OnItemClickListener {
-        public void onItemClick(View view , int position);
+        public void onItemClick(View view, int position);
     }
 
     public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {
