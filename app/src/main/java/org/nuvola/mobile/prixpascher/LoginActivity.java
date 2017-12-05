@@ -1,39 +1,22 @@
 package org.nuvola.mobile.prixpascher;
 
-/*import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;*/
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.StringBody;
-/*import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;*/
-
-import org.nuvola.mobile.prixpascher.business.Utils;
-import org.nuvola.mobile.prixpascher.business.UserSessionManager;
-import org.nuvola.mobile.prixpascher.models.User;
-import com.gc.materialdesign.views.ButtonRectangle;
-
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.gc.materialdesign.views.ButtonFlat;
+
+import org.nuvola.mobile.prixpascher.business.Utils;
 
 public class LoginActivity extends ActionBarParentActivity {
 	ProgressDialog dialogPrg;
 	String TAG = "LoginActivity";
 	TextView email;
 	TextView pwd;
-	ButtonRectangle btnLogin;
+	ButtonFlat btnLogin;
     Toolbar toolbar;
 
 
@@ -46,7 +29,7 @@ public class LoginActivity extends ActionBarParentActivity {
         toolbar.setTitle(R.string.app_name);
         setSupportActionBar(toolbar);
 
-		btnLogin = (ButtonRectangle) findViewById(R.id.btn_login);
+		btnLogin = (ButtonFlat) findViewById(R.id.btn_login);
 		email = (TextView) findViewById(R.id.email);
 		pwd = (TextView) findViewById(R.id.pwd);
 		dialogPrg = new ProgressDialog(this);
@@ -64,7 +47,7 @@ public class LoginActivity extends ActionBarParentActivity {
 					dialogPrg.setMessage(getResources().getString(
 							R.string.loging));
 					dialogPrg.show();
-					new Login().start();
+					// new Login().start();
 				}
 			}
 		});
@@ -77,25 +60,14 @@ public class LoginActivity extends ActionBarParentActivity {
         showDialog(getResources().getString(R.string.login_failed));
 	}
 
-	private class Login extends Thread {
+	/*private class Login extends Thread {
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
 			super.run();
 			try {
 				String handlerUrl = getResources().getString(
-						R.string.users_json_url)
-						+ "login";
-				//HttpClient client = new DefaultHttpClient();
-				//HttpPost post = new HttpPost(handlerUrl);
-				MultipartEntity reqEntity = new MultipartEntity();
-				String emailText = email.getText().toString();
-				String pwdText = pwd.getText().toString();
-				// reqEntity.addPart("email", new StringBody(emailText));
-				// reqEntity.addPart("pwd", new StringBody(pwdText));
-				//post.setEntity(reqEntity);
-				//HttpResponse res = client.execute(post);
-				//HttpEntity resEntity = res.getEntity();
+						R.string.users_json_url);
+
 				final String response_str = "connected"; // EntityUtils.toString(resEntity);
 				if (1 == 1) {
 					Log.i(TAG, response_str);
@@ -103,15 +75,20 @@ public class LoginActivity extends ActionBarParentActivity {
 						public void run() {
 							dialogPrg.dismiss();
 							try {
-								//JSONArray jsonArray = new JSONArray(
-								//		response_str);
-								/*if (jsonArray.length() == 1) {
+								JSONArray jsonArray = new JSONArray(
+										response_str);
+								if (jsonArray.length() == 1) {
 									JSONObject obj = jsonArray.getJSONObject(0);
 									User user = Utils.parseUser(obj);
 									UserSessionManager userSession = new UserSessionManager(
 											LoginActivity.this);
 									userSession.storeUserSession(user);
-								}*/
+
+                                    // Register merchant on cloud
+                                    registerForNotification(user.getFbId());
+								}
+
+
 								Intent intent = new Intent(LoginActivity.this,
 										HomeActivity.class);
 								intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -124,9 +101,8 @@ public class LoginActivity extends ActionBarParentActivity {
 					});
 				}
 			} catch (Exception e) {
-				// TODO: handle exception
-				// showDialogFailedLogin();
+				showDialogFailedLogin();
 			}
 		}
-	}
+	}*/
 }

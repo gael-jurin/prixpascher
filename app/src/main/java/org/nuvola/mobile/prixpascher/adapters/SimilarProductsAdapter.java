@@ -13,7 +13,9 @@ import com.squareup.picasso.Picasso;
 import org.nuvola.mobile.prixpascher.R;
 import org.nuvola.mobile.prixpascher.dto.ProductVO;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class SimilarProductsAdapter extends RecyclerView.Adapter<SimilarProductsAdapter.ProductsViewHolder> {
     private Context context;
@@ -47,7 +49,8 @@ public class SimilarProductsAdapter extends RecyclerView.Adapter<SimilarProducts
 
         if (products.get(position).getPrice() != null
                 && !products.get(position).getPrice().toString().equalsIgnoreCase("")) {
-            holder.price.setText(products.get(position).getPrice() + " Dhs");
+            holder.price.setText(
+                    NumberFormat.getInstance(Locale.FRANCE).format(products.get(position).getPrice()) + " Dhs");
         } else {
             holder.price.setText(
                     context.getResources()

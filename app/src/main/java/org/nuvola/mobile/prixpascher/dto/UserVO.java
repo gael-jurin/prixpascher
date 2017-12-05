@@ -1,15 +1,24 @@
 package org.nuvola.mobile.prixpascher.dto;
 
+import org.nuvola.mobile.prixpascher.models.Authority;
+import org.nuvola.mobile.prixpascher.models.ShopType;
+import org.nuvola.mobile.prixpascher.models.TypeAnnonceur;
+
 import java.util.Date;
 
 public class UserVO {
     private String id;
     private String userName;
     private String email;
-    // private Authority authority;
+    private Authority authority;
     private String firstName;
     private String lastName;
+    private String providerUserId;
+    private String accessToken;
     private String photo;
+    private String primaryShop;
+    private ShopType primaryShopClasse;
+    private TypeAnnonceur typeAnnonceur;
     private String userGroupChain;
     private Date joined;
 
@@ -37,13 +46,37 @@ public class UserVO {
         this.email = email;
     }
 
-    /*public Authority getAuthority() {
+    public String getPrimaryShop() {
+        return primaryShop;
+    }
+
+    public void setPrimaryShop(String primaryShop) {
+        this.primaryShop = primaryShop;
+    }
+
+    public ShopType getPrimaryShopClasse() {
+        return primaryShopClasse;
+    }
+
+    public void setPrimaryShopClasse(ShopType primaryShopClasse) {
+        this.primaryShopClasse = primaryShopClasse;
+    }
+
+    public TypeAnnonceur getTypeAnnonceur() {
+        return typeAnnonceur;
+    }
+
+    public void setTypeAnnonceur(TypeAnnonceur typeAnnonceur) {
+        this.typeAnnonceur = typeAnnonceur;
+    }
+
+    public Authority getAuthority() {
         return authority;
     }
 
     public void setAuthority(Authority authority) {
         this.authority = authority;
-    }*/
+    }
 
     public String getFirstName() {
         return firstName;
@@ -67,6 +100,22 @@ public class UserVO {
 
     public void setPhoto(String photo) {
         this.photo = photo;
+    }
+
+    public String getProviderUserId() {
+        return providerUserId;
+    }
+
+    public void setProviderUserId(String providerUserId) {
+        this.providerUserId = providerUserId;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     public Date getJoined() {

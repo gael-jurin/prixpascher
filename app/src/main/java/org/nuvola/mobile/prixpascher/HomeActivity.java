@@ -1,41 +1,40 @@
 package org.nuvola.mobile.prixpascher;
 
-import java.util.ArrayList;
-
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.support.v7.widget.Toolbar;
 
 import org.nuvola.mobile.prixpascher.adapters.DrawerMenuAdapter;
-import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.business.UserSessionManager;
+import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.fragments.AboutUsFragment;
 import org.nuvola.mobile.prixpascher.fragments.CategoriesFragment;
-import org.nuvola.mobile.prixpascher.fragments.CitiesFragment;
 import org.nuvola.mobile.prixpascher.fragments.FanpageFragment;
-import org.nuvola.mobile.prixpascher.fragments.FilterFragment;
 import org.nuvola.mobile.prixpascher.fragments.ProductFragment;
 import org.nuvola.mobile.prixpascher.fragments.ProfileFragment;
-import org.nuvola.mobile.prixpascher.fragments.ProvincesFragment;
+import org.nuvola.mobile.prixpascher.fragments.ShopGeoFragment;
 import org.nuvola.mobile.prixpascher.interfaces.ProfileComunicator;
 import org.nuvola.mobile.prixpascher.models.DrawerMenuItem;
 import org.nuvola.mobile.prixpascher.models.User;
+
+import java.util.ArrayList;
 
 public class HomeActivity extends ActionBarParentActivity implements
 		ProfileComunicator {
 	DrawerLayout drawerLayout;
 	private ActionBarDrawerToggle mDrawerToggle;
+
 	ListView lst;
 	Intent intent;
 	ArrayList<DrawerMenuItem> drawerItems;
@@ -66,14 +65,14 @@ public class HomeActivity extends ActionBarParentActivity implements
 		drawerItems.add(new DrawerMenuItem(drawerMenuTitles.getItem(1),
 				R.drawable.ic_list));
 		drawerItems.add(new DrawerMenuItem(drawerMenuTitles.getItem(2),
-				R.drawable.ic_area));
-		drawerItems.add(new DrawerMenuItem(drawerMenuTitles.getItem(3),
+				R.drawable.ic_cart));
+		/*drawerItems.add(new DrawerMenuItem(drawerMenuTitles.getItem(3),
 				R.drawable.ic_city));
 		drawerItems.add(new DrawerMenuItem(drawerMenuTitles.getItem(4),
-				R.drawable.ic_filter));
-		drawerItems.add(new DrawerMenuItem(drawerMenuTitles.getItem(5),
+				R.drawable.ic_filter));*/
+		drawerItems.add(new DrawerMenuItem(drawerMenuTitles.getItem(3),
 				R.drawable.ic_fanpage));
-		drawerItems.add(new DrawerMenuItem(drawerMenuTitles.getItem(6),
+		drawerItems.add(new DrawerMenuItem(drawerMenuTitles.getItem(4),
 				R.drawable.ic_info));
 		drawerMenuAdapter = new DrawerMenuAdapter(this, drawerItems);
 
@@ -96,7 +95,7 @@ public class HomeActivity extends ActionBarParentActivity implements
 				supportInvalidateOptionsMenu();
 			}
 		};
-		drawerLayout.setDrawerListener(mDrawerToggle);
+		drawerLayout.addDrawerListener(mDrawerToggle);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
 		loadView(1);
@@ -130,8 +129,8 @@ public class HomeActivity extends ActionBarParentActivity implements
 			break;
 
 		case 1:
-			fragment = ProductFragment.newInstance();
-			changeActionBarTitle(getResources().getString(R.string.home_label));
+			fragment = ProductFragment.newInstance(toolbar);
+			changeActionBarTitle(getResources().getString(R.string.app_name));
 			break;
 		case 2:
 			fragment = CategoriesFragment.newInstance();
@@ -140,12 +139,12 @@ public class HomeActivity extends ActionBarParentActivity implements
 			break;
 
 		case 3:
-			fragment = ProvincesFragment.newInstance();
+			fragment = new ShopGeoFragment();
 			changeActionBarTitle(getResources()
 					.getString(R.string.shop_label));
 			break;
 			
-		case 4:
+		/*case 4:
 			fragment = CitiesFragment.newInstance();
 			changeActionBarTitle(getResources()
 					.getString(R.string.city_label));
@@ -155,14 +154,14 @@ public class HomeActivity extends ActionBarParentActivity implements
 			fragment = FilterFragment.newInstance();
 			changeActionBarTitle(getResources()
 					.getString(R.string.filter_label));
-			break;
+			break;*/
 
-		case 6:
+		case 4:
 			fragment = FanpageFragment.newInstance();
 			changeActionBarTitle(getResources().getString(R.string.fan_page));
 			break;
 
-		case 7:
+		case 5:
 			fragment = AboutUsFragment.newInstance();
 			changeActionBarTitle(getResources().getString(
 					R.string.about_us_label));
@@ -201,9 +200,9 @@ public class HomeActivity extends ActionBarParentActivity implements
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
 		switch (item.getItemId()) {
-		case R.id.btn_action_upload:
+		// case R.id.btn_action_upload:
 
-			break;
+			// break;
 
 		default:
 			break;

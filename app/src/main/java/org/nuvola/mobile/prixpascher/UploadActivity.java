@@ -1,23 +1,5 @@
 package org.nuvola.mobile.prixpascher;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.Locale;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -42,17 +24,32 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
+import com.facebook.AccessToken;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.nuvola.mobile.prixpascher.business.JSONFetchTask;
-import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.business.UserSessionManager;
+import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.models.Categories;
 import org.nuvola.mobile.prixpascher.models.County;
 import org.nuvola.mobile.prixpascher.models.User;
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.gc.materialdesign.views.ButtonRectangle;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.Locale;
 
 public class UploadActivity extends ActionBarParentActivity {
 	private static final int SELECT_PICTURE = 0;
@@ -79,7 +76,7 @@ public class UploadActivity extends ActionBarParentActivity {
 	int city_selected = 0;
 	int aim_selected = -1;
 	String photoPath1 = null;
-	ButtonRectangle btnUpload;
+	Button btnUpload;
 	ProgressDialog dialog;
 	File tmpFile;
 	CharSequence[] items;
@@ -341,7 +338,7 @@ public class UploadActivity extends ActionBarParentActivity {
 		title = (EditText) findViewById(R.id.title);
 		price = (EditText) findViewById(R.id.price);
 		content = (EditText) findViewById(R.id.content);
-		btnUpload = (ButtonRectangle) findViewById(R.id.btn_submit);
+		btnUpload = (Button) findViewById(R.id.btn_submit);
 		btnUpload.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -369,7 +366,7 @@ public class UploadActivity extends ActionBarParentActivity {
 		}
 
 		LinkedHashSet<Integer> disableItem = new LinkedHashSet<Integer>();
-		disableItem.add(R.id.btn_action_upload);
+		// disableItem.add(R.id.btn_action_upload);
 		setDisableItem(disableItem);
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.upload_label);
@@ -566,18 +563,9 @@ public class UploadActivity extends ActionBarParentActivity {
 		}
 	}
 
-	private Session.StatusCallback callback = new Session.StatusCallback() {
-		@Override
-		public void call(final Session session, final SessionState state,
-				final Exception exception) {
-			onSessionStateChange(session, state, exception);
-		}
-	};
-
 	@SuppressLint("NewApi")
-	private void onSessionStateChange(Session session, SessionState state,
-			Exception exception) {
-		if (state.isOpened()) {
+	private void onSessionStateChange() {
+		if (AccessToken.getCurrentAccessToken() != null) {
 			UserSessionManager sessionManager = new UserSessionManager(this);
 			User user = sessionManager.getUserSession();
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -588,20 +576,20 @@ public class UploadActivity extends ActionBarParentActivity {
 				new Upload(user.getFbId(), user.getId()).execute();
 			}
 			Log.i("FB AUT FRAGMENT", "Logged in...");
-		} else if (state.isClosed()) {
+		} else if (AccessToken.getCurrentAccessToken() == null) {
 			Log.i("FB AUT FRAGMENT", "Logged out...");
 		}
 	}
 
 	private class Upload extends AsyncTask<Void, Void, Boolean> {
 		String fb_id = null;
-		int user_id = 0;
+		String user_id = "0";
 
 		public Upload() {
 			// TODO Auto-generated constructor stub
 		}
 
-		public Upload(String fb_id, int user_id) {
+		public Upload(String fb_id, String user_id) {
 			this.fb_id = fb_id;
 			this.user_id = user_id;
 		}

@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.ViewPager;
@@ -19,37 +18,39 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.*;
-import butterknife.Bind;
-import butterknife.ButterKnife;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.TextView;
+
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.gc.materialdesign.views.ButtonRectangle;
+import com.gc.materialdesign.views.ButtonFlat;
+import com.gc.materialdesign.views.ButtonFlat;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
+
 import org.json.JSONObject;
 import org.nuvola.mobile.prixpascher.adapters.FullScreenImageAdapter;
-import org.nuvola.mobile.prixpascher.adapters.ProductsAdapter;
 import org.nuvola.mobile.prixpascher.adapters.SimilarProductsAdapter;
 import org.nuvola.mobile.prixpascher.business.ProductFetchTask;
 import org.nuvola.mobile.prixpascher.business.RoundedAvatarDrawable;
 import org.nuvola.mobile.prixpascher.business.UserSessionManager;
 import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.confs.constants;
+import org.nuvola.mobile.prixpascher.dto.PriceAlertVO;
 import org.nuvola.mobile.prixpascher.dto.ProductVO;
-import org.nuvola.mobile.prixpascher.dto.SearchFilterVO;
 import org.nuvola.mobile.prixpascher.models.User;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -60,21 +61,27 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 @SuppressLint({ "NewApi", "HandlerLeak" })
 public class DetailActivity extends ActionBarParentActivity {
 
-    @Bind(R.id.btn_edit_desc) ImageButton btnUpdateDesc;
+    // @Bind(R.id.btn_edit_desc) ImageButton btnUpdateDesc;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.full_name) TextView fullName;
     @Bind(R.id.address) TextView address;
     @Bind(R.id.price) TextView price;
     @Bind(R.id.title) TextView title;
+    @Bind(R.id.pricetag) TextView pricetag;
     @Bind(R.id.shop) ImageView shop;
     @Bind(R.id.phone) TextView phone;
-    @Bind(R.id.btnAddToCart) ImageButton btnAddToCart;
     @Bind(R.id.pager) ViewPager viewPager;
-    @Bind(R.id.btn_delete) ImageButton btnDelete;
+    @Bind(R.id.btnAddToCart) FloatingActionButton btnAddToCart;
+    @Bind(R.id.btnEmail) FloatingActionButton btnEmail;
+    @Bind(R.id.btnMenu) FloatingActionMenu btnMenu;
     @Bind(R.id.ratingBarClick) RatingBar ratingBar;
     @Bind(R.id.similarProducts) RecyclerView similarProducts;
 
@@ -88,7 +95,7 @@ public class DetailActivity extends ActionBarParentActivity {
     private String user_id;
     private String email, phoneText;
     private User logedUser;
-    private EditText message, comment;
+    private EditText alertEmail, alertPrice, comment;
     private ImageView avt;
     private Integer pastVisiblesItems, visibleItemCount, totalItemCount;
 
@@ -96,14 +103,14 @@ public class DetailActivity extends ActionBarParentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        setContentView(R.layout.detail_layout);
+        setContentView(R.layout.detail_main_layout);
         ButterKnife.bind(this);
-        
+
         Bundle bundle = getIntent().getExtras();
         if (bundle.containsKey(constants.USER_ID_KEY)) {
             // int user_id=bundle.getInt(constants.USER_ID_KEY);
-            ImageButton btnUpdateGallery = (ImageButton) findViewById(R.id.btn_update_gallery);
-            btnUpdateGallery.setOnClickListener(new View.OnClickListener() {
+            // ImageButton btnUpdateGallery = (ImageButton) findViewById(R.id.btn_update_gallery);
+            /*btnUpdateGallery.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View arg0) {
@@ -113,24 +120,22 @@ public class DetailActivity extends ActionBarParentActivity {
                     intent.putExtra(constants.COMMON_KEY, productId);
                     startActivity(intent);
                 }
-            });
+            });*/
         } else {
-            LinearLayout updateButtonWrapper = (LinearLayout) findViewById(R.id.update_button_wrapper);
-            updateButtonWrapper.setVisibility(LinearLayout.INVISIBLE);
-            updateButtonWrapper.setLayoutParams(new LinearLayout.LayoutParams(0, 0));
+            // LinearLayout updateButtonWrapper = (LinearLayout) findViewById(R.id.update_button_wrapper);
+            // updateButtonWrapper.setVisibility(LinearLayout.INVISIBLE);
+            // updateButtonWrapper.setLayoutParams(new LinearLayout.LayoutParams(0, 0));
         }
 
-        // initGallery();
-        btnDelete.setOnClickListener(new View.OnClickListener() {
+        // Send email alert request();
+        btnEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                showDialogConfirmDelete(getResources().getString(
-                        R.string.confirm_del));
+                new SendEnquiry();
             }
         });
 
-        btnUpdateDesc.setOnClickListener(new View.OnClickListener() {
+        /*btnUpdateDesc.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View arg0) {
@@ -140,13 +145,13 @@ public class DetailActivity extends ActionBarParentActivity {
                 intent.putExtra(constants.COMMON_KEY, productId);
                 startActivity(intent);
             }
-        });
+        });*/
 
         if (getIntent().getExtras() != null
                 && getIntent().getExtras().containsKey(constants.COMMON_KEY)) {
             productId = getIntent().getExtras().getString(constants.COMMON_KEY);
             new ProductFetchTask(getResources().getString(
-                    R.string.products_root_json_url)
+                    R.string.product_root_json_url)
                     + productId, handler).execute();
         }
 
@@ -179,7 +184,7 @@ public class DetailActivity extends ActionBarParentActivity {
                         rankDialog.show();
 
                         final RatingBar ratingBar = (RatingBar) rankDialog.findViewById(R.id.dialog_ratingbar);
-                        ButtonRectangle updateButton = (ButtonRectangle) rankDialog.findViewById(R.id.rank_dialog_button);
+                        ButtonFlat updateButton = (ButtonFlat) rankDialog.findViewById(R.id.rank_dialog_button);
 
                         comment = (EditText) rankDialog.findViewById(R.id.comment);
 
@@ -200,7 +205,8 @@ public class DetailActivity extends ActionBarParentActivity {
                 Intent intent = new Intent(DetailActivity.this, DetailActivity.class);
                 intent.putExtra(constants.COMMON_KEY, productsList.get(position)
                         .getId());
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                finish();
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         });
@@ -213,11 +219,11 @@ public class DetailActivity extends ActionBarParentActivity {
         dialog.show();
         paths = new ArrayList<>();
 
-        toolbar.setTitle(getResources().getString(R.string.detail_label));
+        toolbar.setTitle(getResources().getString(R.string.compare_label));
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setLogo(R.drawable.ic_logo);
+        // getSupportActionBar().setLogo(R.drawable.ic_logo);
         loadAd();
     }
 
@@ -230,6 +236,8 @@ public class DetailActivity extends ActionBarParentActivity {
                 product = (ProductVO) bundle
                         .getSerializable(productId);
                 parseProduct(product);
+                toolbar.setTitle(NumberFormat.getInstance(Locale.FRANCE).format(product.getPrice())
+                        + " - " + product.getTitle());
                 new LoadSimilarDataTask().execute();
             }
         };
@@ -287,20 +295,15 @@ public class DetailActivity extends ActionBarParentActivity {
     private List<ProductVO> feedSimilar() {
         try {
             HttpHeaders requestHeaders = new HttpHeaders();
-
-            // Sending a JSON or XML object i.e. "application/json" or "application/xml"
             requestHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-            // Populate the Message object to serialize and headers in an
-            // HttpEntity object to use for the request
-            org.springframework.http.HttpEntity<SearchFilterVO> requestEntity =
-                    new org.springframework.http.HttpEntity<>(requestHeaders);
+            org.springframework.http.HttpEntity<ProductVO> requestEntity =
+                    new org.springframework.http.HttpEntity<>(product, requestHeaders);
 
             RestTemplate restTemplate = new RestTemplate();
-            byte[] encodedId = Base64.encode(productId.getBytes(), Base64.DEFAULT);
+            byte[] encodedId = Base64.encode(productId.getBytes(), Base64.NO_WRAP);
             restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
             ResponseEntity<ProductVO[]> products = restTemplate.exchange(
-                    getResources().getString(R.string.products_root_json_url) + new String(encodedId) + "/similar",
+                    getResources().getString(R.string.product_root_json_url) + new String(encodedId) + "/similar",
                     HttpMethod.POST,
                     requestEntity, ProductVO[].class);
 
@@ -360,6 +363,18 @@ public class DetailActivity extends ActionBarParentActivity {
             address.setText(addressText);
             String phoneText = "Mis à jour le " + new SimpleDateFormat("dd/MM/yyyy").format(jsonObj.getTrackingDate());
             phone.setText(phoneText);
+
+            if (jsonObj.getPromoted()) {
+                Animation anim = new AlphaAnimation(0.0f, 1.0f);
+                anim.setDuration(400);
+                anim.setStartOffset(10);
+                anim.setRepeatMode(Animation.REVERSE);
+                anim.setRepeatCount(Animation.INFINITE);
+                pricetag.startAnimation(anim);
+                pricetag.setVisibility(View.VISIBLE);
+            } else {
+                pricetag.setVisibility(View.INVISIBLE);
+            }
             
             /*            String conditionText = jsonObj.getString("condition");
             String[] condition_id = getResources().getStringArray(
@@ -373,7 +388,7 @@ public class DetailActivity extends ActionBarParentActivity {
                 }
             }*/
 
-            String priceText = NumberFormat.getInstance().format(jsonObj.getPrice());
+            String priceText = NumberFormat.getInstance(Locale.FRANCE).format(jsonObj.getPrice());
             if (priceText != null && !priceText.equalsIgnoreCase("")) {
                 price.setText(priceText + " Dhs");
             } else {
@@ -450,15 +465,7 @@ public class DetailActivity extends ActionBarParentActivity {
                     R.string.products_json_url)
                     + "delete";
             try {
-                HttpClient client = new DefaultHttpClient();
-                HttpPost post = new HttpPost(handleInsertUser);
-                MultipartEntity reqEntity = new MultipartEntity();
-                // reqEntity.addPart("id", new StringBody(productId + ""));
-                post.setEntity(reqEntity);
-                HttpResponse res = client.execute(post);
-                HttpEntity resEntity = res.getEntity();
-                final String response_str = EntityUtils.toString(resEntity);
-                if (resEntity != null) {
+                /*if (resEntity != null) {
                     Log.i(TAG, response_str);
                     runOnUiThread(new Runnable() {
                         public void run() {
@@ -470,7 +477,7 @@ public class DetailActivity extends ActionBarParentActivity {
                             }
                         }
                     });
-                }
+                }*/
             } catch (Exception e) {
                 // TODO: handle exception
                 e.printStackTrace();
@@ -536,9 +543,32 @@ public class DetailActivity extends ActionBarParentActivity {
     }
 
     private class SendEnquiry extends AsyncTask<Void, Void, Boolean> {
+        String mail;
+        String price;
 
         public SendEnquiry() {
             // TODO Auto-generated constructor stub
+            MaterialDialog.Builder alertDialogBuilder = new MaterialDialog.Builder(DetailActivity.this);
+            alertDialogBuilder.customView(R.layout.alerts_prompts_layout, true);
+
+            final MaterialDialog alertDialog = alertDialogBuilder.build();
+            alertDialog.show();
+
+            alertEmail = (EditText) alertDialog.findViewById(R.id.emailDialogUserInput);
+            alertPrice = (EditText) alertDialog.findViewById(R.id.priceDialogUserInput);
+            Double suggestPrice = Math.ceil(product.getPrice() - (product.getPrice() * 0.2));
+            alertPrice.setText(suggestPrice.toString());
+            ButtonFlat sendAlert = (ButtonFlat) alertDialog.findViewById(R.id.sendAlert);
+
+            sendAlert.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    execute();
+                    alertDialog.dismiss();
+                }
+
+            });
+            alertDialog.show();
         }
 
         @Override
@@ -557,51 +587,43 @@ public class DetailActivity extends ActionBarParentActivity {
                     R.string.please_wait_msg));
             dialog.setCanceledOnTouchOutside(false);
             dialog.show();
+            mail = alertEmail.getText().toString();
+            price = alertPrice.getText().toString();
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO Auto-generated method stub
-            String handleInserUrl = getResources().getString(
-                    R.string.users_json_url)
-                    + "send_enquiry";
+            PriceAlertVO priceAlertVO = new PriceAlertVO();
+            priceAlertVO.setProductId(productId);
+            priceAlertVO.setEmail(mail);
+            priceAlertVO.setPrice(price);
+
             try {
-                HttpClient client = new DefaultHttpClient();
-                HttpPost post = new HttpPost(handleInserUrl);
-                MultipartEntity reqEntity = new MultipartEntity();
-                /*reqEntity.addPart("email", new StringBody(email));
-                reqEntity.addPart("message", new StringBody(message.getText()
-                        .toString()));
-                reqEntity.addPart("reply_to",
-                        new StringBody(logedUser.getEmail()));
-                reqEntity.addPart("user_name",
-                        new StringBody(logedUser.getUserName()));*/
-                post.setEntity(reqEntity);
-                HttpResponse response = client.execute(post);
-                HttpEntity resEntity = response.getEntity();
-                final String response_str = EntityUtils.toString(resEntity);
+                HttpHeaders requestHeaders = new HttpHeaders();
+                requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+                HttpEntity<PriceAlertVO> requestEntity =
+                        new HttpEntity<>(priceAlertVO, requestHeaders);
+
+                RestTemplate restTemplate = new RestTemplate();
+                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+                ResponseEntity<String> resEntity = restTemplate.postForEntity(
+                        getResources().getString(R.string.alert_json_url),
+                        requestEntity, String.class);
+
                 if (resEntity != null) {
-                    Log.i("RESPONSE", response_str);
-                    runOnUiThread(new Runnable() {
-                        public void run() {
-                            try {
-                                dialog.dismiss();
-                                JSONObject jsonObj = new JSONObject(
-                                        response_str);
-                                if (jsonObj.getString("ok").equals("0")) {
-                                    showDialog(getResources().getString(
-                                            R.string.spam_msg));
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
+                    Log.i("RESPONSE", resEntity.getBody());
+                    if (!resEntity.getStatusCode().equals(HttpStatus.OK)) {
+                        showDialog(getResources().getString(
+                                R.string.spam_msg));
+                    }
                 }
             } catch (Exception ex) {
+                dialog.dismiss();
                 Log.e("Debug", "error: " + ex.getMessage(), ex);
+                return false;
             }
-            return null;
+            dialog.dismiss();
+            return true;
         }
     };
 }

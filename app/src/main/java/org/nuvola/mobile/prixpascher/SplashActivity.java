@@ -4,10 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.widget.TextView;
 
 import org.nuvola.mobile.prixpascher.confs.constants;
 
+import io.cloudboost.CloudApp;
+
 public class SplashActivity extends Activity {
+	private TextView mInformationTextView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -25,5 +29,8 @@ public class SplashActivity extends Activity {
 				finish();
 			}
 		}, constants.SPLASH_TIME_OUT);
+
+		CloudApp.init("wpcjpusfglac", "72940f58-6bd9-48ef-af68-bdb9a7f7d060");
+		mInformationTextView = (TextView) findViewById(R.id.informationTextView);
 	}
 }

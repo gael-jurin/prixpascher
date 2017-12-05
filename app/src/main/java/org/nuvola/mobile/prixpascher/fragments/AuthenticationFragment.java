@@ -1,23 +1,9 @@
 package org.nuvola.mobile.prixpascher.fragments;
 
-import java.util.Arrays;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,61 +12,127 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 
-import org.nuvola.mobile.prixpascher.CreateAccountActivity;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.GraphRequest;
+import com.facebook.GraphRequestAsyncTask;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.gc.materialdesign.views.ButtonFlat;
+import com.twitter.sdk.android.core.Callback;
+import com.twitter.sdk.android.core.DefaultLogger;
+import com.twitter.sdk.android.core.Result;
+import com.twitter.sdk.android.core.Twitter;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterConfig;
+import com.twitter.sdk.android.core.TwitterCore;
+import com.twitter.sdk.android.core.TwitterException;
+import com.twitter.sdk.android.core.TwitterSession;
+import com.twitter.sdk.android.core.identity.TwitterLoginButton;
+
+import org.json.JSONObject;
 import org.nuvola.mobile.prixpascher.HomeActivity;
-import org.nuvola.mobile.prixpascher.LoginActivity;
 import org.nuvola.mobile.prixpascher.R;
-import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.business.UserSessionManager;
-import org.nuvola.mobile.prixpascher.business.Validator;
+import org.nuvola.mobile.prixpascher.business.Utils;
+import org.nuvola.mobile.prixpascher.dto.UserVO;
+import org.nuvola.mobile.prixpascher.models.TypeAnnonceur;
 import org.nuvola.mobile.prixpascher.models.User;
-import com.facebook.Request;
-import com.facebook.Request.GraphUserCallback;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.facebook.UiLifecycleHelper;
-import com.facebook.model.GraphUser;
-import com.facebook.widget.LoginButton;
-import com.gc.materialdesign.views.ButtonRectangle;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TimeZone;
+
+import io.cloudboost.CloudException;
+import io.cloudboost.CloudNotification;
+import io.cloudboost.CloudObject;
+import io.cloudboost.CloudObjectCallback;
+import io.cloudboost.CloudPush;
+import io.cloudboost.CloudStringCallback;
 
 @SuppressLint("NewApi")
 public class AuthenticationFragment extends Fragment {
-	LoginButton facebookLoginButton;
-	private UiLifecycleHelper uiHelper;
+    LoginButton facebookLoginButton;
+    TwitterLoginButton btnTwitterLogin;
 	String TAG = "Fragment";
-	ButtonRectangle btnLogin, btnCreateAccount;
+	ButtonFlat btnLogin, btnCreateAccount;
 	ProgressDialog dialogPrg;
-	String userName = null;
+    private CallbackManager callbackManager;
 
-	public static final AuthenticationFragment newInstance() {
+    public static final AuthenticationFragment newInstance() {
 		// TODO Auto-generated constructor stub
 		AuthenticationFragment fragment = new AuthenticationFragment();
 		return fragment;
 	}
 
 	@Override
-	public void onAttach(Activity activity) {
-		// TODO Auto-generated method stub
-		super.onAttach(activity);
+	public void onAttach(Context context) {
+		super.onAttach(context);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		View view = inflater.inflate(R.layout.authentication_layout, container,
-				false);
-		facebookLoginButton = (LoginButton) view
-				.findViewById(R.id.btnFacebookLogin);
-		facebookLoginButton.setFragment(this);
-		facebookLoginButton.setReadPermissions(Arrays.asList("email"));
-		btnLogin = (ButtonRectangle) view.findViewById(R.id.btn_login);
-		btnCreateAccount = (ButtonRectangle) view.findViewById(R.id.btn_create_account);
-		btnLogin.setOnClickListener(new View.OnClickListener() {
+        // TODO Auto-generated method stub
+        View view = inflater.inflate(R.layout.authentication_layout, container,
+                false);
+        facebookLoginButton = (LoginButton) view.findViewById(R.id.btnFacebookLogin);
+        facebookLoginButton.setFragment(this);
+        List<String> permissions = new ArrayList<>();
+        permissions.add("public_profile");
+        permissions.add("email");
+        permissions.add("user_about_me");
+        facebookLoginButton.setReadPermissions(permissions);
+
+        callbackManager = CallbackManager.Factory.create();
+        LoginManager.getInstance().registerCallback(callbackManager,
+                new FacebookCallback<LoginResult>() {
+                    @Override
+                    public void onSuccess(LoginResult loginResult) {
+                        dialogPrg.setMessage(getActivity().getResources().getString(
+                                R.string.loging));
+                        dialogPrg.show();
+                        facebookLoginButton.setEnabled(false);
+                        insertUser(loginResult.getAccessToken());
+                    }
+
+                    @Override
+                    public void onCancel() {
+                    }
+
+                    @Override
+                    public void onError(FacebookException exception) {
+                    }
+                });
+		btnLogin = (ButtonFlat) view.findViewById(R.id.btn_login);
+
+        btnTwitterLogin = (TwitterLoginButton) view.findViewById(R.id.btnTwitterLogin);
+        btnTwitterLogin.setCallback(new Callback<TwitterSession>() {
+            @Override
+            public void success(Result<TwitterSession> result) {
+                // Do something with result, which provides a TwitterSession for making API calls
+            }
+
+            @Override
+            public void failure(TwitterException exception) {
+                // Do something on failure
+            }
+        });
+
+		// btnCreateAccount = (ButtonFlat) view.findViewById(R.id.btn_create_account);
+		/*btnLogin.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(getActivity(), LoginActivity.class);
@@ -96,50 +148,166 @@ public class AuthenticationFragment extends Fragment {
 						CreateAccountActivity.class);
 				startActivity(intent);
 			}
-		});
+		});*/
 		dialogPrg = new ProgressDialog(getActivity());
 		dialogPrg.setCanceledOnTouchOutside(false);
+
 		return view;
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		uiHelper = new UiLifecycleHelper(getActivity(), callback);
-		uiHelper.onCreate(savedInstanceState);
+
+        TwitterConfig config = new TwitterConfig.Builder(this.getContext())
+                .logger(new DefaultLogger(Log.DEBUG))
+                .twitterAuthConfig(new TwitterAuthConfig("4wxTqQnKOp8FYVfCJn9xHAXeD",
+						"3bmVARzU0pw5TUwk6C1is3G7EcxJl68yeQrluPfUl1xpld9ZLp"))
+                .debug(true)
+                .build();
+        Twitter.initialize(config);
 	}
 
-	private Session.StatusCallback callback = new Session.StatusCallback() {
+    private void insertUser(AccessToken accessToken) {
+        GraphRequest request = GraphRequest.newMeRequest(
+                accessToken,
+                new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject user, GraphResponse response) {
+                        new facebookUserRegister(user).start();
+                    }
+                });
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "id,name,short_name,link,picture,email,website,address");
+        request.setParameters(parameters);
+        request.executeAsync();
+	}
+
+	private class facebookUserRegister extends Thread {
+		JSONObject user;
+
+		public facebookUserRegister(JSONObject user) {
+			// TODO Auto-generated constructor stub
+			this.user = user;
+		}
+
 		@Override
-		public void call(final Session session, final SessionState state,
-				final Exception exception) {
-			onSessionStateChange(session, state, exception);
-		}
-	};
+		public void run() {
+			super.run();
+			getActivity().runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					dialogPrg.show();
+				}
+			});
 
-	private void onSessionStateChange(Session session, SessionState state,
-			Exception exception) {
-		if (state.isOpened()) {
-			Log.i("FB AUT FRAGMENT", "Logged in...");
-		} else if (state.isClosed()) {
-			Log.i("FB AUT FRAGMENT", "Logged out...");
-		}
-	}
+			User userInfos = Utils.parseUser(this.user);
+            final UserVO userVO = new UserVO();
+            userVO.setId(String.valueOf(userInfos.getId()));
+            userVO.setEmail(userInfos.getEmail());
 
-	private void insertUser(Session session) {
-		Request.newMeRequest(session, new GraphUserCallback() {
-			@Override
-			public void onCompleted(GraphUser user, Response response) {
-				// TODO Auto-generated method stub
-				new facebookUserCheck(user).start();
+			try {
+                HttpHeaders requestHeaders = new HttpHeaders();
+                requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+                org.springframework.http.HttpEntity<UserVO> requestEntity =
+                        new org.springframework.http.HttpEntity<>(userVO, requestHeaders);
+
+                RestTemplate restTemplate = new RestTemplate();
+                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+                ResponseEntity<UserVO> mobileUser = restTemplate.exchange(
+                        getResources().getString(R.string.users_json_url),
+                        HttpMethod.POST,
+                        requestEntity, UserVO.class);
+
+				if (mobileUser.getStatusCode().equals(HttpStatus.OK)) {
+					Log.i(TAG, mobileUser.getBody().getUserName() + "got connected");
+                    try {
+                        dialogPrg.dismiss();
+                        UserSessionManager userSession = new UserSessionManager(
+                                getActivity());
+                        userSession.storeUserSession(mobileUser.getBody());
+                        registerForNotification(mobileUser.getBody());
+                        Intent intent = new Intent(
+                                getActivity(),
+                                HomeActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                        showDialog(getActivity().getResources()
+                                .getString(R.string.login_failed));
+                    }
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		}).executeAsync();
+		}
 	}
 
-	private class facebookUserCheck extends Thread {
-		GraphUser user;
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
 
-		public facebookUserCheck(GraphUser user) {
+        TwitterSession session = TwitterCore.getInstance().getSessionManager().getActiveSession();
+        // TwitterAuthToken authToken = session.getAuthToken();
+
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+	}
+
+	public void showDialog(String message) {
+		Utils.logout(getActivity());
+		AlertDialog.Builder buidler = new AlertDialog.Builder(getActivity());
+		buidler.setMessage(message);
+		buidler.setPositiveButton(
+				getActivity().getResources().getString(R.string.ok_label),
+				new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method
+						// stub
+						facebookLoginButton.setEnabled(true);
+					}
+				});
+		AlertDialog dialog = buidler.create();
+		dialog.show();
+	}
+
+    private void registerForNotification(UserVO mobileUser) {
+        String[] channels = {"global"};
+        String[] channels2 = {"global", "affiliates"};
+        if (mobileUser.getPrimaryShopClasse() != null && mobileUser.getTypeAnnonceur().equals(TypeAnnonceur.PROFESSIONAL)) {
+            channels = channels2;
+        }
+        try {
+            new CloudPush().addDevice(mobileUser.getProviderUserId(), TimeZone.getDefault().getDisplayName(), channels, "prixpascher",
+                    new CloudObjectCallback() {
+                        @Override
+                        public void done(CloudObject x, CloudException t) throws CloudException {
+                        }
+                    });
+        } catch (CloudException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    private void unsubscribeForNotification() {
+        try {
+            CloudNotification.off("affiliates", new CloudStringCallback() {
+                @Override
+                public void done(String x, CloudException e) throws CloudException {
+                }
+            });
+        } catch (CloudException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    /*private class facebookUserCheck extends Thread {
+		JSONObject user;
+
+		public facebookUserCheck(JSONObject user) {
 			// TODO Auto-generated constructor stub
 			this.user = user;
 		}
@@ -150,8 +318,7 @@ public class AuthenticationFragment extends Fragment {
 			super.run();
 			// TODO Auto-generated method stub
 			String handleInsertUser = getActivity().getResources().getString(
-					R.string.users_json_url)
-					+ "facebook_user_check";
+					R.string.users_json_url);
 			try {
 				HttpClient client = new DefaultHttpClient();
 				HttpPost post = new HttpPost(handleInsertUser);
@@ -175,6 +342,7 @@ public class AuthenticationFragment extends Fragment {
 									UserSessionManager userSession = new UserSessionManager(
 											getActivity());
 									userSession.storeUserSession(user);
+
 									Intent intent = new Intent(getActivity(),
 											HomeActivity.class);
 									intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -241,167 +409,6 @@ public class AuthenticationFragment extends Fragment {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	private class facebookUserRegister extends Thread {
-		GraphUser user;
-
-		public facebookUserRegister(GraphUser user) {
-			// TODO Auto-generated constructor stub
-			this.user = user;
-		}
-
-		@Override
-		public void run() {
-			super.run();
-			getActivity().runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					dialogPrg.show();
-				}
-			});
-			String handleInsertUser = getActivity().getResources().getString(
-					R.string.users_json_url)
-					+ "facebook_user_register";
-			try {
-				HttpClient client = new DefaultHttpClient();
-				HttpPost post = new HttpPost(handleInsertUser);
-				MultipartEntity reqEntity = new MultipartEntity();
-				// reqEntity.addPart("fb_id", new StringBody(user.getId()));
-				// reqEntity.addPart("fullname", new StringBody(user.getName()));
-				// reqEntity.addPart("email",new StringBody(user.asMap().get("email").toString()));
-				// reqEntity.addPart("username", new StringBody(userName));
-				post.setEntity(reqEntity);
-				HttpResponse res = client.execute(post);
-				HttpEntity resEntity = res.getEntity();
-				final String response_str = EntityUtils.toString(resEntity);
-				if (resEntity != null) {
-					Log.i(TAG, response_str);
-					getActivity().runOnUiThread(new Runnable() {
-						public void run() {
-							try {
-								dialogPrg.dismiss();
-								JSONObject jsonObj = new JSONObject(
-										response_str);
-								if (jsonObj.getString("ok").equals("0")) {
-									// show error email;
-									showDialog(getActivity().getResources()
-											.getString(R.string.email_exist));
-									return;
-								}
-
-								if (jsonObj.getString("ok").equals("1")) {
-									// show error username
-									showDialog(getActivity()
-											.getResources()
-											.getString(R.string.user_name_exist));
-									return;
-								}
-
-								if (jsonObj.getString("ok").equals("2")) {
-									// show unknow username
-									showDialog(getActivity().getResources()
-											.getString(R.string.login_failed));
-									return;
-								}
-
-							} catch (Exception e) {
-								JSONArray jsonArray;
-								try {
-									jsonArray = new JSONArray(response_str);
-									if (jsonArray.length() == 1) {
-										JSONObject obj = jsonArray
-												.getJSONObject(0);
-										User user = Utils.parseUser(obj);
-										UserSessionManager userSession = new UserSessionManager(
-												getActivity());
-										userSession.storeUserSession(user);
-										Intent intent = new Intent(
-												getActivity(),
-												HomeActivity.class);
-										intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
-												| Intent.FLAG_ACTIVITY_NEW_TASK);
-										startActivity(intent);
-									}
-								} catch (JSONException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-									showDialog(getActivity().getResources()
-											.getString(R.string.login_failed));
-								}
-
-							}
-						}
-					});
-				}
-			} catch (Exception e) {
-				// TODO: handle exception
-				e.printStackTrace();
-			}
-		}
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		Session session = Session.getActiveSession();
-		if (session != null && (session.isOpened() || session.isClosed())) {
-			onSessionStateChange(session, session.getState(), null);
-		}
-
-		uiHelper.onResume();
-	}
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		uiHelper.onActivityResult(requestCode, resultCode, data);
-		if (Session.getActiveSession() != null
-				&& Session.getActiveSession().isOpened()) {
-			dialogPrg.setMessage(getActivity().getResources().getString(
-					R.string.loging));
-			dialogPrg.show();
-			facebookLoginButton.setEnabled(false);
-			insertUser(Session.getActiveSession());
-		}
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-		uiHelper.onPause();
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		uiHelper.onDestroy();
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		uiHelper.onSaveInstanceState(outState);
-	}
-
-	public void showDialog(String message) {
-		Utils.logout(getActivity());
-		AlertDialog.Builder buidler = new AlertDialog.Builder(getActivity());
-		buidler.setMessage(message);
-		buidler.setPositiveButton(
-				getActivity().getResources().getString(R.string.ok_label),
-				new DialogInterface.OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// TODO Auto-generated method
-						// stub
-						facebookLoginButton.setEnabled(true);
-					}
-				});
-		AlertDialog dialog = buidler.create();
-		dialog.show();
-	}
+	}*/
 
 }

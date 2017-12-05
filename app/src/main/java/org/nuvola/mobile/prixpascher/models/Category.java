@@ -1,15 +1,26 @@
 package org.nuvola.mobile.prixpascher.models;
 
-import java.util.*;
+import android.content.Context;
+import android.support.annotation.NonNull;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public enum Category {
     all(null, new String[]{}, new String[]{""}),
     telephonie(null, new String[]{}, new String[]{""}),
-    android(telephonie, new String[]{"accessoires_phone"}, new String[]{"chargeur" ,"powerbank", "pochette", "coque", "film", "protection"}),
-    iphone(telephonie, new String[]{"accessoires_phone"}, new String[]{"chargeur" ,"powerbank", "pochette", "coque", "film", "protection"}),
-    windows(telephonie, new String[]{"accessoires_phone"}, new String[]{"chargeur" ,"powerbank", "pochette", "coque", "film", "protection"}),
-    blackberry(telephonie, new String[]{"accessoires_phone"}, new String[]{"chargeur" ,"powerbank", "pochette", "coque", "film", "protection"}),
+    android(telephonie, new String[]{"accessoires_phone", "smartwatch"}, new String[]{"chargeur" ,"powerbank", "pochette", "coque", "film", "protection"}),
+    iphone(telephonie, new String[]{"accessoires_phone", "smartwatch"}, new String[]{"chargeur" ,"powerbank", "pochette", "coque", "film", "protection"}),
+    windows(telephonie, new String[]{"accessoires_phone", "smartwatch"}, new String[]{"chargeur" ,"powerbank", "pochette", "coque", "film", "protection"}),
+    blackberry(telephonie, new String[]{"accessoires_phone", "smartwatch"}, new String[]{"chargeur" ,"powerbank", "pochette", "coque", "film", "protection"}),
     accessoires_phone(telephonie, new String[]{}, new String[]{""}),
+    smartwatch(telephonie, new String[]{}, new String[]{""}),
+    gps(telephonie, new String[]{}, new String[]{""}),
     tablette(null, new String[]{}, new String[]{""}),
     android_tablette(tablette, new String[]{"accessoires_tablette"}, new String[]{"chargeur", "pochette", "coque", "film", "protection"}),
     ipad(tablette, new String[]{"accessoires_tablette"}, new String[]{"chargeur", "pochette", "coque", "film", "protection"}),
@@ -28,6 +39,7 @@ public enum Category {
     jeux_videos(image_son, new String[]{}, new String[]{"abonnement", "jeu", "mannette", "gamepad"}),
     recepteurs(image_son, new String[]{"tv", "recepteurs"}, new String[]{"led", "lcd", "antenne", "satellite"}),
     photo(image_son, new String[]{"photo"}, new String[]{"sd"}),
+    lunettes_3d(image_son, new String[]{""}, new String[]{""}),
     electromenager(null, new String[]{}, new String[]{""}),
     refrigerateur(electromenager, new String[]{"lave_linge", "lavage_sechage", "cuisine"}, new String[]{"machine", "micro", "robot", "four"}),
     lave_linge(electromenager, new String[]{"refrigerateur", "lavage_sechage", "cuisine"}, new String[]{"micro","four","robot","refrigerateur"}),
@@ -42,6 +54,8 @@ public enum Category {
     garcons(fashion, new String[]{"homme_chaussures"}, new String[]{""}),
     femmes(fashion, new String[]{"femme_chaussures"}, new String[]{"escarpin", "sandale", "bottine"}),
     hommes(fashion, new String[]{"homme_chaussures"}, new String[]{"botte", "richelieu", "mocassin"}),
+    soins_cosmetiques(fashion, new String[]{""}, new String[]{""}),
+    accessoires_fashion(fashion, new String[]{""}, new String[]{""}),
     sport(null, new String[]{}, new String[]{""}),
     men_baskets(sport, new String[]{"men_survets"}, new String[]{""}),
     ladies_baskets(sport, new String[]{"ladies_survets"}, new String[]{""}),
@@ -52,16 +66,18 @@ public enum Category {
     femme_chaussures(fashion, new String[]{}, new String[]{"veste", "pantatlon", "chemise", "jacket", "robe", "blouson"}),
     accessoires_mode(null, new String[]{}, new String[]{""}),
     homme_montres(accessoires_mode, new String[]{"homme_lunettes"}, new String[]{""}),
-    femme_montres(accessoires_mode, new String[]{"femme_lunettes", "sacs"}, new String[]{""}),
+    femme_montres(accessoires_mode, new String[]{"femme_lunettes", "sacs", "soins_cosmetiques"}, new String[]{""}),
     homme_lunettes(accessoires_mode, new String[]{"homme_montres"}, new String[]{""}),
-    femme_lunettes(accessoires_mode, new String[]{"femme_montres", "sacs"}, new String[]{""}),
-    sacs(accessoires_mode, new String[]{"femme_montres", "femme_lunettes"}, new String[]{"bracelet", "collier", "pendentif", "bague"}),
+    femme_lunettes(accessoires_mode, new String[]{"femme_montres", "sacs", "soins_cosmetiques"}, new String[]{""}),
+    sacs(accessoires_mode, new String[]{"femme_montres", "femme_lunettes", "soins_cosmetiques"}, new String[]{"bracelet", "collier", "pendentif", "bague"}),
     homme_parfums(accessoires_mode, new String[]{"homme_montres", "homme_lunettes"}, new String[]{""}),
     femme_parfums(accessoires_mode, new String[]{"femme_montres", "femme_lunettes"}, new String[]{""}),
     bijoux(accessoires_mode, new String[]{"femme_montres", "sacs", "femme_lunettes"}, new String[]{""}),
     equipement(null, new String[]{}, new String[]{""}),
-    poussettes(equipement, new String[]{"jouets"}, new String[]{"vtech", "playmobil"}),
     jouets(equipement, new String[]{"poussettes"}, new String[]{"maxi", "youpala"}),
+    poussettes(equipement, new String[]{"jouets"}, new String[]{"vtech", "playmobil"}),
+    maison(equipement, new String[]{"maison"}, new String[]{"lit", "matelas", "salon", "tapis"}),
+    peche(equipement, new String[]{"peche"}, new String[]{"leurre", "moulinet"}),
     vehicule(null, new String[]{}, new String[]{""}),
     immobilier(null, new String[]{}, new String[]{""});
 
@@ -206,6 +222,31 @@ public enum Category {
         return valueOf(name);
     }
 
+    public static List<DrawerMenuItem> mobileAppCategories(Context context) {
+        List<DrawerMenuItem> iconableCategories =  new ArrayList<>();
+        for (Category category: getCategories().keySet()) {
+            if (!category.equals(all) && category.getParent() == null) {
+                String label = getLabel(category);
+                DrawerMenuItem item = new DrawerMenuItem(category.name(),
+                        getDrawable(context, "pub_" + category.name()));
+                item.setAvt(label);
+                iconableCategories.add(item);
+            }
+        }
+        return iconableCategories;
+    }
+
+    @NonNull
+    public static String getLabel(Category category) {
+        String label = category.name();
+        if (category.equals(equipement)) {
+            label = "Maison & Loisirs";
+        } else {
+            label = label.replaceAll("_", " ");
+        }
+        return label.toUpperCase();
+    }
+
     private static Comparator<Category> ALPHABETICAL_ORDER = new Comparator<Category>() {
         public int compare(Category str1, Category str2) {
             int res = String.CASE_INSENSITIVE_ORDER.compare(str1.name(), str2.name());
@@ -215,4 +256,10 @@ public enum Category {
             return res;
         }
     };
+
+    private static int getDrawable(Context context, String name)
+    {
+        return context.getResources().getIdentifier(name,
+                "drawable", context.getPackageName());
+    }
 }

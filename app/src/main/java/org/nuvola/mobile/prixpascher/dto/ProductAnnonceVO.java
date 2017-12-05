@@ -7,6 +7,7 @@ import org.nuvola.mobile.prixpascher.models.City;
 import org.nuvola.mobile.prixpascher.models.ProductSource;
 
 import java.util.Date;
+import java.util.List;
 
 public class ProductAnnonceVO {
     private String id;
@@ -21,6 +22,7 @@ public class ProductAnnonceVO {
     private String image1;
     private String image2;
     private String image3;
+    private String videoUri;
     private AnnounceStatus status;
     private AnnounceType type;
     private Category category;
@@ -31,16 +33,19 @@ public class ProductAnnonceVO {
     private String contactMail;
     private ProductSource source;
     private Long views;
+    private Long qty;
     private Date viewed;
     private String detail;
     private String specification;
-    // private List<OfferVO> offers;
+    private List<OfferVO> offers;
     private UserVO user;
     private String cityName;
     private String categoryName;
+    private String categoryTitle;
 
     public ProductAnnonceVO() {
         this.source = ProductSource.DEFAULT;
+        this.type = AnnounceType.COMMON_SELL;
     }
 
     public ProductAnnonceVO(ProductVO product) {
@@ -50,6 +55,19 @@ public class ProductAnnonceVO {
         this.price = product.getPrice();
         this.trackingDate = new Date();
         this.category = product.getCategory();
+        this.type = AnnounceType.OFFER_ASK;
+        this.qty = 1L;
+    }
+
+    public ProductAnnonceVO(String id, String name, String price, String categoryName) {
+        this.parentId = id;
+        this.title = name;
+        this.source = ProductSource.ANNONCE;
+        this.price = Double.valueOf(price);
+        this.trackingDate = new Date();
+        this.category = Category.valueOf(categoryName);
+        this.type = AnnounceType.OFFER_ASK;
+        this.qty = 1L;
     }
 
     public String getId() {
@@ -82,6 +100,14 @@ public class ProductAnnonceVO {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Long getQty() {
+        return qty;
+    }
+
+    public void setQty(Long qty) {
+        this.qty = qty;
     }
 
     public String getLink() {
@@ -188,13 +214,13 @@ public class ProductAnnonceVO {
         this.userGroupChain = userGroupChain;
     }
 
-    /*public List<OfferVO> getOffers() {
+    public List<OfferVO> getOffers() {
         return offers;
     }
 
     public void setOffers(List<OfferVO> offers) {
         this.offers = offers;
-    }*/
+    }
 
     public String getDetail() {
         return detail;
@@ -244,6 +270,14 @@ public class ProductAnnonceVO {
         this.image3 = image3;
     }
 
+    public String getVideoUri() {
+        return videoUri;
+    }
+
+    public void setVideoUri(String videoUri) {
+        this.videoUri = videoUri;
+    }
+
     public Category getCategory() {
         return category;
     }
@@ -284,12 +318,24 @@ public class ProductAnnonceVO {
         categoryName = "";
         if (getCategory() != null) {
             categoryName = getCategory().name().toLowerCase();
-            categoryName = categoryName.replace("_", " ");
         }
         return categoryName;
     }
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public String getCategoryTitle() {
+        categoryTitle = "";
+        if (getCategory() != null) {
+            categoryTitle = getCategory().name().toLowerCase();
+            categoryTitle = categoryTitle.replace("_", " ");
+        }
+        return categoryTitle;
+    }
+
+    public void setCategoryTitle(String categoryTitle) {
+        this.categoryTitle = categoryTitle;
     }
 }

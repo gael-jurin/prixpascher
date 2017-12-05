@@ -12,7 +12,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.gc.materialdesign.views.ButtonRectangle;
+
+import com.gc.materialdesign.views.ButtonFlat;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -27,7 +29,7 @@ import org.nuvola.mobile.prixpascher.models.User;
 
 @SuppressLint({ "NewApi", "ShowToast" })
 public class ChangePassActivity extends ActionBarParentActivity {
-	ButtonRectangle btnUpdate;
+	ButtonFlat btnUpdate;
 	TextView oldPass, newPass, cfmPass;
 	ProgressDialog dialogPrg;
     Toolbar toolbar;
@@ -42,7 +44,7 @@ public class ChangePassActivity extends ActionBarParentActivity {
 		newPass = (TextView) findViewById(R.id.new_pass);
 		cfmPass = (TextView) findViewById(R.id.cfm_pass);
 
-		btnUpdate = (ButtonRectangle) findViewById(R.id.btn_update);
+		btnUpdate = (ButtonFlat) findViewById(R.id.btn_update);
 		btnUpdate.setOnClickListener(new View.OnClickListener() {
 
 			@Override

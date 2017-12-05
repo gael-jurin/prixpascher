@@ -6,15 +6,17 @@ public class OfferVO {
     private String email;
     private Date posted;
     private Boolean valid;
-    private Double targetPrice;
-    private String productAnnonceProductId;
-    private String productAnnonceTitle;
-    private Double productAnnoncePrice;
+    private String targetPrice;
+    private ProductAnnonceVO productAnnonce;
+    private String stock;
+    private String attachedDevis;
+    private String codePromo;
+
 
     public OfferVO() {
     }
 
-    public OfferVO(String email, Double targetPrice) {
+    public OfferVO(String email, String targetPrice) {
         this.email = email;
         this.targetPrice = targetPrice;
         setValid(false);
@@ -36,28 +38,36 @@ public class OfferVO {
         this.valid = valid;
     }
 
-    public String getProductAnnonceProductId() {
-        return productAnnonceProductId;
+    public ProductAnnonceVO getProductAnnonce() {
+        return productAnnonce;
     }
 
-    public void setProductAnnonceProductId(String productAnnonceProductId) {
-        this.productAnnonceProductId = productAnnonceProductId;
+    public void setProductAnnonce(ProductAnnonceVO productAnnonce) {
+        this.productAnnonce = productAnnonce;
     }
 
-    public String getProductAnnonceTitle() {
-        return productAnnonceTitle;
+    public String getStock() {
+        return stock;
     }
 
-    public void setProductAnnonceTitle(String productAnnonceTitle) {
-        this.productAnnonceTitle = productAnnonceTitle;
+    public void setStock(String stock) {
+        this.stock = stock;
     }
 
-    public Double getProductAnnoncePrice() {
-        return productAnnoncePrice;
+    public String getCodePromo() {
+        return codePromo;
     }
 
-    public void setProductAnnoncePrice(Double productAnnoncePrice) {
-        this.productAnnoncePrice = productAnnoncePrice;
+    public void setCodePromo(String codePromo) {
+        this.codePromo = codePromo;
+    }
+
+    public String getAttachedDevis() {
+        return attachedDevis;
+    }
+
+    public void setAttachedDevis(String attachedDevis) {
+        this.attachedDevis = attachedDevis;
     }
 
     public String getEmail() {
@@ -68,11 +78,11 @@ public class OfferVO {
         this.email = email;
     }
 
-    public Double getTargetPrice() {
+    public String getTargetPrice() {
         return targetPrice;
     }
 
-    public void setTargetPrice(Double targetPrice) {
+    public void setTargetPrice(String targetPrice) {
         this.targetPrice = targetPrice;
     }
 }

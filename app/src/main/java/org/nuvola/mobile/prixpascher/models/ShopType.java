@@ -14,10 +14,14 @@ public enum ShopType {
     PINKANDBLUE(new String[]{"LG", "RP"}),
     MAGANAT(new String[]{"LG", "RP"}),
     MICROCHOIX(new String[]{"LG", "SR", "SAV", "PC"}),
+    SESA(new String[]{"LG", "SR", "SAV", "PC"}),
+    COSMISHOP(new String[]{"LG", "SR", "SAV", "PC"}),
     PLANETTVSAT(new String[]{"LG", "SR", "SAV", "PC"}),
     BOUTIKA(new String[]{"LG", "SR", "PL", "SAV", "PC"}),
+    KITEA(new String[]{"LG", "SR", "PL", "SAV", "PC"}),
     LAROSE(new String[]{"LG", "SR", "PL", "SAV", "PC"}),
     LAREDOUTE(new String[]{"LG", "SR", "PL", "SAV", "PC"}),
+    PECHEURMA(new String[]{"LG", "SR", "PL", "SAV", "PC"}),
     MPRICE(new String[]{"LG", "SR", "PL", "SAV", "PC"}),
     COSMOS(new String[]{"LG", "SR", "PL", "SAV", "PC"}),
     UNIVERSPROMO(new String[]{"LG", "SR", "PL", "SAV"}),
@@ -33,12 +37,25 @@ public enum ShopType {
     MAROCVENTES(new String[]{""}),
     ASWAKASALAM(new String[]{""}),
     HM(new String[]{""}),
+    HOTELIA(new String[]{""}),
     TONPC(new String[]{"LG", "RP"}),
     MICROSTORE(new String[]{"LG", "RP"}),
     CHOIXMA(new String[]{""}),
     MICROLAND(new String[]{"LG", "PL"}),
     SPORTPLUS(new String[]{"LG", "PL"}),
-    UNIDEALS(new String[]{"LG", "SR", "PL", "PC"});
+    UNIDEALS(new String[]{"LG", "SR", "PL", "PC"}),
+    PCFACTORY(new String[]{"LG", "RP"}),
+    BEAUTYSUCCESS(new String[]{"LG", "RP"}),
+    BESTMARK(new String[]{"LG", "RP"}),
+    MONJOUET(new String[]{"LG", "RP"}),
+    LINKSOLUTIONS(new String[]{"LG", "SR", "PL", "PC"}),
+    LECOMPTOIRELECTRO(new String[]{"LG", "SR", "PL", "PC"}),
+    TABTEL(new String[]{"LG", "SR", "PL", "PC"}),
+    NIKE(new String[]{"LG", "SR", "PL", "PC"}),
+    ELECBOUSFIHA(new String[]{"LG", "SR", "PL", "PC"}),
+    VETEMENTMA(new String[]{"LG", "SR", "PL", "PC"}),
+    VIRGIN(new String[]{"LG", "SR", "PL", "PC"}),
+    GENERIC(new String[]{"LG", "SR", "PL", "PC"});
 
     private String[] features;
 
@@ -47,63 +64,25 @@ public enum ShopType {
     }
 
     public static List<ShopType> affilliates() {
-        List<ShopType> shopTypeList = new ArrayList<>();
-        shopTypeList.add(ALAMODE);
-        shopTypeList.add(ASWAKASALAM);
-        shopTypeList.add(BOUTIKA);
-        shopTypeList.add(CHOIXMA);
-        shopTypeList.add(HMALL);
+        List<ShopType> shopTypeList = new ArrayList();
+        shopTypeList.add(BEAUTYSUCCESS);
         shopTypeList.add(JUMIA);
-        shopTypeList.add(LESJOUETSMA);
-        shopTypeList.add(LAROSE);
         shopTypeList.add(LAREDOUTE);
-        shopTypeList.add(MAGANAT);
-        shopTypeList.add(MAROCVENTES);
-        shopTypeList.add(MICROCHOIX);
-        shopTypeList.add(MICROLAND);
-        shopTypeList.add(MICROSTORE);
-        shopTypeList.add(MPRICE);
-        shopTypeList.add(ORIFLAME);
-        shopTypeList.add(PLANETTVSAT);
-        shopTypeList.add(PULLnBEAR);
-        shopTypeList.add(PINKANDBLUE);
-        shopTypeList.add(SHOPPEOS);
-        shopTypeList.add(TANGEROIS);
-        shopTypeList.add(TONPC);
-        shopTypeList.add(VENTEONLINE);
-        shopTypeList.add(YOUPICOMA);
-        shopTypeList.add(COSMOS);
-        shopTypeList.add(GEMEAUXSAT);
-        shopTypeList.add(UNIVERSPROMO);
-        shopTypeList.add(UNIDEALS);
-        shopTypeList.add(ZARA);
+        shopTypeList.add(NIKE);
         return shopTypeList;
     }
 
     public static List<String> detailShops() {
-        List<String> detailShops = new ArrayList<>();
+        List<String> detailShops = new ArrayList();
         detailShops.add(JUMIA.name());
-        detailShops.add(HMALL.name());
-        detailShops.add(SHOPPEOS.name());
-        detailShops.add(BOUTIKA.name());
-        detailShops.add(MAROCVENTES.name());
+        detailShops.add(NIKE.name());
+        detailShops.add(ELECBOUSFIHA.name());
+        detailShops.add(LAREDOUTE.name());
         return detailShops;
     }
 
-    public static List<String> checkBySignatureShops() {
-        List<String> shops = new ArrayList<>();
-        shops.add(ZARA.name());
-        shops.add(ALAMODE.name());
-        shops.add(BIOUGNACH.name());
-        shops.add(TANGEROIS.name());
-        shops.add(MAROCVENTES.name());
-        shops.add(LAREDOUTE.name());
-        shops.add(SPORTPLUS.name());
-        return shops;
-    }
-
     public static List<String> lowerNames() {
-        List<String> shops = new ArrayList<>();
+        List<String> shops = new ArrayList();
         for (ShopType shopType: values()) {
             shops.add(shopType.name().toLowerCase());
         }

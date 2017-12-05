@@ -267,8 +267,6 @@ public class SearchActivity extends ActionBarParentActivity {
     private List<ProductVO> feedJson() {
         try {
             HttpHeaders requestHeaders = new HttpHeaders();
-
-            // Sending a JSON or XML object i.e. "application/json" or "application/xml"
             requestHeaders.setContentType(MediaType.APPLICATION_JSON);
 
             searchFilter.setSearchText("*");

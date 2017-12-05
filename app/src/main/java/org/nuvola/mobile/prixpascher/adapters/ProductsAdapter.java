@@ -13,7 +13,9 @@ import com.squareup.picasso.Picasso;
 import org.nuvola.mobile.prixpascher.R;
 import org.nuvola.mobile.prixpascher.dto.ProductVO;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ProductsViewHolder> {
     private Context context;
@@ -47,7 +49,8 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
 
         if (products.get(position).getPrice() != null
                 && !products.get(position).getPrice().toString().equalsIgnoreCase("")) {
-            holder.price.setText(products.get(position).getPrice() + " Dhs");
+            holder.price.setText(
+                    NumberFormat.getInstance(Locale.FRANCE).format(products.get(position).getPrice()) + " Dhs");
         } else {
             holder.price.setText(
                     context.getResources()
@@ -79,7 +82,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
         @Override
         public void onClick(View v) {
             if (mItemClickListener != null) {
-                mItemClickListener.onItemClick(v, getPosition());
+                mItemClickListener.onItemClick(v, getLayoutPosition());
             }
         }
     }
@@ -91,7 +94,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
     }
 
     public interface OnItemClickListener {
-        public void onItemClick(View view , int position);
+        void onItemClick(View view , int position);
     }
 
     public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {
