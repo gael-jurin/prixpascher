@@ -165,7 +165,7 @@ public class CreateAccountActivity extends ActionBarParentActivity {
 				reqEntity.addPart("user_name", new StringBody(userName));
 				reqEntity.addPart("full_name", new StringBody(fullName));
 				reqEntity.addPart("address", new StringBody(address));
-				reqEntity.addPart("phone", new StringBody(phone));
+				reqEntity.addPart("productFeed", new StringBody(productFeed));
 				reqEntity.addPart("pwd", new StringBody(pwd));*/
 				post.setEntity(reqEntity);
 				HttpResponse response = client.execute(post);

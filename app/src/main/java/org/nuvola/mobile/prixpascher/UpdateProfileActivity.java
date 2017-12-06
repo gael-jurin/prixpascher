@@ -314,7 +314,7 @@ public class UpdateProfileActivity extends ActionBarParentActivity {
                 // reqEntity.addPart("fb_id", new StringBody(user.getFbId()));
                 // reqEntity.addPart("website", new StringBody(websiteText));
                 // reqEntity.addPart("address", new StringBody(addressText));
-                // reqEntity.addPart("phone", new StringBody(phoneText));
+                // reqEntity.addPart("productFeed", new StringBody(phoneText));
                 if (avtPath != null && !avtPath.equalsIgnoreCase("")) {
                     // reqEntity.addPart("avt", new FileBody(new File(avtPath)));
                 }

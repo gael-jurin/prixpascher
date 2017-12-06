@@ -172,12 +172,12 @@ public class ProductFragment extends Fragment {
             }
 
             if (bundle.containsKey(constants.USER_ID_KEY)) {
-                int id = bundle.getInt(constants.USER_ID_KEY);
-                if (id != 0) {
+                String id = bundle.getString(constants.USER_ID_KEY);
+                // if (id != 0) {
                     // query += "&user_id=" + id;
-                    user_id = id;
+                    // user_id = id;
 
-                }
+                // }
             }
 
             if (bundle.containsKey(constants.USER_POST_KEY)) {

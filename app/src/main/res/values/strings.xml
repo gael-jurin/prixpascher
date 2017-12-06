@@ -41,7 +41,7 @@
 
 
     <!-- TEXT LABEL -->
-    <string name="shop_label">Magasin</string>
+    <string name="shop_label">Boutiques</string>
     <string name="categories_label">Catégories</string>
     <string name="category_label">Catégorie</string>
     <string name="city_label">Ville</string>
@@ -60,12 +60,12 @@
     <string name="low_price_label">Prix en baisse !</string>
     <string name="promotion_label">En Promo</string>
     <string name="all_label">Tout</string>
-    <string name="tap_to_change_avt">Tap to change your avatar</string>
+    <string name="tap_to_change_avt">Changer votre avatar</string>
     <string name="follow_label">Suivre</string>
     <string name="product">Produits</string>
     <string name="similar_products">Produits Similaires</string>
     <string name="bookmarked_product">Mark Products</string>
-    <string name="logout">Deconnexion</string>
+    <string name="logout">Déconnexion</string>
     <string name="close_label">Fermer</string>
     <string name="filter_label">Filtre</string>
     <string name="home_label">Accueil</string>
@@ -142,6 +142,7 @@
     <string name="products_json_url">https://www.prixpascher.ma/api/products/products/list</string>
     <string name="product_root_json_url">https://www.prixpascher.ma/article/api/products/</string>
     <string name="users_json_url">http://10.0.2.2:9090/api/user/</string>
+    <string name="merchant_json_url">http://10.0.2.2:9090/api/merchant/</string>
     <string name="alert_json_url">https://www.prixpascher.ma/api/products/alert</string>
     
     <string name="admob_publisher_id">ca-app-pub-1074284300135896/6213979568</string>

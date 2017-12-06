@@ -293,8 +293,7 @@ public class ProfileFragment extends Fragment {
 		protected Boolean doInBackground(Void... params) {
 			// TODO Auto-generated method stub
 			String handleInserUrl = getResources().getString(
-					R.string.products_json_url)
-					+ "update";
+					R.string.users_json_url);
 			try {
 				HttpClient client = new DefaultHttpClient();
 				HttpPost post = new HttpPost(handleInserUrl);
