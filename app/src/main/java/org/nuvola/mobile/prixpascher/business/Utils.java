@@ -1,10 +1,5 @@
 package org.nuvola.mobile.prixpascher.business;
 
-import java.io.File;
-import java.net.URL;
-
-import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -19,8 +14,13 @@ import android.os.Environment;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.facebook.AccessToken;
+
+import org.json.JSONObject;
 import org.nuvola.mobile.prixpascher.models.User;
-import com.facebook.Session;
+
+import java.io.File;
+import java.net.URL;
 
 public class Utils {
 	public static boolean isConnectingToInternet(Context context) {
@@ -120,23 +120,12 @@ public class Utils {
 	}
 
 	public static void logout(Context context) {
-		Session session = Session.getActiveSession();
 		UserSessionManager sessionManager = new UserSessionManager(context);
 		sessionManager.clearAll();
-		//facbook session
-		if (session != null) {
-			if (!session.isClosed()) {
-				session.closeAndClearTokenInformation();
-				// clear your preferences if saved
-			}
+		if (AccessToken.getCurrentAccessToken() != null) {
+            AccessToken.setCurrentAccessToken(null);
 		} else {
-
-			session = new Session(context);
-			Session.setActiveSession(session);
-
-			session.closeAndClearTokenInformation();
-			// clear your preferences if saved
-
+			AccessToken.refreshCurrentAccessTokenAsync();
 		}
 	}
 
@@ -155,28 +144,27 @@ public class Utils {
 	public static User parseUser(JSONObject jsonObj) {
 		User user = new User();
 		try {
-			int id = jsonObj.getInt(User.TAG_ID);
-			String fbId = jsonObj.getString(User.TAG_FB_ID);
-			String fullName = jsonObj.getString(User.TAG_FULL_NAME);
-			String userName = jsonObj.getString(User.TAG_USER_NAME);
-			String email = jsonObj.getString(User.TAG_EMAIL);
-			String website = jsonObj.getString(User.TAG_WEBSITES);
-			String phone = jsonObj.getString(User.TAG_PHONE);
-			String address = jsonObj.getString(User.TAG_ADDRESS);
-			String avt = jsonObj.getString(User.TAG_AVT);
+			String id = jsonObj.getString(User.TAG_ID);
 			user.setId(id);
-			user.setFbId(fbId);
-			user.setFullName(fullName);
-			user.setUserName(userName);
+			String email = jsonObj.getString(User.TAG_EMAIL);
 			user.setEmail(email);
-			user.setWebsite(website);
-			user.setPhone(phone);
-			user.setAddress(address);
+			String fullName = jsonObj.getString(User.TAG_FULL_NAME);
+			user.setFullName(fullName);
+			String userName = jsonObj.getString(User.TAG_USER_NAME);
+			user.setUserName(userName);
+			/*String address = jsonObj.getString(User.TAG_ADDRESS);
+			user.setAddress(address);*/
+			String avt = ((JSONObject)((JSONObject)jsonObj.get("picture")).get("data")).getString(User.TAG_AVT);
 			user.setAvt(avt);
+			/*String fbId = jsonObj.getString(User.TAG_FB_ID);
+			user.setFbId(fbId);*/
+			String website = jsonObj.getString(User.TAG_WEBSITES);
+			user.setWebsite(website);
+			/*String phone = jsonObj.getString(User.TAG_PHONE);
+			user.setPhone(phone);*/
 		} catch (Exception e) {
-			// TODO: handle exception
 			e.printStackTrace();
-			return null;
+			return user;
 		}
 		return user;
 	}

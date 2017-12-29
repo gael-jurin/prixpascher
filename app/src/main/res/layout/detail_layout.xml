@@ -21,7 +21,7 @@
                 layout="@layout/admob_fragment_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp" />-->
+                android:layout_marginTop="5dp" />
 
             <LinearLayout
                 android:id="@+id/update_button_wrapper"
@@ -67,7 +67,7 @@
                     android:src="@drawable/ic_delete"
                     android:textColor="@color/white"
                     android:textSize="12sp" />
-            </LinearLayout>
+            </LinearLayout>-->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -129,12 +129,30 @@
                             android:textStyle="bold" />
 
 
-                      <RatingBar
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minHeight="50dp"
+                            android:orientation="horizontal"
+                            android:padding="1dp">
+
+                        <RatingBar
                         android:id="@+id/ratingBarClick"
                         style="@style/ratingBar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp" />
+
+                        <TextView
+                            android:id="@+id/pricetag"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/low_price_label"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginTop="2dp"
+                            android:textAppearance="@style/PromoTextAppearance"
+                            />
+                        </LinearLayout>
 
 
                     </LinearLayout>
@@ -321,69 +339,5 @@
             </LinearLayout>
 
         </LinearLayout>
-
     </ScrollView>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp">
-
-            <ImageButton
-                    android:id="@+id/btnAddToCart"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:background="@drawable/tab_categories"
-                    android:contentDescription="@string/addToCart"
-                    android:minHeight="40dp"
-                    android:src="@drawable/ic_cart"
-                    android:text="@string/addToCart"
-                    android:textColor="@color/white"
-                    android:textSize="12sp" />
-
-            <!--<ImageButton
-                android:id="@+id/btnEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/tab_categories"
-                android:contentDescription="@string/email"
-                android:minHeight="40dp"
-                android:src="@drawable/ic_mail"
-                android:text="@string/all_label"
-                android:textColor="@color/white"
-                android:textSize="12sp" />
-
-            <ImageButton
-                android:id="@+id/btnSmS"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/tab_categories"
-                android:contentDescription="@string/email"
-                android:minHeight="40dp"
-                android:src="@drawable/ic_sms"
-                android:textColor="@color/white"
-                android:textSize="12sp" />
-
-            <ImageButton
-                android:id="@+id/btnPhone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@drawable/tab_categories"
-                android:contentDescription="@string/email"
-                android:minHeight="40dp"
-                android:src="@drawable/ic_call"
-                android:textColor="@color/white"
-                android:textSize="12sp" />-->
-
-        </LinearLayout>
-    </LinearLayout>
-
 </LinearLayout>

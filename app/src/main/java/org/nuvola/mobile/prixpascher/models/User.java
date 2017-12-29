@@ -6,15 +6,15 @@ import android.os.Parcelable;
 public class User implements Parcelable {
 	public static final String TAG_ID = "id";
 	public static final String TAG_FB_ID = "fb_id";
-	public static final String TAG_FULL_NAME = "full_name";
-	public static final String TAG_USER_NAME = "user_name";
+	public static final String TAG_FULL_NAME = "name";
+	public static final String TAG_USER_NAME = "short_name";
 	public static final String TAG_EMAIL = "email";
 	public static final String TAG_PHONE = "phone";
 	public static final String TAG_ADDRESS = "address";
 	public static final String TAG_WEBSITES = "website";
-	public static final String TAG_AVT = "avt";
+	public static final String TAG_AVT = "url";
 
-	int id;
+	String id;
 	String fbId;
 	String fullName;
 	String email;
@@ -40,11 +40,11 @@ public class User implements Parcelable {
 		this.userName = userName;
 	}
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -104,9 +104,8 @@ public class User implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		// TODO Auto-generated method stub
-		dest.writeInt(id);
-		dest.writeString(fbId);
+		dest.writeString(id);
+		// dest.writeString(fbId);
 		dest.writeString(fullName);
 		dest.writeString(email);
 		dest.writeString(website);
@@ -117,9 +116,8 @@ public class User implements Parcelable {
 	}
 
 	public User(Parcel in) {
-		// TODO Auto-generated constructor stub
-		id = in.readInt();
-		fbId = in.readString();
+		id = in.readString();
+		// fbId = in.readString();
 		fullName = in.readString();
 		email = in.readString();
 		website = in.readString();

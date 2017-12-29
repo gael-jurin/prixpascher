@@ -9,25 +9,25 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import butterknife.Bind;
-import butterknife.ButterKnife;
+
 import org.nuvola.mobile.prixpascher.DetailActivity;
 import org.nuvola.mobile.prixpascher.R;
 import org.nuvola.mobile.prixpascher.adapters.ProductsAdapter;
 import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.dto.ProductVO;
 import org.nuvola.mobile.prixpascher.dto.SearchFilterVO;
+import org.nuvola.mobile.prixpascher.models.Category;
 import org.nuvola.mobile.prixpascher.models.PagedResponse;
+import org.nuvola.mobile.prixpascher.models.SortField;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -37,6 +37,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class ProductFragment extends Fragment {
     List<ProductVO> productsList = new ArrayList<>();
@@ -53,14 +56,16 @@ public class ProductFragment extends Fragment {
     @Bind(R.id.btnPromo) Button btnPromo;
     @Bind(R.id.prgLoadMore) LinearLayout loadMorePrg;
     ProductsAdapter adapter;
+    static Toolbar toolbar;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
     }
 
-    public static final ProductFragment newInstance() {
+    public static final ProductFragment newInstance(Toolbar otoolbar) {
         ProductFragment fragment = new ProductFragment();
+        toolbar = otoolbar;
         return fragment;
     }
 
@@ -83,6 +88,8 @@ public class ProductFragment extends Fragment {
         ButterKnife.bind(this, view);
         final LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
+
+        resetSearch();
 
         adapter = new ProductsAdapter(getActivity(), productsList);
         adapter.SetOnItemClickListener(new ProductsAdapter.OnItemClickListener() {
@@ -142,9 +149,11 @@ public class ProductFragment extends Fragment {
             }
 
             if (bundle.containsKey(constants.CATEGORIES_ID_KEY)) {
-                int id = bundle.getInt(constants.CATEGORIES_ID_KEY);
-                if (id != 0) {
-                    // query += "&categories_id=" + id;
+                String category = bundle.getString(constants.CATEGORIES_ID_KEY);
+                if (category != null && category != "") {
+                    Category value = Category.valueOf(category);
+                    toolbar.setTitle(Category.getLabel(value));
+                    searchFilter.setCategory(value);
                 }
             }
 
@@ -163,12 +172,12 @@ public class ProductFragment extends Fragment {
             }
 
             if (bundle.containsKey(constants.USER_ID_KEY)) {
-                int id = bundle.getInt(constants.USER_ID_KEY);
-                if (id != 0) {
+                String id = bundle.getString(constants.USER_ID_KEY);
+                // if (id != 0) {
                     // query += "&user_id=" + id;
-                    user_id = id;
+                    // user_id = id;
 
-                }
+                // }
             }
 
             if (bundle.containsKey(constants.USER_POST_KEY)) {
@@ -194,6 +203,8 @@ public class ProductFragment extends Fragment {
 
                 searchFilter.setPage(first);
                 searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
+                searchFilter.setPromotion(false);
+                searchFilter.setDefaultSort(SortField.MOST_UPDATED);
 
                 loadingMore = false;
                 productsList.clear();
@@ -213,6 +224,7 @@ public class ProductFragment extends Fragment {
 
                 searchFilter.setPage(first);
                 searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
+                searchFilter.setPromotion(true);
 
                 loadingMore = false;
                 productsList.clear();
@@ -232,6 +244,8 @@ public class ProductFragment extends Fragment {
 
                 searchFilter.setPage(first);
                 searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
+                searchFilter.setPromotion(false);
+                searchFilter.setDefaultSort(SortField.MOST_VIEWED);
 
                 loadingMore = false;
                 productsList.clear();
@@ -287,6 +301,22 @@ public class ProductFragment extends Fragment {
         // Sending a JSON or XML object i.e. "application/json" or "application/xml"
         requestHeaders.setContentType(MediaType.APPLICATION_JSON);
 
+        // Populate the Message object to serialize and headers in an
+        // HttpEntity object to use for the request
+        HttpEntity<SearchFilterVO> requestEntity = new HttpEntity<>(searchFilter, requestHeaders);
+
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        ResponseEntity<PagedResponse> products = restTemplate.postForEntity(
+                getResources().getString(R.string.products_json_url),
+                requestEntity, PagedResponse.class);
+
+        productsList.addAll(products.getBody().getPayload());
+
+        return productsList;
+    }
+
+    private void resetSearch() {
         searchFilter.setSearchText("*");
         searchFilter.setPage(first);
         searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
@@ -294,21 +324,7 @@ public class ProductFragment extends Fragment {
         searchFilter.setUserId(null);
         searchFilter.setBrand(null);
         searchFilter.setCity(null);
-
-        // Populate the Message object to serialize and headers in an
-        // HttpEntity object to use for the request
-        HttpEntity<SearchFilterVO> requestEntity = new HttpEntity<>(searchFilter, requestHeaders);
-
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-        ResponseEntity<PagedResponse> products = restTemplate.exchange(
-                getResources().getString(R.string.products_json_url),
-                HttpMethod.POST,
-                requestEntity, PagedResponse.class);
-
-        productsList.addAll(products.getBody().getPayload());
-
-        return productsList;
+        searchFilter.setCategory(null);
     }
 
     private class LoadMoreDataTask extends AsyncTask<Void, Void, List<ProductVO>> {

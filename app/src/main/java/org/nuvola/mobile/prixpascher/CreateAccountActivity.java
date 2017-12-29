@@ -26,14 +26,14 @@ import android.widget.EditText;
 import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.business.Validator;
 import org.nuvola.mobile.prixpascher.confs.constants;
-import com.gc.materialdesign.views.ButtonRectangle;
+import com.gc.materialdesign.views.ButtonFlat;
 
 @SuppressLint("InlinedApi")
 public class CreateAccountActivity extends ActionBarParentActivity {
 	String email, userName, fullName, address, phone, websites, pwd, cmfPwd;
 	EditText emailText, userNameText, fullNameText, addressText, phoneText,
 			pwdText, cmfPwdText;
-	ButtonRectangle submit;
+	ButtonFlat submit;
 	ProgressDialog dialog;
     Toolbar toolbar;
 
@@ -56,7 +56,7 @@ public class CreateAccountActivity extends ActionBarParentActivity {
 		pwdText = (EditText) findViewById(R.id.pwd);
 		cmfPwdText = (EditText) findViewById(R.id.cmf_pwd);
 
-		submit = (ButtonRectangle) findViewById(R.id.btn_submit);
+		submit = (ButtonFlat) findViewById(R.id.btn_submit);
 		submit.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -165,7 +165,7 @@ public class CreateAccountActivity extends ActionBarParentActivity {
 				reqEntity.addPart("user_name", new StringBody(userName));
 				reqEntity.addPart("full_name", new StringBody(fullName));
 				reqEntity.addPart("address", new StringBody(address));
-				reqEntity.addPart("phone", new StringBody(phone));
+				reqEntity.addPart("productFeed", new StringBody(productFeed));
 				reqEntity.addPart("pwd", new StringBody(pwd));*/
 				post.setEntity(reqEntity);
 				HttpResponse response = client.execute(post);

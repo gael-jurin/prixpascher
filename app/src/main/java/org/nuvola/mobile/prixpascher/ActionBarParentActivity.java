@@ -74,7 +74,7 @@ public class ActionBarParentActivity extends AppCompatActivity {
 			finish();
 			break;
 
-		case R.id.btn_action_upload:
+		/*case R.id.btn_action_upload:
 			if (!Utils.isConnectingToInternet(this)) {
 				showMsg(getResources().getString(R.string.open_network));
 				return false;
@@ -87,7 +87,7 @@ public class ActionBarParentActivity extends AppCompatActivity {
 				Intent intent = new Intent(this, AuthenticationActivity.class);
 				startActivity(intent);
 			}
-			break;
+			break; */
 
 		default:
 			break;

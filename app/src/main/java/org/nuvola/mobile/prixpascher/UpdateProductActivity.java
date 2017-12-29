@@ -1,20 +1,5 @@
 package org.nuvola.mobile.prixpascher;
 
-import java.io.File;
-import java.util.LinkedHashSet;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -22,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.Toolbar;
@@ -31,23 +15,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
-
-import org.nuvola.mobile.prixpascher.business.JSONFetchTask;
-import org.nuvola.mobile.prixpascher.business.UserSessionManager;
-import org.nuvola.mobile.prixpascher.business.Utils;
-import org.nuvola.mobile.prixpascher.confs.constants;
-import org.nuvola.mobile.prixpascher.models.Categories;
-import org.nuvola.mobile.prixpascher.models.County;
-import org.nuvola.mobile.prixpascher.models.Products;
-import org.nuvola.mobile.prixpascher.models.User;
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.gc.materialdesign.views.ButtonRectangle;
+import com.gc.materialdesign.views.ButtonFlat;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -56,7 +28,26 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import com.NYXDigital.NiceSupportMapFragment;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.nuvola.mobile.prixpascher.business.JSONFetchTask;
+import org.nuvola.mobile.prixpascher.business.UserSessionManager;
+import org.nuvola.mobile.prixpascher.business.Utils;
+import org.nuvola.mobile.prixpascher.confs.constants;
+import org.nuvola.mobile.prixpascher.models.Categories;
+import org.nuvola.mobile.prixpascher.models.County;
+import org.nuvola.mobile.prixpascher.models.Products;
+import org.nuvola.mobile.prixpascher.models.User;
+
+import java.io.File;
+import java.util.LinkedHashSet;
 
 public class UpdateProductActivity extends ActionBarParentActivity {
 	ImageView btnPickPhoto;
@@ -78,7 +69,7 @@ public class UpdateProductActivity extends ActionBarParentActivity {
 																		// new
 	// condition
 	String photoPath = null;
-	ButtonRectangle btnUpload;
+	ButtonFlat btnUpload;
 	ProgressDialog dialog;
 	File tmpFile;
 	CharSequence[] items;
@@ -409,7 +400,7 @@ public class UpdateProductActivity extends ActionBarParentActivity {
 		title = (EditText) findViewById(R.id.title);
 		price = (EditText) findViewById(R.id.price);
 		content = (EditText) findViewById(R.id.content);
-		btnUpload = (ButtonRectangle) findViewById(R.id.btn_submit);
+		btnUpload = (ButtonFlat) findViewById(R.id.btn_submit);
 		btnUpload.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -429,7 +420,7 @@ public class UpdateProductActivity extends ActionBarParentActivity {
 				handler_categories, KEY_CATEGORIES_RESPONSE).execute();
 
 		LinkedHashSet<Integer> disableItem = new LinkedHashSet<Integer>();
-		disableItem.add(R.id.btn_action_upload);
+		// disableItem.add(R.id.btn_action_upload);
 		setDisableItem(disableItem);
 		//setTitle(R.string.update_description);
 		getSupportActionBar().setHomeButtonEnabled(true);
@@ -485,39 +476,11 @@ public class UpdateProductActivity extends ActionBarParentActivity {
 		}
 	}
 
-	@SuppressWarnings("unused")
-	private Session.StatusCallback callback = new Session.StatusCallback() {
-		@Override
-		public void call(final Session session, final SessionState state,
-				final Exception exception) {
-			onSessionStateChange(session, state, exception);
-		}
-	};
-
-	@SuppressLint("NewApi")
-	private void onSessionStateChange(Session session, SessionState state,
-			Exception exception) {
-		if (state.isOpened()) {
-			UserSessionManager sessionManager = new UserSessionManager(this);
-			User user = sessionManager.getUserSession();
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-				Log.i(TAG + "user_id", user.getId() + "kasjd");
-				new Upload(user.getFbId(), user.getId())
-						.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-			} else {
-				new Upload(user.getFbId(), user.getId()).execute();
-			}
-			Log.i("FB AUT FRAGMENT", "Logged in...");
-		} else if (state.isClosed()) {
-			Log.i("FB AUT FRAGMENT", "Logged out...");
-		}
-	}
-
 	private class Upload extends AsyncTask<Void, Void, Boolean> {
 		String fb_id = null;
-		int user_id = 0;
+		String user_id = "0";
 
-		public Upload(String fb_id, int user_id) {
+		public Upload(String fb_id, String user_id) {
 			this.fb_id = fb_id;
 			this.user_id = user_id;
 		}

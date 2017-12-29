@@ -15,12 +15,12 @@
     <color name="selected_item">#f1f1f1</color>
     <color name="selected_item_title">#ff5500</color>
     <color name="orange_light">#ffffb108</color>
-    <color name="bg_splash">#ff09d288</color>
+    <color name="bg_splash">#096ad2</color>
     <color name="title_dialog">#000000</color>
     <color name="content">#807e7e</color>
     <color name="menu_drawer_pressed">#282542</color>
     <color name="bg_actionbar">#464464</color>
-    <color name="base_color">#ff09d288</color>
+    <color name="base_color">#096ad2</color>
     <color name="btn_pressed">#282542</color>
     <color name="violet">#464464</color>
     <color name="green">#028105</color>

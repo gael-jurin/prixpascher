@@ -41,7 +41,7 @@
                     android:gravity="right"
                     android:orientation="horizontal">
 
-                    <com.gc.materialdesign.views.ButtonRectangle
+                    <com.gc.materialdesign.views.ButtonFlat
                         android:id="@+id/btn_show_my_item"
                         style="@style/common_button"
                         android:layout_width="wrap_content"

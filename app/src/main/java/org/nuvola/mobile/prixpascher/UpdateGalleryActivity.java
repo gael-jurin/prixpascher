@@ -35,12 +35,12 @@ import org.nuvola.mobile.prixpascher.adapters.UpdateGalleryAdapter;
 import org.nuvola.mobile.prixpascher.business.JSONFetchTask;
 import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.confs.constants;
-import com.gc.materialdesign.views.ButtonRectangle;
+import com.gc.materialdesign.views.ButtonFlat;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
 public class UpdateGalleryActivity extends ActionBarParentActivity {
-	ButtonRectangle btnImagePicker, btnSubmit;
+	ButtonFlat btnImagePicker, btnSubmit;
 	GridView gallery;
 	int product_id;
 	int columnWidth;
@@ -152,8 +152,8 @@ public class UpdateGalleryActivity extends ActionBarParentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.update_gallery_layout);
 		gallery = (GridView) findViewById(R.id.gallery);
-		btnImagePicker = (ButtonRectangle) findViewById(R.id.btnPicker);
-		btnSubmit = (ButtonRectangle) findViewById(R.id.btnSubmit);
+		btnImagePicker = (ButtonFlat) findViewById(R.id.btnPicker);
+		btnSubmit = (ButtonFlat) findViewById(R.id.btnSubmit);
 		product_id = getIntent().getExtras().getInt(constants.COMMON_KEY);
 		btnImagePicker.setOnClickListener(new View.OnClickListener() {
 

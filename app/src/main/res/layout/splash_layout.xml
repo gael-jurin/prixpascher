@@ -45,4 +45,11 @@
         android:text="@string/copyright"
         android:textColor="#FFFFFF" />
 
+    <TextView android:text="@string/registering_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/informationTextView"
+        android:textColor="#096ad2"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
 </RelativeLayout>

@@ -42,14 +42,14 @@ import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.business.UserSessionManager;
 import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.models.User;
-import com.gc.materialdesign.views.ButtonRectangle;
+import com.gc.materialdesign.views.ButtonFlat;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
 @SuppressLint({"NewApi", "ShowToast"})
 public class UpdateProfileActivity extends ActionBarParentActivity {
     EditText website, address, phone;
-    ButtonRectangle btnUpdate;
+    ButtonFlat btnUpdate;
     User user;
     public static final String TAG = "EditProfileActivity";
     ImageView avt;
@@ -69,7 +69,7 @@ public class UpdateProfileActivity extends ActionBarParentActivity {
         toolbar.setTitle(R.string.update_profile_label);
 
         setSupportActionBar(toolbar);
-        btnUpdate = (ButtonRectangle) findViewById(R.id.btn_update);
+        btnUpdate = (ButtonFlat) findViewById(R.id.btn_update);
 
         website = (EditText) findViewById(R.id.websites);
         address = (EditText) findViewById(R.id.address);
@@ -314,7 +314,7 @@ public class UpdateProfileActivity extends ActionBarParentActivity {
                 // reqEntity.addPart("fb_id", new StringBody(user.getFbId()));
                 // reqEntity.addPart("website", new StringBody(websiteText));
                 // reqEntity.addPart("address", new StringBody(addressText));
-                // reqEntity.addPart("phone", new StringBody(phoneText));
+                // reqEntity.addPart("productFeed", new StringBody(phoneText));
                 if (avtPath != null && !avtPath.equalsIgnoreCase("")) {
                     // reqEntity.addPart("avt", new FileBody(new File(avtPath)));
                 }
@@ -337,7 +337,7 @@ public class UpdateProfileActivity extends ActionBarParentActivity {
                                         User user = Utils.parseUser(obj);
                                         UserSessionManager userSession = new UserSessionManager(
                                                 UpdateProfileActivity.this);
-                                        userSession.storeUserSession(user);
+                                        // userSession.storeUserSession(user);
                                         Log.i(TAG, user.getAvt() + "ksjd");
                                     }
                                 } catch (Exception e) {

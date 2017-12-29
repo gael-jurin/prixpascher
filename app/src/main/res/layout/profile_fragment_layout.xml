@@ -33,7 +33,7 @@
                 android:gravity="right"
                 android:orientation="horizontal">
 
-                <com.gc.materialdesign.views.ButtonRectangle
+                <com.gc.materialdesign.views.ButtonFlat
                     android:id="@+id/btn_update"
                     style="@style/common_button"
                     android:layout_width="wrap_content"
@@ -41,7 +41,7 @@
                     android:text="@string/edit_label" />
 
 
-                <com.gc.materialdesign.views.ButtonRectangle
+                <com.gc.materialdesign.views.ButtonFlat
                     android:id="@+id/btn_logout"
                     style="@style/common_button"
                     android:layout_width="wrap_content"
@@ -187,7 +187,7 @@
                     app:met_primaryColor="@color/base_color" />
             </LinearLayout>
 
-            <com.gc.materialdesign.views.ButtonRectangle
+            <com.gc.materialdesign.views.ButtonFlat
                 android:id="@+id/btn_update_products"
                 style="@style/common_button"
                 android:layout_width="match_parent"
@@ -197,7 +197,7 @@
                 android:text="@string/update_products"
                 />
 
-            <com.gc.materialdesign.views.ButtonRectangle
+            <com.gc.materialdesign.views.ButtonFlat
                 android:id="@+id/btn_change_pass"
                 style="@style/common_button"
                 android:layout_width="match_parent"
@@ -207,7 +207,7 @@
                 android:text="@string/change_pass"
                 android:textColor="@color/white" />
 
-            <com.gc.materialdesign.views.ButtonRectangle
+            <com.gc.materialdesign.views.ButtonFlat
                 android:id="@+id/btn_show_my_products"
                 style="@style/common_button"
                 android:layout_width="match_parent"

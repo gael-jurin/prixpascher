@@ -25,7 +25,7 @@ import org.nuvola.mobile.prixpascher.business.JSONFetchTask;
 import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.models.Categories;
 import org.nuvola.mobile.prixpascher.models.County;
-import com.gc.materialdesign.views.ButtonRectangle;
+import com.gc.materialdesign.views.ButtonFlat;
 
 @SuppressLint("NewApi")
 public class FilterFragment extends Fragment {
@@ -268,7 +268,7 @@ public class FilterFragment extends Fragment {
 
 		title = (EditText) view.findViewById(R.id.title);
 
-		ButtonRectangle btnFilter = (ButtonRectangle) view.findViewById(R.id.btn_filter);
+		ButtonFlat btnFilter = (ButtonFlat) view.findViewById(R.id.btn_filter);
 		btnFilter.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {

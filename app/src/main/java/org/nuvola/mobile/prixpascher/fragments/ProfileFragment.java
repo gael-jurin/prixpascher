@@ -42,13 +42,13 @@ import org.nuvola.mobile.prixpascher.business.UserSessionManager;
 import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.interfaces.ProfileComunicator;
 import org.nuvola.mobile.prixpascher.models.User;
-import com.gc.materialdesign.views.ButtonRectangle;
+import com.gc.materialdesign.views.ButtonFlat;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 
 public class ProfileFragment extends Fragment {
 
-    ButtonRectangle btnEdit,btnLogout, btnShowMyProducts,
+    ButtonFlat btnEdit,btnLogout, btnShowMyProducts,
             btnChangePass, btnUpdateProduct;
 	EditText displayName, email, website, address, phone, userName;
 	ImageView avt;
@@ -293,8 +293,7 @@ public class ProfileFragment extends Fragment {
 		protected Boolean doInBackground(Void... params) {
 			// TODO Auto-generated method stub
 			String handleInserUrl = getResources().getString(
-					R.string.products_json_url)
-					+ "update";
+					R.string.users_json_url);
 			try {
 				HttpClient client = new DefaultHttpClient();
 				HttpPost post = new HttpPost(handleInserUrl);
@@ -333,11 +332,11 @@ public class ProfileFragment extends Fragment {
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		View view = inflater.inflate(R.layout.profile_fragment_layout, null);
-		btnLogout = (ButtonRectangle) view.findViewById(R.id.btn_logout);
-		btnEdit = (ButtonRectangle) view.findViewById(R.id.btn_update);
+		btnLogout = (ButtonFlat) view.findViewById(R.id.btn_logout);
+		btnEdit = (ButtonFlat) view.findViewById(R.id.btn_update);
 		// btnShowMarkProducts = (Button) view
 		// .findViewById(R.id.btn_show_mark_products);
-		btnShowMyProducts = (ButtonRectangle) view
+		btnShowMyProducts = (ButtonFlat) view
 				.findViewById(R.id.btn_show_my_products);
 		displayName = (EditText) view.findViewById(R.id.display_name);
 		email = (EditText) view.findViewById(R.id.email);
@@ -346,8 +345,8 @@ public class ProfileFragment extends Fragment {
 		website = (EditText) view.findViewById(R.id.websites);
 		avt = (ImageView) view.findViewById(R.id.avt);
 		userName = (EditText) view.findViewById(R.id.user_name);
-		btnChangePass = (ButtonRectangle) view.findViewById(R.id.btn_change_pass);
-		btnUpdateProduct = (ButtonRectangle) view.findViewById(R.id.btn_update_products);
+		btnChangePass = (ButtonFlat) view.findViewById(R.id.btn_change_pass);
+		btnUpdateProduct = (ButtonFlat) view.findViewById(R.id.btn_update_products);
 		return view;
 	}
 }

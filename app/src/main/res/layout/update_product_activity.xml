@@ -281,7 +281,7 @@
                 android:singleLine="true" />
 
 
-            <com.gc.materialdesign.views.ButtonRectangle
+            <com.gc.materialdesign.views.ButtonFlat
                 android:id="@+id/btn_submit"
                 style="@style/common_button"
                 android:layout_width="wrap_content"

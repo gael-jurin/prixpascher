@@ -4,19 +4,20 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
+import org.nuvola.mobile.prixpascher.dto.UserVO;
 import org.nuvola.mobile.prixpascher.models.User;
 
 public class UserSessionManager {
 	public static final String TAG_ID = "id";
 	public static final String TAG_FB_ID = "fb_id";
-	public static final String TAG_FULL_NAME = "full_name";
-	public static final String TAG_USER_NAME = "user_name";
+	public static final String TAG_FULL_NAME = "name";
+	public static final String TAG_USER_NAME = "short_name";
 	public static final String TAG_EMAIL = "email";
 	public static final String TAG_PHONE = "phone";
 	public static final String TAG_ADDRESS = "address";
-	public static final String TAG_WEBSITE = "websites";
+	public static final String TAG_WEBSITE = "website";
 	public static final String TAG_LOGIN = "login";
-	public static final String TAG_AVT = "avt";
+	public static final String TAG_AVT = "url";
 	public static final int IS_LOGIN = 1;
 	public static final int IS_LOGOUT = 0;
 	public static final int PRIVATE_MODE = 0;
@@ -35,18 +36,18 @@ public class UserSessionManager {
 		editor = sharePre.edit();
 	}
 
-	public void storeUserSession(User user) {
+	public void storeUserSession(UserVO user) {
 		SharedPreferences sharePre = context.getSharedPreferences(
 				SHARED_PREF_NAME, PRIVATE_MODE);
 		Editor editor = sharePre.edit();
-		editor.putInt(TAG_ID, user.getId());
-		editor.putString(TAG_FB_ID, user.getFbId());
-		editor.putString(TAG_FULL_NAME, user.getFullName());
+		editor.putString(TAG_ID, user.getId());
+		// editor.putString(TAG_FB_ID, user.getProviderUserId());
+		editor.putString(TAG_FULL_NAME, user.getUserName());
 		editor.putString(TAG_EMAIL, user.getEmail());
-		editor.putString(TAG_PHONE, user.getPhone());
-		editor.putString(TAG_ADDRESS, user.getAddress());
-		editor.putString(TAG_WEBSITE, user.getWebsite());
-		editor.putString(TAG_AVT, user.getAvt());
+		editor.putString(TAG_PHONE, "");
+		editor.putString(TAG_ADDRESS, "");
+		editor.putString(TAG_WEBSITE, "");
+		editor.putString(TAG_AVT, user.getPhoto());
 		editor.putString(TAG_USER_NAME, user.getUserName());
 		editor.putInt(TAG_LOGIN, IS_LOGIN);
 		editor.commit();
@@ -69,8 +70,8 @@ public class UserSessionManager {
 			int isLogIn = sharePre.getInt(TAG_LOGIN, 0);
 			if (isLogIn == IS_LOGIN) {
 				User user = new User();
-				user.setId(sharePre.getInt(TAG_ID, 0));
-				user.setFbId(sharePre.getString(TAG_FB_ID, null));
+				user.setId(sharePre.getString(TAG_ID, "0"));
+				// user.setFbId(sharePre.getString(TAG_FB_ID, null));
 				user.setEmail(sharePre.getString(TAG_EMAIL, null));
 				user.setAddress(sharePre.getString(TAG_ADDRESS, null));
 				user.setPhone(sharePre.getString(TAG_PHONE, null));

@@ -11,19 +11,23 @@ import java.util.List;
 public class ProductVO implements Serializable {
     private String id;
     private ShopType shopType;
+    private String shopInfoBannerScript;
     private String age;
     private String shopName;
     private String title;
     private Double price;
     private String link;
+    private String affiliatedLink;
     private String image;
     private Category category;
+    private String categoryTitle;
     private Category subCategory;
     private String categoryName;
     private String productCategory;
     private ProductSource source;
     private Boolean promoted;
     private Long views;
+    private Long quantity;
     private Date viewed;
     private Date trackingDate;
     private String detail;
@@ -165,6 +169,38 @@ public class ProductVO implements Serializable {
 
     public void setSubCategory(Category subCategory) {
         this.subCategory = subCategory;
+    }
+
+    public String getShopInfoBannerScript() {
+        return shopInfoBannerScript;
+    }
+
+    public void setShopInfoBannerScript(String shopInfoBannerScript) {
+        this.shopInfoBannerScript = shopInfoBannerScript;
+    }
+
+    public String getAffiliatedLink() {
+        return affiliatedLink;
+    }
+
+    public void setAffiliatedLink(String affiliatedLink) {
+        this.affiliatedLink = affiliatedLink;
+    }
+
+    public String getCategoryTitle() {
+        return categoryTitle;
+    }
+
+    public void setCategoryTitle(String categoryTitle) {
+        this.categoryTitle = categoryTitle;
+    }
+
+    public Long getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Long quantity) {
+        this.quantity = quantity;
     }
 
     public String getShopName() {

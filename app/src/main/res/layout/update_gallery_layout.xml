@@ -34,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.gc.materialdesign.views.ButtonRectangle
+        <com.gc.materialdesign.views.ButtonFlat
             android:id="@+id/btnPicker"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -44,7 +44,7 @@
             android:text="+"
             android:layout_weight="1" />
 
-        <com.gc.materialdesign.views.ButtonRectangle
+        <com.gc.materialdesign.views.ButtonFlat
             android:id="@+id/btnSubmit"
             android:layout_height="50dp"
             android:layout_width="match_parent"

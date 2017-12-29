@@ -17,7 +17,7 @@ public class ProductsActivity extends ActionBarParentActivity {
         setSupportActionBar(toolbar);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            ProductFragment fragment = ProductFragment.newInstance();
+            ProductFragment fragment = ProductFragment.newInstance(toolbar);
             fragment.setArguments(bundle);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.container, fragment).commit();

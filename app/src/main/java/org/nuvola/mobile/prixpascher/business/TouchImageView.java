@@ -581,7 +581,7 @@ public class TouchImageView extends ImageView {
 	}
 
 	/**
-	 * Gesture Listener detects a single click or long click and passes that on
+	 * Gesture MessageListener detects a single click or long click and passes that on
 	 * to the view's listener.
 	 * 
 	 * @author Ortiz

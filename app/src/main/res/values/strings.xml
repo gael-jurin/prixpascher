@@ -1,6 +1,8 @@
 <resources>
 
     <string name="facebook_app_id">1415384325424737</string>
+    <string name="twitter_app_id">4wxTqQnKOp8FYVfCJn9xHAXeD</string>
+    <string name="twitter_app_secret">3bmVARzU0pw5TUwk6C1is3G7EcxJl68yeQrluPfUl1xpld9ZLp</string>
     <string name="app_name">PrixPasCher</string>
     <string name="download_label">Download</string>
     <string name="remove_label">Remove</string>
@@ -8,11 +10,13 @@
     <string name="un_bookmark_label">Unbookmark</string>
     <string name="channel_label">Channel</string>
     <string name="feed_label">Feed</string>
-    <string name="share_label">Share</string>
+    <string name="share_label">Partager</string>
     <string name="content_descripton_logo_splash">prixpascher</string>
     <string name="folder_save_photo">prixpascher</string>
-    <string name="send_enquiry">Send Enquiry</string>
-    <string name="your_message">Your message</string>
+    <string name="send_enquiry">Alerte mail / prix</string>
+    <string name="your_message">Votre message</string>
+    <string name="your_email">Votre email</string>
+    <string name="your_price">Prix cible</string>
     <string name="this_user_not_share_phone_number">This users not share phone number</string>
     <string name="cannot_rating_for_yourself">You can not rating for your self</string>
     <string name="rate_this_product">Rate this product</string>
@@ -37,8 +41,9 @@
 
 
     <!-- TEXT LABEL -->
-    <string name="shop_label">Magasin</string>
-    <string name="categories_label">Categories</string>
+    <string name="shop_label">Boutiques</string>
+    <string name="categories_label">Catégories</string>
+    <string name="category_label">Catégorie</string>
     <string name="city_label">Ville</string>
     <string name="price_label">Prix</string>
     <string name="title_label">Titre</string>
@@ -50,15 +55,17 @@
     <string name="alert">Alert</string>
     <string name="aim_label">Purpose</string>
     <string name="confirm_take_photo">Please take an photo ?</string>
-    <string name="sell_label">Meilleurs</string>
+    <string name="best_label">Best</string>
     <string name="buy_label">Promos</string>
+    <string name="low_price_label">Prix en baisse !</string>
+    <string name="promotion_label">En Promo</string>
     <string name="all_label">Tout</string>
-    <string name="tap_to_change_avt">Tap to change your avatar</string>
+    <string name="tap_to_change_avt">Changer votre avatar</string>
     <string name="follow_label">Suivre</string>
     <string name="product">Produits</string>
     <string name="similar_products">Produits Similaires</string>
     <string name="bookmarked_product">Mark Products</string>
-    <string name="logout">Deconnexion</string>
+    <string name="logout">Déconnexion</string>
     <string name="close_label">Fermer</string>
     <string name="filter_label">Filtre</string>
     <string name="home_label">Accueil</string>
@@ -67,6 +74,7 @@
     <string name="choose_your_user_name">Choose your username</string>
     <string name="skip_label">Skip</string>
     <string name="addToCart">Acheter IcI</string>
+    <string name="alert_mail">Je souhaite recevoir une alerte email sur toute baisse de prix de ce produit</string>
     <!-- END -->
 
 
@@ -79,6 +87,7 @@
     <string name="update_label">Update</string>
     <string name="edit_label">Edit</string>
     <string name="comment_label">Avis</string>
+    <string name="send">Envoyer</string>
     <string name="search_hint">Search</string>
     <string name="user_name">User Name</string>
     <string name="submit">Submit</string>
@@ -110,8 +119,8 @@
         <item>Accueil</item>
         <item>Categories</item>
         <item>Magasin</item>
-        <item>Ville</item>
-        <item>Filtre</item>
+        <!--<item>Ville</item>
+        <item>Filtre</item>-->
         <item>Fan Page</item>
         <item>A Propos</item>
     </string-array>
@@ -125,15 +134,16 @@
     </string-array>
     <!-- END -->
 
-    <string name="domain_url">http://www.prixpascher.ma/</string>
+    <string name="domain_url">https://www.prixpascher.ma/</string>
     <string name="categories_json_url">http://www.prixpascher.ma/api/categories_api/</string>
     <string name="county_json_url">http://www.prixpascher.ma/api/county_api/</string>
     <string name="cities_json_url">http://www.prixpascher.ma/api/cities_api/</string>
-    <string name="products_json_url">https://www.prixpascher.ma/api/products/products/list</string>
-    <string name="products_root_json_url">https://www.prixpascher.ma/api/products/</string>
     <string name="images_json_url">http://www.prixpascher.ma/api/images_api/</string>
-    <string name="users_json_url">https://www.prixpascher.ma/api/users_api/</string>
-    
+    <string name="products_json_url">https://www.prixpascher.ma/api/products/products/list</string>
+    <string name="product_root_json_url">https://www.prixpascher.ma/article/api/products/</string>
+    <string name="users_json_url">http://10.0.2.2:9090/api/user/</string>
+    <string name="merchant_json_url">http://10.0.2.2:9090/api/merchant/</string>
+    <string name="alert_json_url">https://www.prixpascher.ma/api/products/alert</string>
     
     <string name="admob_publisher_id">ca-app-pub-1074284300135896/6213979568</string>
     <string name="admob_test_device_ids">TEST_EMULATOR</string>
@@ -168,6 +178,7 @@
     <string name="negotiate_label">negotiate</string>
     <string name="product_label">Products</string>
     <string name="detail_label">Detail</string>
+    <string name="compare_label">Prix - En ligne</string>
     <string name="update_products">Renew my products</string>
     <string name="update_products_msg">One day, your products will renew once and go to top</string>
     <string name="verified_msg">One verified code have been send to your email, please check it and fill in the next form</string>
@@ -197,7 +208,7 @@
     <!--update 10-5-2015-->
     <string name="condition_msg">Condition</string>
     <string name="contact">Contact</string>
-    <string name="infomation">infomation</string>
+    <string name="infomation">information</string>
     <string name="gallery">Gallery</string>
     <string-array name="condition_name">
         <item>New</item>
@@ -217,4 +228,5 @@
     </string-array>
     <string name="location">Location</string>
     <string name="google_map_api">AIzaSyAyAY85G59yDZ6WyDyBPfQ7_s9Ar4G0mD4</string>
+    <string name="registering_message">performing autoregistration...</string>
 </resources>
