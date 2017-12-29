@@ -6,30 +6,30 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
-import com.facebook.GraphRequestAsyncTask;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.gc.materialdesign.views.ButtonFlat;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.twitter.sdk.android.core.Callback;
-import com.twitter.sdk.android.core.DefaultLogger;
 import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.Twitter;
-import com.twitter.sdk.android.core.TwitterAuthConfig;
-import com.twitter.sdk.android.core.TwitterConfig;
+import com.twitter.sdk.android.core.TwitterAuthToken;
 import com.twitter.sdk.android.core.TwitterCore;
 import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
@@ -43,13 +43,9 @@ import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.dto.UserVO;
 import org.nuvola.mobile.prixpascher.models.TypeAnnonceur;
 import org.nuvola.mobile.prixpascher.models.User;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +53,7 @@ import java.util.TimeZone;
 
 import io.cloudboost.CloudException;
 import io.cloudboost.CloudNotification;
+import io.cloudboost.CloudNotificationCallback;
 import io.cloudboost.CloudObject;
 import io.cloudboost.CloudObjectCallback;
 import io.cloudboost.CloudPush;
@@ -118,16 +115,31 @@ public class AuthenticationFragment extends Fragment {
                 });
 		btnLogin = (ButtonFlat) view.findViewById(R.id.btn_login);
 
-        btnTwitterLogin = (TwitterLoginButton) view.findViewById(R.id.btnTwitterLogin);
+        // isTwitterInstalled();
+
+        btnTwitterLogin = view.findViewById(R.id.btnTwitterLogin);
         btnTwitterLogin.setCallback(new Callback<TwitterSession>() {
             @Override
             public void success(Result<TwitterSession> result) {
-                // Do something with result, which provides a TwitterSession for making API calls
+                Log.i(TAG, "logged In with twitter");
+
+                TwitterSession session = TwitterCore.getInstance().getSessionManager().getActiveSession();
+                if (session != null) {
+                    TwitterAuthToken authToken = session.getAuthToken();
+
+                    final UserVO userVO = new UserVO();
+                    userVO.setId(String.valueOf(session.getUserId()));
+                    userVO.setProviderUserId(String.valueOf(session.getUserId()));
+                    userVO.setUserName(session.getUserName());
+                    userVO.setAccessToken(authToken.token);
+
+                    new TwitterUserRegister(userVO, authToken).start();
+                }
             }
 
             @Override
             public void failure(TwitterException exception) {
-                // Do something on failure
+                Log.e(TAG, exception.getMessage());
             }
         });
 
@@ -158,23 +170,15 @@ public class AuthenticationFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-        TwitterConfig config = new TwitterConfig.Builder(this.getContext())
-                .logger(new DefaultLogger(Log.DEBUG))
-                .twitterAuthConfig(new TwitterAuthConfig("4wxTqQnKOp8FYVfCJn9xHAXeD",
-						"3bmVARzU0pw5TUwk6C1is3G7EcxJl68yeQrluPfUl1xpld9ZLp"))
-                .debug(true)
-                .build();
-        Twitter.initialize(config);
 	}
 
-    private void insertUser(AccessToken accessToken) {
+    private void insertUser(final AccessToken accessToken) {
         GraphRequest request = GraphRequest.newMeRequest(
                 accessToken,
                 new GraphRequest.GraphJSONObjectCallback() {
                     @Override
                     public void onCompleted(JSONObject user, GraphResponse response) {
-                        new facebookUserRegister(user).start();
+                        new FacebookUserRegister(user, accessToken).start();
                     }
                 });
         Bundle parameters = new Bundle();
@@ -183,15 +187,17 @@ public class AuthenticationFragment extends Fragment {
         request.executeAsync();
 	}
 
-	private class facebookUserRegister extends Thread {
+	private class FacebookUserRegister extends Thread {
 		JSONObject user;
+        AccessToken accessToken;
 
-		public facebookUserRegister(JSONObject user) {
+		public FacebookUserRegister(JSONObject user, AccessToken accessToken) {
 			// TODO Auto-generated constructor stub
 			this.user = user;
+            this.accessToken = accessToken;
 		}
 
-		@Override
+        @Override
 		public void run() {
 			super.run();
 			getActivity().runOnUiThread(new Runnable() {
@@ -203,54 +209,79 @@ public class AuthenticationFragment extends Fragment {
 
 			User userInfos = Utils.parseUser(this.user);
             final UserVO userVO = new UserVO();
-            userVO.setId(String.valueOf(userInfos.getId()));
-            userVO.setEmail(userInfos.getEmail());
-
-			try {
-                HttpHeaders requestHeaders = new HttpHeaders();
-                requestHeaders.setContentType(MediaType.APPLICATION_JSON);
-                org.springframework.http.HttpEntity<UserVO> requestEntity =
-                        new org.springframework.http.HttpEntity<>(userVO, requestHeaders);
-
-                RestTemplate restTemplate = new RestTemplate();
-                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-                ResponseEntity<UserVO> mobileUser = restTemplate.exchange(
-                        getResources().getString(R.string.users_json_url),
-                        HttpMethod.POST,
-                        requestEntity, UserVO.class);
-
-				if (mobileUser.getStatusCode().equals(HttpStatus.OK)) {
-					Log.i(TAG, mobileUser.getBody().getUserName() + "got connected");
-                    try {
-                        dialogPrg.dismiss();
-                        UserSessionManager userSession = new UserSessionManager(
-                                getActivity());
-                        userSession.storeUserSession(mobileUser.getBody());
-                        registerForNotification(mobileUser.getBody());
-                        Intent intent = new Intent(
-                                getActivity(),
-                                HomeActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                    } catch (Exception e1) {
-                        e1.printStackTrace();
-                        showDialog(getActivity().getResources()
-                                .getString(R.string.login_failed));
-                    }
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+            String email = userInfos.getEmail();
+            getRegisteredUser(userVO, email, accessToken);
 		}
-	}
+    }
+
+    private class TwitterUserRegister extends Thread {
+        UserVO user;
+        TwitterAuthToken accessToken;
+
+        public TwitterUserRegister(UserVO user, TwitterAuthToken accessToken) {
+            // TODO Auto-generated constructor stub
+            this.user = user;
+            this.accessToken = accessToken;
+        }
+
+        @Override
+        public void run() {
+            super.run();
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    dialogPrg.show();
+                }
+            });
+
+            getRegisteredUser(user, "", null);
+        }
+    }
+
+    private void getRegisteredUser(UserVO userVO, String email, AccessToken accessToken) {
+        if (accessToken != null) {
+            userVO.setId(accessToken.getUserId());
+            userVO.setProviderUserId(accessToken.getUserId());
+            userVO.setEmail(email);
+        }
+
+        try {
+            org.springframework.http.HttpEntity<UserVO> requestEntity =
+                    new org.springframework.http.HttpEntity<>(userVO);
+
+            ResponseEntity<UserVO> mobileUser = Utils.MyRestemplate.getInstance().exchange(
+                    getResources().getString(R.string.users_json_url) + userVO.getProviderUserId(),
+                    HttpMethod.GET,
+                    null, UserVO.class);
+
+            if (mobileUser.getStatusCode().equals(HttpStatus.OK)) {
+                Log.i(TAG, mobileUser.getBody().getUserName() + "got connected");
+                try {
+                    dialogPrg.dismiss();
+                    UserSessionManager userSession = new UserSessionManager(
+                            getActivity());
+                    userSession.storeUserSession(mobileUser.getBody());
+                    registerForNotification(mobileUser.getBody());
+                    Intent intent = new Intent(
+                            getActivity(),
+                            HomeActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                    showDialog(getActivity().getResources()
+                            .getString(R.string.login_failed));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-
-        TwitterSession session = TwitterCore.getInstance().getSessionManager().getActiveSession();
-        // TwitterAuthToken authToken = session.getAuthToken();
 
         callbackManager.onActivityResult(requestCode, resultCode, data);
 	}
@@ -277,31 +308,67 @@ public class AuthenticationFragment extends Fragment {
     private void registerForNotification(UserVO mobileUser) {
         String[] channels = {"global"};
         String[] channels2 = {"global", "affiliates"};
+
         if (mobileUser.getPrimaryShopClasse() != null && mobileUser.getTypeAnnonceur().equals(TypeAnnonceur.PROFESSIONAL)) {
             channels = channels2;
-        }
-        try {
-            new CloudPush().addDevice(mobileUser.getProviderUserId(), TimeZone.getDefault().getDisplayName(), channels, "prixpascher",
-                    new CloudObjectCallback() {
-                        @Override
-                        public void done(CloudObject x, CloudException t) throws CloudException {
-                        }
-                    });
-        } catch (CloudException e) {
-            Log.e(TAG, e.getMessage());
+            String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+            try {
+                new CloudPush().addDevice(refreshedToken, TimeZone.getDefault().getDisplayName(),
+                        channels, "prixpascher",
+                        new CloudObjectCallback() {
+                            @Override
+                            public void done(CloudObject x, CloudException t) throws CloudException {
+                                subscribeForNotification();
+                            }
+                        });
+            } catch (CloudException e) {
+                Log.e(TAG, e.getMessage());
+            }
+        } else {
+            unsubscribeForNotification();
         }
     }
 
     private void unsubscribeForNotification() {
         try {
+            String refreshedToken = FirebaseInstanceId.getInstance().getToken();
             CloudNotification.off("affiliates", new CloudStringCallback() {
                 @Override
                 public void done(String x, CloudException e) throws CloudException {
+                    Log.i(TAG, "Unregistered as affiliated");
                 }
             });
         } catch (CloudException e) {
             Log.e(TAG, e.getMessage());
         }
+    }
+
+    private void subscribeForNotification() {
+        try {
+            CloudNotification.on("affiliates", new CloudNotificationCallback() {
+                @Override
+                public void done(Object x, CloudException t) throws CloudException {
+                    Log.i(TAG, "Registered as affiliated");
+                }
+            });
+        } catch (CloudException e) {
+            Log.e(TAG, e.getMessage());
+        }
+    }
+
+    public boolean isTwitterInstalled() {
+        boolean twitterInstalled = false;
+        try {
+            PackageInfo packageInfo = getActivity().getPackageManager().getPackageInfo("com.twitter.android", 0);
+            String getPackageName = packageInfo.toString();
+            if (getPackageName.equals("com.twitter.android")) {
+                Toast.makeText(getActivity(), "Twitter App is installed on device!", Toast.LENGTH_LONG).show();
+                twitterInstalled = true;
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            Toast.makeText(getActivity(), "Twitter App not found on device!", Toast.LENGTH_LONG).show();
+        }
+        return twitterInstalled;
     }
 
     /*private class facebookUserCheck extends Thread {
@@ -389,7 +456,7 @@ public class AuthenticationFragment extends Fragment {
 														userName = message
 																.getText()
 																.toString();
-														new facebookUserRegister(
+														new FacebookUserRegister(
 																user).start();
 													}
 												});

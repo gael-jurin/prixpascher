@@ -1,11 +1,6 @@
 package org.nuvola.mobile.prixpascher.fragments;
 
-import java.util.ArrayList;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,27 +14,29 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.nuvola.mobile.prixpascher.ProductsActivity;
 import org.nuvola.mobile.prixpascher.R;
 import org.nuvola.mobile.prixpascher.adapters.CountyAdapter;
-import org.nuvola.mobile.prixpascher.business.JSONFetchTask;
+import org.nuvola.mobile.prixpascher.tasks.JSONFetchTask;
 import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.models.Categories;
 import org.nuvola.mobile.prixpascher.models.County;
+
+import java.util.ArrayList;
 
 public class CitiesFragment extends Fragment {
 	ArrayList<County> provinces_list = new ArrayList<County>();
 	ListView list;
 	CountyAdapter adapter;
-	String TAG = "CategoriesFragment";
+	String TAG = "CitiesFragment";
 	ProgressBar loadMorePrg;
 	LayoutInflater inflater;
 
 	@Override
-	public void onAttach(Activity activity) {
-		// TODO Auto-generated method stub
-		super.onAttach(activity);
-		inflater = (LayoutInflater) activity.getLayoutInflater();
+	public void onAttach(Context context) {
+		super.onAttach(context);
 	}
 
 	public static final CitiesFragment newInstance() {
@@ -51,7 +48,7 @@ public class CitiesFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
+
 		View view = inflater.inflate(R.layout.listview_container_layout, null);
 		JSONFetchTask jsonFetchTask = new JSONFetchTask(getResources()
 				.getString(R.string.cities_json_url) + "cities", handler);

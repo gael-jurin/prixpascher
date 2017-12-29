@@ -14,7 +14,7 @@ import com.facebook.share.model.ShareOpenGraphContent;
 import com.facebook.share.model.ShareOpenGraphObject;
 import com.facebook.share.widget.ShareDialog;
 
-import org.nuvola.mobile.prixpascher.business.ProductFetchTask;
+import org.nuvola.mobile.prixpascher.tasks.ProductFetchTask;
 import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.dto.ProductVO;
 

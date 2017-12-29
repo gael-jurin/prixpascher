@@ -1,7 +1,5 @@
 package org.nuvola.mobile.prixpascher.adapters;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
@@ -9,11 +7,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
-
 import org.nuvola.mobile.prixpascher.R;
 import org.nuvola.mobile.prixpascher.UpdateImagePreviewActivity;
+import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.confs.constants;
-import com.koushikdutta.ion.Ion;
+
+import java.util.ArrayList;
 
 public class UpdateGalleryAdapter extends BaseAdapter {
 
@@ -57,9 +56,10 @@ public class UpdateGalleryAdapter extends BaseAdapter {
 			imageView = (ImageView) convertView;
 		}
 
-		Ion.with(context, filePaths.get(position)).withBitmap()
+		Utils.MyPicasso.with(context)
+				.load(filePaths.get(position))
 				.resize(256, 256).centerCrop().placeholder(R.drawable.no_photo)
-				.error(R.drawable.no_photo).intoImageView(imageView);
+				.error(R.drawable.no_photo).into(imageView);
 
 		imageView.setOnClickListener(new View.OnClickListener() {
 			@Override

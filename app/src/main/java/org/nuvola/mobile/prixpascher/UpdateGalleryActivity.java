@@ -1,26 +1,10 @@
 package org.nuvola.mobile.prixpascher;
 
-import java.io.File;
-import java.util.ArrayList;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,14 +14,25 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.GridView;
 
+import com.gc.materialdesign.views.ButtonFlat;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.nuvola.mobile.prixpascher.adapters.UpdateGalleryAdapter;
-import org.nuvola.mobile.prixpascher.business.JSONFetchTask;
 import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.confs.constants;
-import com.gc.materialdesign.views.ButtonFlat;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
+import org.nuvola.mobile.prixpascher.tasks.JSONFetchTask;
+
+import java.io.File;
+import java.util.ArrayList;
 
 public class UpdateGalleryActivity extends ActionBarParentActivity {
 	ButtonFlat btnImagePicker, btnSubmit;
@@ -128,15 +123,16 @@ public class UpdateGalleryActivity extends ActionBarParentActivity {
 			switch (requestCode) {
 			case SELECT_PICTURE:
 				String selectAbpath = getPath(data.getData());
-				Ion.with(getApplicationContext(), new File(selectAbpath))
-						.withBitmap().resize(200, 200).centerCrop().asBitmap()
-						.setCallback(new FutureCallback<Bitmap>() {
+				Utils.MyPicasso.with(getApplicationContext())
+						.load(new File(selectAbpath))
+						.resize(200, 200).centerCrop();
+						/*.setCallback(new FutureCallback<Bitmap>() {
 							@Override
 							public void onCompleted(Exception arg0,
 									Bitmap bitmap) {
 								///btnImagePicker.setImageBitmap(bitmap);
 							}
-						});
+						});*/
 
 				photoPath = selectAbpath;
 				break;

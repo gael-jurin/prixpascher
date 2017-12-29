@@ -20,11 +20,11 @@ import org.nuvola.mobile.prixpascher.models.DrawerMenuItem;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CategoriesFragment extends Fragment {
-    @Bind(R.id.rv) RecyclerView rv;
+    @BindView(R.id.rv) RecyclerView rv;
 
 	List<DrawerMenuItem> categories = new ArrayList<>();
     private CategoriesAdapter rcAdapter;

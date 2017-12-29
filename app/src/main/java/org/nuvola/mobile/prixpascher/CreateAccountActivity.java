@@ -5,7 +5,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
@@ -20,7 +19,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import org.nuvola.mobile.prixpascher.business.Utils;
@@ -52,7 +50,7 @@ public class CreateAccountActivity extends ActionBarParentActivity {
 		userNameText = (EditText) findViewById(R.id.user_name);
 		fullNameText = (EditText) findViewById(R.id.full_name);
 		addressText = (EditText) findViewById(R.id.address);
-		phoneText = (EditText) findViewById(R.id.phone);
+		phoneText = (EditText) findViewById(R.id.trackingDate);
 		pwdText = (EditText) findViewById(R.id.pwd);
 		cmfPwdText = (EditText) findViewById(R.id.cmf_pwd);
 

@@ -1,6 +1,12 @@
 package org.nuvola.mobile.prixpascher.dto;
 
-public class ContactMailVO {
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import org.nuvola.mobile.prixpascher.models.Taskable;
+
+import java.io.Serializable;
+
+public class ContactMailVO implements Serializable, Taskable {
     private String email;
     private String subject;
     private String message;
@@ -40,5 +46,11 @@ public class ContactMailVO {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    @Override
+    @JsonIgnore
+    public String getId() {
+        return email;
     }
 }

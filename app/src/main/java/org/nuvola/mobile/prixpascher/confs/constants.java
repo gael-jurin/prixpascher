@@ -9,6 +9,7 @@ public class constants {
 	public static String CITY_ID_KEY = "CITY_ID_KEY";
 	public static String USER_ID_KEY = "USER_ID_KEY";
 	public static String TITLE_KEY = "TITLE_KEY";
+	public static String TYPE_KEY = "TYPE_KEY";
 	public static String MARK_USER_ID_KEY = "MARK_USER_ID_KEY";
 	public static String USER_POST_KEY = "USER_POST_KEY";
 	// end
@@ -19,6 +20,7 @@ public class constants {
 	public static String BUY = "BUY";
 	public static String SELL = "SELL";
 	public static String AIM = "AIM";
+	public static int NOTICOUNT = 0;
 	public static int BUY_VALUE = 0;
 	public static int SELL_VALUE = 1;
 	public static String IMAGE_POSITION = "IMAGE_POSITION";

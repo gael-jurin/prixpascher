@@ -19,9 +19,10 @@ import org.nuvola.mobile.prixpascher.adapters.DrawerMenuAdapter;
 import org.nuvola.mobile.prixpascher.business.UserSessionManager;
 import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.fragments.AboutUsFragment;
+import org.nuvola.mobile.prixpascher.fragments.AnnouncesFragment;
 import org.nuvola.mobile.prixpascher.fragments.CategoriesFragment;
 import org.nuvola.mobile.prixpascher.fragments.FanpageFragment;
-import org.nuvola.mobile.prixpascher.fragments.ProductFragment;
+import org.nuvola.mobile.prixpascher.fragments.ProductsFragment;
 import org.nuvola.mobile.prixpascher.fragments.ProfileFragment;
 import org.nuvola.mobile.prixpascher.fragments.ShopGeoFragment;
 import org.nuvola.mobile.prixpascher.interfaces.ProfileComunicator;
@@ -57,22 +58,24 @@ public class HomeActivity extends ActionBarParentActivity implements
 				android.R.layout.simple_list_item_1, getResources()
 						.getStringArray(R.array.drawer_menus));
 
-		drawerItems = new ArrayList<DrawerMenuItem>();
+		drawerItems = new ArrayList<>();
 		drawerItems.add(new DrawerMenuItem(getResources().getString(
 				R.string.login_label), R.drawable.ic_small_avatar));
 		drawerItems.add(new DrawerMenuItem(drawerMenuTitles.getItem(0),
 				R.drawable.ic_home));
-		drawerItems.add(new DrawerMenuItem(drawerMenuTitles.getItem(1),
-				R.drawable.ic_list));
+        drawerItems.add(new DrawerMenuItem(drawerMenuTitles.getItem(1),
+                R.drawable.ic_deal));
 		drawerItems.add(new DrawerMenuItem(drawerMenuTitles.getItem(2),
-				R.drawable.ic_cart));
+				R.drawable.ic_list));
+		drawerItems.add(new DrawerMenuItem(drawerMenuTitles.getItem(3),
+				R.drawable.ic_map));
 		/*drawerItems.add(new DrawerMenuItem(drawerMenuTitles.getItem(3),
 				R.drawable.ic_city));
-		drawerItems.add(new DrawerMenuItem(drawerMenuTitles.getItem(4),
+		/*drawerItems.add(new DrawerMenuItem(drawerMenuTitles.getItem(4),
 				R.drawable.ic_filter));*/
-		drawerItems.add(new DrawerMenuItem(drawerMenuTitles.getItem(3),
-				R.drawable.ic_fanpage));
 		drawerItems.add(new DrawerMenuItem(drawerMenuTitles.getItem(4),
+				R.drawable.ic_fanpage));
+		drawerItems.add(new DrawerMenuItem(drawerMenuTitles.getItem(5),
 				R.drawable.ic_info));
 		drawerMenuAdapter = new DrawerMenuAdapter(this, drawerItems);
 
@@ -116,34 +119,38 @@ public class HomeActivity extends ActionBarParentActivity implements
 			showMsg(getResources().getString(R.string.open_network));
 		}
 		switch (position) {
-		case 0:
-			UserSessionManager userSessionManager = new UserSessionManager(this);
-			if (userSessionManager.getUserSession() != null) {
-				fragment = ProfileFragment.newInstance();
-			} else {
-				Intent intent = new Intent(this, AuthenticationActivity.class);
-				startActivity(intent);
-			}
-			changeActionBarTitle(getResources().getString(
-					R.string.profile_label));
-			break;
+			case 0:
+				UserSessionManager userSessionManager = new UserSessionManager(this);
+				if (userSessionManager.getUserSession() != null) {
+					fragment = ProfileFragment.newInstance();
+				} else {
+					Intent intent = new Intent(this, AuthenticationActivity.class);
+					startActivity(intent);
+				}
+				changeActionBarTitle(getResources().getString(
+						R.string.profile_label));
+				break;
 
-		case 1:
-			fragment = ProductFragment.newInstance(toolbar);
-			changeActionBarTitle(getResources().getString(R.string.app_name));
-			break;
-		case 2:
-			fragment = CategoriesFragment.newInstance();
-			changeActionBarTitle(getResources().getString(
-					R.string.categories_label));
-			break;
+			case 1:
+				fragment = ProductsFragment.newInstance(toolbar);
+				changeActionBarTitle(getResources().getString(R.string.app_name));
+				break;
+			case 2:
+				fragment = AnnouncesFragment.newInstance(toolbar);
+				changeActionBarTitle(getResources().getString(
+						R.string.app_name));
+				break;
+            case 3:
+				fragment = CategoriesFragment.newInstance();
+				changeActionBarTitle(getResources().getString(
+						R.string.categories_label));
+				break;
+			case 4:
+				fragment = new ShopGeoFragment();
+				changeActionBarTitle(getResources()
+						.getString(R.string.shop_label));
+				break;
 
-		case 3:
-			fragment = new ShopGeoFragment();
-			changeActionBarTitle(getResources()
-					.getString(R.string.shop_label));
-			break;
-			
 		/*case 4:
 			fragment = CitiesFragment.newInstance();
 			changeActionBarTitle(getResources()
@@ -156,18 +163,18 @@ public class HomeActivity extends ActionBarParentActivity implements
 					.getString(R.string.filter_label));
 			break;*/
 
-		case 4:
-			fragment = FanpageFragment.newInstance();
-			changeActionBarTitle(getResources().getString(R.string.fan_page));
-			break;
+			case 5:
+				fragment = FanpageFragment.newInstance();
+				changeActionBarTitle(getResources().getString(R.string.fan_page));
+				break;
 
-		case 5:
-			fragment = AboutUsFragment.newInstance();
-			changeActionBarTitle(getResources().getString(
-					R.string.about_us_label));
-			break;
-		default:
-			break;
+			case 6:
+				fragment = AboutUsFragment.newInstance();
+				changeActionBarTitle(getResources().getString(
+						R.string.about_us_label));
+				break;
+			default:
+				break;
 		}
 
 		if (fragment != null) {
@@ -224,13 +231,7 @@ public class HomeActivity extends ActionBarParentActivity implements
 		User user = sessionManager.getUserSession();
 		if (user != null) {
 			if (user.getAvt() != null && !user.getAvt().equalsIgnoreCase("")) {
-				String avtString = "";
-				if (Utils.checkFacebookAvt(user.getAvt())) {
-					avtString = user.getAvt();
-				} else {
-					avtString = getResources().getString(R.string.domain_url)
-							+ user.getAvt();
-				}
+				String avtString = user.getAvt();
 				menuItem.setAvt(avtString);
 			}
 			drawerItems.remove(0);

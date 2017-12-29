@@ -1,22 +1,8 @@
 package org.nuvola.mobile.prixpascher.fragments;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,30 +11,35 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.gc.materialdesign.views.ButtonFlat;
-import com.gc.materialdesign.widgets.Dialog;
 
 import org.nuvola.mobile.prixpascher.ChangePassActivity;
-import org.nuvola.mobile.prixpascher.UpdateProfileActivity;
 import org.nuvola.mobile.prixpascher.ProductsActivity;
 import org.nuvola.mobile.prixpascher.R;
-import org.nuvola.mobile.prixpascher.business.RoundedAvatarDrawable;
-import org.nuvola.mobile.prixpascher.business.Utils;
+import org.nuvola.mobile.prixpascher.UpdateProfileActivity;
 import org.nuvola.mobile.prixpascher.business.UserSessionManager;
+import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.confs.constants;
+import org.nuvola.mobile.prixpascher.dto.ContactMailVO;
 import org.nuvola.mobile.prixpascher.interfaces.ProfileComunicator;
 import org.nuvola.mobile.prixpascher.models.User;
-import com.gc.materialdesign.views.ButtonFlat;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 
 public class ProfileFragment extends Fragment {
 
-    ButtonFlat btnEdit,btnLogout, btnShowMyProducts,
+    Button btnEdit,btnLogout;
+    ButtonFlat btnShowMyProducts,
             btnChangePass, btnUpdateProduct;
 	EditText displayName, email, website, address, phone, userName;
 	ImageView avt;
@@ -89,34 +80,14 @@ public class ProfileFragment extends Fragment {
 			userName.setText(userProfile.getUserName());
 			if (userProfile.getAvt() != null
 					&& !userProfile.getAvt().equalsIgnoreCase("")) {
-				Log.i(TAG, "Khac null");
-				String avtString = "";
-				if (Utils.checkFacebookAvt(userProfile.getAvt())) {
-					avtString = userProfile.getAvt();
-				} else {
-					avtString = getResources().getString(R.string.domain_url)
-							+ userProfile.getAvt();
-				}
+				String avtString = userProfile.getAvt();
 				Log.i(TAG, avtString);
-				Ion.with(getActivity(), avtString).withBitmap()
+
+				Utils.MyPicasso.with(getContext())
+						.load(avtString)
 						.resize(200, 200).centerCrop()
 						.placeholder(R.drawable.ic_avatar)
-						.error(R.drawable.ic_avatar).asBitmap()
-						.setCallback(new FutureCallback<Bitmap>() {
-
-							@Override
-							public void onCompleted(Exception arg0,
-									Bitmap bitmap) {
-								// TODO Auto-generated method stub
-								if (bitmap != null) {
-									RoundedAvatarDrawable avtDrawable = new RoundedAvatarDrawable(
-											bitmap);
-									avt.setImageDrawable(avtDrawable);
-								}
-							}
-
-						});
-
+						.into(avt);
 			}
 
 			btnEdit.setOnClickListener(new View.OnClickListener() {
@@ -212,11 +183,15 @@ public class ProfileFragment extends Fragment {
 					AlertDialog dialog = builder.create();
 					dialog.show();*/
 
-                    final Dialog dialog = new Dialog(getActivity(),getResources().getString(R.string.alert),getActivity().getResources().getString(
-                            R.string.update_products_msg));
-                    dialog.addCancelButton(getResources().getString(R.string.cancel_label));
+                    MaterialDialog.Builder alertDialogBuilder = new MaterialDialog.Builder(getActivity());
+                    alertDialogBuilder.customView(R.layout.renew_prompts_layout, true);
 
-                    dialog.setOnAcceptButtonClickListener(new View.OnClickListener() {
+                    final MaterialDialog alertDialog = alertDialogBuilder.build();
+                    alertDialog.show();
+
+                    ButtonFlat sendAlert = (ButtonFlat) alertDialog.findViewById(R.id.sendRequest);
+
+                    sendAlert.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             if (Utils
@@ -226,6 +201,7 @@ public class ProfileFragment extends Fragment {
                                             .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                                 } else {
                                     new Upload().execute();
+                                    alertDialog.dismiss();
                                 }
                             } else {
                                 Toast ts = Toast.makeText(
@@ -237,17 +213,7 @@ public class ProfileFragment extends Fragment {
                             }
                         }
                     });
-
-                    dialog.setOnCancelButtonClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialog.dismiss();
-                        }
-                    });
-
-                    dialog.show();
-
-
+                    alertDialog.show();
 				}
 			});
 
@@ -291,39 +257,37 @@ public class ProfileFragment extends Fragment {
 
 		@Override
 		protected Boolean doInBackground(Void... params) {
-			// TODO Auto-generated method stub
-			String handleInserUrl = getResources().getString(
-					R.string.users_json_url);
+			ContactMailVO contactVO = new ContactMailVO();
+			contactVO.setSubject("PrixPasCher - Store");
+			contactVO.setEmail(userProfile.getEmail());
+			contactVO.setMessage("Demande de Boost Produits de la boutique : " +
+                    userProfile.getUserName() + " - " + userProfile.getWebsite());
+
 			try {
-				HttpClient client = new DefaultHttpClient();
-				HttpPost post = new HttpPost(handleInserUrl);
-				MultipartEntity reqEntity = new MultipartEntity();
-				// reqEntity.addPart("user_id", new StringBody(userProfile.getId()+ ""));
-				post.setEntity(reqEntity);
-				HttpResponse response = client.execute(post);
-				HttpEntity resEntity = response.getEntity();
-				final String response_str = EntityUtils.toString(resEntity);
+				HttpHeaders requestHeaders = new HttpHeaders();
+				requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+				org.springframework.http.HttpEntity<ContactMailVO> requestEntity =
+						new org.springframework.http.HttpEntity<>(contactVO, requestHeaders);
+
+				RestTemplate restTemplate = new RestTemplate();
+				restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+				ResponseEntity<String> resEntity = restTemplate.postForEntity(
+						getResources().getString(R.string.msg_send_url),
+						requestEntity, String.class);
+
 				if (resEntity != null) {
-					Log.i("RESPONSE", response_str);
-					getActivity().runOnUiThread(new Runnable() {
-						public void run() {
-							try {
-								prgDialog.dismiss();
-								Toast ts = Toast.makeText(
-										getActivity(),
-										getActivity().getResources().getString(
-												R.string.success_action), Toast.LENGTH_LONG);
-								ts.show();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-					});
+					Log.i("RESPONSE", resEntity.getBody());
+					if (!resEntity.getStatusCode().equals(HttpStatus.OK)) {
+						prgDialog.dismiss();
+                        // showDialog(getResources().getString(
+								// R.string.spam_msg));
+					}
 				}
+				return true;
 			} catch (Exception ex) {
 				Log.e("Debug", "error: " + ex.getMessage(), ex);
+				return false;
 			}
-			return null;
 		}
 	};
 
@@ -332,21 +296,20 @@ public class ProfileFragment extends Fragment {
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		View view = inflater.inflate(R.layout.profile_fragment_layout, null);
-		btnLogout = (ButtonFlat) view.findViewById(R.id.btn_logout);
-		btnEdit = (ButtonFlat) view.findViewById(R.id.btn_update);
+		btnLogout = view.findViewById(R.id.btn_logout);
+		btnEdit = view.findViewById(R.id.btn_update);
 		// btnShowMarkProducts = (Button) view
 		// .findViewById(R.id.btn_show_mark_products);
-		btnShowMyProducts = (ButtonFlat) view
-				.findViewById(R.id.btn_show_my_products);
-		displayName = (EditText) view.findViewById(R.id.display_name);
-		email = (EditText) view.findViewById(R.id.email);
-		address = (EditText) view.findViewById(R.id.address);
-		phone = (EditText) view.findViewById(R.id.phone);
-		website = (EditText) view.findViewById(R.id.websites);
-		avt = (ImageView) view.findViewById(R.id.avt);
-		userName = (EditText) view.findViewById(R.id.user_name);
-		btnChangePass = (ButtonFlat) view.findViewById(R.id.btn_change_pass);
-		btnUpdateProduct = (ButtonFlat) view.findViewById(R.id.btn_update_products);
+		btnShowMyProducts = view.findViewById(R.id.btn_show_my_products);
+		displayName = view.findViewById(R.id.display_name);
+		email = view.findViewById(R.id.email);
+		address = view.findViewById(R.id.address);
+		phone = view.findViewById(R.id.trackingDate);
+		website = view.findViewById(R.id.websites);
+		avt = view.findViewById(R.id.avt);
+		userName = view.findViewById(R.id.user_name);
+		btnChangePass = view.findViewById(R.id.btn_change_pass);
+		btnUpdateProduct = view.findViewById(R.id.btn_update_products);
 		return view;
 	}
 }

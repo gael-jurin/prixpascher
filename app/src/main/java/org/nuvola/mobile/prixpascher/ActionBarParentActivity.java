@@ -3,26 +3,40 @@ package org.nuvola.mobile.prixpascher;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.view.MenuItemCompat;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
-import com.gc.materialdesign.widgets.Dialog;
-import org.nuvola.mobile.prixpascher.business.UserSessionManager;
-import org.nuvola.mobile.prixpascher.business.Utils;
 
+import com.gc.materialdesign.widgets.Dialog;
+import com.mikepenz.iconics.context.IconicsLayoutInflater2;
+
+import org.nuvola.mobile.prixpascher.business.BadgeUtils;
+
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Set;
+
+import static org.nuvola.mobile.prixpascher.business.UserSessionManager.PRIVATE_MODE;
+import static org.nuvola.mobile.prixpascher.business.UserSessionManager.SHARED_PREF_DATA;
 
 public class ActionBarParentActivity extends AppCompatActivity {
-	private LinkedHashSet<Integer> enableItems = new LinkedHashSet<Integer>();
-	private LinkedHashSet<Integer> disableItems = new LinkedHashSet<Integer>();
+	private LinkedHashSet<Integer> enableItems = new LinkedHashSet<>();
+	private LinkedHashSet<Integer> disableItems = new LinkedHashSet<>();
 	private Iterator<Integer> iter;
+    private TextView alertCount;
+    private SharedPreferences sharePre;
 
-	public void setEnableItem(LinkedHashSet<Integer> items) {
+    public void setEnableItem(LinkedHashSet<Integer> items) {
 		this.enableItems = items;
 	}
 
@@ -31,8 +45,16 @@ public class ActionBarParentActivity extends AppCompatActivity {
 	}
 
 	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		LayoutInflaterCompat.setFactory2(getLayoutInflater(), new IconicsLayoutInflater2(getDelegate()));
+
+        sharePre = getApplicationContext().getSharedPreferences(
+                SHARED_PREF_DATA, PRIVATE_MODE);
+		super.onCreate(savedInstanceState);
+	}
+
+	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		// TODO Auto-generated method stub
 		if (!disableItems.isEmpty()) {
 			iter = disableItems.iterator();
 			while (iter.hasNext()) {
@@ -53,26 +75,57 @@ public class ActionBarParentActivity extends AppCompatActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// TODO Auto-generated method stub
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.main_menu, menu);
+
 		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-		SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu
-				.findItem(R.id.btn_action_search));
-		searchView.setSearchableInfo(searchManager
-				.getSearchableInfo(getComponentName()));
-		return true;
+		SearchView searchView = (SearchView) menu.findItem(R.id.btn_action_search).getActionView();
+		searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        final MenuItem menuItem = menu.findItem(R.id.action_alert);
+        menuItem.setActionView(R.layout.action_bar_notification);
+
+        final View alertBadge = menuItem.getActionView();
+        ImageView alertIcon = alertBadge.findViewById(R.id.hotlist_bell);
+
+        alertCount = alertBadge.findViewById(R.id.badge_textView);
+
+        Set<String> notifs = sharePre.getStringSet("PROMOS", new HashSet<String>());
+        Set<String> devis = sharePre.getStringSet("DEVIS", new HashSet<String>());
+        Set<String> offers = sharePre.getStringSet("OFFERS", new HashSet<String>());
+
+        updateHotCount(notifs.size() + devis.size() + offers.size());
+
+        alertCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), InNotificationActivity.class);
+                startActivity(intent);
+            }
+        });
+
+		alertIcon.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				if (BadgeUtils.counter > 0) {
+					Intent intent = new Intent(getApplicationContext(), InNotificationActivity.class);
+					startActivity(intent);
+				}
+			}
+		});
+
+        return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
 		switch (item.getItemId()) {
-		case android.R.id.home:
-			// NavUtils.navigateUpTo(this, new Intent(this,
-			// HomeActivity.class));
-			finish();
-			break;
+            case android.R.id.home:
+                // NavUtils.navigateUpTo(this, new Intent(this,
+                // HomeActivity.class));
+                finish();
+                break;
 
 		/*case R.id.btn_action_upload:
 			if (!Utils.isConnectingToInternet(this)) {
@@ -123,4 +176,19 @@ public class ActionBarParentActivity extends AppCompatActivity {
 				.build();
 		adView.loadAd(adRequest);*/
 	}
+
+    public void updateHotCount(final int new_hot_number) {
+        if (alertCount == null) return;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (new_hot_number == 0)
+                    alertCount.setVisibility(View.INVISIBLE);
+                else {
+                    alertCount.setVisibility(View.VISIBLE);
+                    alertCount.setText(Integer.toString(new_hot_number));
+                }
+            }
+        });
+    }
 }

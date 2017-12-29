@@ -156,7 +156,7 @@ public enum Category {
     }
 
     public static List<Category> publishedCategoryValues() {
-        List<Category> filterValues = new ArrayList<>();
+        List<Category> filterValues = new ArrayList();
         filterValues.add(Category.refrigerateur);
         filterValues.add(Category.recepteurs);
         filterValues.add(Category.climatiseur);
@@ -164,8 +164,19 @@ public enum Category {
         return filterValues;
     }
 
+    public static List<Category> offerCategoryValues() {
+        List<Category> filterValues = new ArrayList();
+        filterValues.add(Category.electromenager);
+        filterValues.add(Category.image_son);
+        filterValues.add(Category.informatique);
+        filterValues.add(Category.telephonie);
+        filterValues.add(Category.tablette);
+        filterValues.add(Category.equipement);
+        return filterValues;
+    }
+
     public static List<Category> filterSubCategoryValues() {
-        List<Category> filterValues = new ArrayList<>();
+        List<Category> filterValues = new ArrayList();
         for (Category category: values()) {
             if (category.getParent() != null) {
                 filterValues.add(category);
@@ -176,7 +187,7 @@ public enum Category {
     }
 
     public static List<String> detailCategories() {
-        List<String> detailCategories = new ArrayList<>();
+        List<String> detailCategories = new ArrayList();
         detailCategories.add(Category.telephonie.name());
         detailCategories.add(Category.tablette.name());
         detailCategories.add(Category.image_son.name());

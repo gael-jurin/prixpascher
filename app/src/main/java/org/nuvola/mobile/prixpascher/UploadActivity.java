@@ -2,11 +2,9 @@ package org.nuvola.mobile.prixpascher;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -25,25 +23,17 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 
 import com.facebook.AccessToken;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.nuvola.mobile.prixpascher.business.JSONFetchTask;
 import org.nuvola.mobile.prixpascher.business.UserSessionManager;
 import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.models.Categories;
 import org.nuvola.mobile.prixpascher.models.County;
 import org.nuvola.mobile.prixpascher.models.User;
+import org.nuvola.mobile.prixpascher.tasks.JSONFetchTask;
+import org.nuvola.mobile.prixpascher.tasks.UploadTask;
+import org.nuvola.mobile.prixpascher.tasks.UploadType;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -77,7 +67,6 @@ public class UploadActivity extends ActionBarParentActivity {
 	int aim_selected = -1;
 	String photoPath1 = null;
 	Button btnUpload;
-	ProgressDialog dialog;
 	File tmpFile;
 	CharSequence[] items;
     Toolbar toolbar;
@@ -435,15 +424,16 @@ public class UploadActivity extends ActionBarParentActivity {
 			switch (requestCode) {
 			case SELECT_PICTURE:
 				String selectAbpath = getPath(data.getData());
-				Ion.with(getApplicationContext(), new File(selectAbpath))
-						.withBitmap().resize(200, 200).centerCrop().asBitmap()
-						.setCallback(new FutureCallback<Bitmap>() {
+				Utils.MyPicasso.with(getApplicationContext())
+						.load(new File(selectAbpath))
+						.resize(200, 200).centerCrop();
+						/*.setCallback(new FutureCallback<Bitmap>() {
 							@Override
 							public void onCompleted(Exception arg0,
 									Bitmap bitmap) {
 								currentImageView.setImageBitmap(bitmap);
 							}
-						});
+						});*/
 				switch (currentChooserPhotoId) {
 				case R.id.btn_pick_photo_1:
 					photoPath1 = selectAbpath;
@@ -464,15 +454,16 @@ public class UploadActivity extends ActionBarParentActivity {
 
 			case TAKE_PICTURE:
 				if (tmpFile.exists()) {
-					Ion.with(getApplicationContext(), tmpFile).withBitmap()
-							.resize(200, 200).centerCrop().asBitmap()
-							.setCallback(new FutureCallback<Bitmap>() {
+					Utils.MyPicasso.with(getApplicationContext())
+							.load(tmpFile)
+							.resize(200, 200).centerCrop();
+							/*.setCallback(new FutureCallback<Bitmap>() {
 								@Override
 								public void onCompleted(Exception arg0,
 										Bitmap bitmap) {
 									currentImageView.setImageBitmap(bitmap);
 								}
-							});
+							});*/
 				}
 				switch (currentChooserPhotoId) {
 				case R.id.btn_pick_photo_1:
@@ -551,10 +542,10 @@ public class UploadActivity extends ActionBarParentActivity {
 			if (user != null) {
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 					Log.i(TAG + "user_id", user.getId() + "kasjd");
-					new Upload(user.getFbId(), user.getId())
+					new UploadTask(UploadType.PRODUCT, user.getFbId(), user.getId(), this)
 							.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				} else {
-					new Upload(user.getFbId(), user.getId()).execute();
+					new UploadTask(UploadType.PRODUCT, user.getFbId(), user.getId(), this).execute();
 				}
 			} else {
 				Intent intent = new Intent(this, AuthenticationActivity.class);
@@ -570,116 +561,16 @@ public class UploadActivity extends ActionBarParentActivity {
 			User user = sessionManager.getUserSession();
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 				Log.i(TAG + "user_id", user.getId() + "kasjd");
-				new Upload(user.getFbId(), user.getId())
+				new UploadTask(UploadType.PRODUCT, user.getFbId(), user.getId(), this)
 						.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 			} else {
-				new Upload(user.getFbId(), user.getId()).execute();
+				new UploadTask(UploadType.PRODUCT, user.getFbId(), user.getId(), this).execute();
 			}
 			Log.i("FB AUT FRAGMENT", "Logged in...");
 		} else if (AccessToken.getCurrentAccessToken() == null) {
 			Log.i("FB AUT FRAGMENT", "Logged out...");
 		}
 	}
-
-	private class Upload extends AsyncTask<Void, Void, Boolean> {
-		String fb_id = null;
-		String user_id = "0";
-
-		public Upload() {
-			// TODO Auto-generated constructor stub
-		}
-
-		public Upload(String fb_id, String user_id) {
-			this.fb_id = fb_id;
-			this.user_id = user_id;
-		}
-
-		@Override
-		protected void onCancelled() {
-			// TODO Auto-generated method stub
-			super.onCancelled();
-			dialog.dismiss();
-		}
-
-		protected void onPostExecute() {
-			dialog.dismiss();
-		};
-
-		@Override
-		protected void onPreExecute() {
-			// TODO Auto-generated method stub
-			super.onPreExecute();
-			dialog = new ProgressDialog(UploadActivity.this);
-			dialog.setMessage(UploadActivity.this.getResources().getString(
-					R.string.upload_product_msg));
-			dialog.setCanceledOnTouchOutside(false);
-			dialog.show();
-		}
-
-		@Override
-		protected Boolean doInBackground(Void... params) {
-			// TODO Auto-generated method stub
-			String handleInserUrl = getResources().getString(
-					R.string.products_json_url)
-					+ "products";
-			try {
-				HttpClient client = new DefaultHttpClient();
-				HttpPost post = new HttpPost(handleInserUrl);
-				MultipartEntity reqEntity = new MultipartEntity();
-
-				FileBody fileUpload = null;
-				if (photoPath1 != null) {
-					fileUpload = new FileBody(new File(photoPath1));
-					// reqEntity.addPart("photo1", fileUpload);
-				}
-
-
-				String titleText = title.getText().toString();
-				String priceText = price.getText().toString();
-				String contentText = content.getText().toString();
-				// reqEntity.addPart("user_id", new StringBody(user_id + ""));
-				// reqEntity.addPart("fb_id", new StringBody(fb_id));
-				// reqEntity.addPart("title", new StringBody(titleText));
-				// reqEntity.addPart("price", new StringBody(priceText));
-				// reqEntity.addPart("content", new StringBody(contentText));
-				// reqEntity.addPart("city", new StringBody(city_selected + ""));
-				// reqEntity.addPart("categories", new StringBody(categories_selected + ""));
-				// reqEntity.addPart("county",new StringBody(county_selected + ""));
-				// reqEntity.addPart("aim", new StringBody(aim_selected + ""));
-				post.setEntity(reqEntity);
-				HttpResponse response = client.execute(post);
-				HttpEntity resEntity = response.getEntity();
-				final String response_str = EntityUtils.toString(resEntity);
-				if (resEntity != null) {
-					Log.i("RESPONSE", response_str);
-					runOnUiThread(new Runnable() {
-						public void run() {
-							try {
-								dialog.dismiss();
-								title.setText("");
-								price.setText("");
-								content.setText("");
-								btnPickPhoto_1
-										.setImageResource(R.drawable.ic_picker_photo);
-								btnPickPhoto_2
-										.setImageResource(R.drawable.ic_picker_photo);
-								btnPickPhoto_3
-										.setImageResource(R.drawable.ic_picker_photo);
-								photoPath1 = null;
-
-								Log.i(TAG, "upload");
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-					});
-				}
-			} catch (Exception ex) {
-				Log.e("Debug", "error: " + ex.getMessage(), ex);
-			}
-			return null;
-		}
-	};
 
 	@Override
 	protected void onStop() {

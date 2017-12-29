@@ -21,7 +21,7 @@ public class ShopGeoFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.maps_container_layout, container, false);
+        View rootView = inflater.inflate(R.layout.maps_container_layout, null);
 
         mapView = (MapView) rootView.findViewById(R.id.map);
         mapView.onCreate(savedInstanceState);

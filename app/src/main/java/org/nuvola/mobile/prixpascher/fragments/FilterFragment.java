@@ -21,7 +21,7 @@ import android.widget.Spinner;
 
 import org.nuvola.mobile.prixpascher.ProductsActivity;
 import org.nuvola.mobile.prixpascher.R;
-import org.nuvola.mobile.prixpascher.business.JSONFetchTask;
+import org.nuvola.mobile.prixpascher.tasks.JSONFetchTask;
 import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.models.Categories;
 import org.nuvola.mobile.prixpascher.models.County;

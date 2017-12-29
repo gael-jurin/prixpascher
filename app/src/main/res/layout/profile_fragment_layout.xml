@@ -33,22 +33,25 @@
                 android:gravity="right"
                 android:orientation="horizontal">
 
-                <com.gc.materialdesign.views.ButtonFlat
+                <Button
                     android:id="@+id/btn_update"
-                    style="@style/common_button"
+                    style="@style/icon_button"
+                    android:layout_alignParentRight="true"
                     android:layout_width="wrap_content"
-                    android:layout_height="50dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/background_transparent"
                     android:text="@string/edit_label" />
 
 
-                <com.gc.materialdesign.views.ButtonFlat
+                <Button
                     android:id="@+id/btn_logout"
-                    style="@style/common_button"
+                    style="@style/icon_button"
                     android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center_horizontal"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/background_transparent"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="10dp"
                     android:text="@string/logout" />
 
             </LinearLayout>
@@ -72,7 +75,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="5dp"
-                android:editable="false"
                 app:met_primaryColor="@color/base_color" />
 
             <LinearLayout
@@ -93,7 +95,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginTop="5dp"
-                    android:editable="false"
                     app:met_primaryColor="@color/base_color"
                     />
 
@@ -117,7 +118,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginTop="5dp"
-                    android:editable="false"
                     app:met_primaryColor="@color/base_color" />
             </LinearLayout>
 
@@ -139,7 +139,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginTop="5dp"
-                    android:editable="false"
                     app:met_primaryColor="@color/base_color" />
             </LinearLayout>
 
@@ -161,7 +160,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginTop="5dp"
-                    android:editable="false"
                     app:met_primaryColor="@color/base_color" />
             </LinearLayout>
 
@@ -178,12 +176,11 @@
                     android:text="@string/phone" />
 
                 <com.rengwuxian.materialedittext.MaterialEditText
-                    android:id="@+id/phone"
+                    android:id="@+id/trackingDate"
                     style="@style/common_text"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginTop="5dp"
-                    android:editable="false"
                     app:met_primaryColor="@color/base_color" />
             </LinearLayout>
 
