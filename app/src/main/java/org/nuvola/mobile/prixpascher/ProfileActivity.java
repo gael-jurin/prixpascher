@@ -3,7 +3,6 @@ package org.nuvola.mobile.prixpascher;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,22 +11,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
-
-import org.nuvola.mobile.prixpascher.business.RoundedAvatarDrawable;
 import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.dto.MerchantVO;
 import org.nuvola.mobile.prixpascher.dto.UserVO;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
 
 public class ProfileActivity extends ActionBarParentActivity {
 	ProgressDialog dialogPrg;
@@ -51,13 +40,14 @@ public class ProfileActivity extends ActionBarParentActivity {
 		Log.i(TAG, "user id la" + user_id);
 
 		dialogPrg.show();
-		// displayName = (TextView) findViewById(R.id.display_name);
-		userName = (TextView) findViewById(R.id.user_name);
-		address = (TextView) findViewById(R.id.address);
-		productFeed = (TextView) findViewById(R.id.phone);
-		website = (TextView) findViewById(R.id.websites);
-		avt = (ImageView) findViewById(R.id.avt);
-		btnShowItem = (Button) findViewById(R.id.btn_show_my_item);
+		// displayName = findViewById(R.id.display_name);
+		userName = findViewById(R.id.user_name);
+		address = findViewById(R.id.address);
+		productFeed = findViewById(R.id.trackingDate);
+		website = findViewById(R.id.websites);
+		avt = findViewById(R.id.avt);
+		btnShowItem = findViewById(R.id.btn_show_my_item);
+
 		getSupportActionBar().setHomeButtonEnabled(true);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		changeActionBarTitle(getResources().getString(R.string.profile_label));
@@ -94,16 +84,10 @@ public class ProfileActivity extends ActionBarParentActivity {
 
 	private MerchantVO getMerchant() {
 		try {
-			HttpHeaders requestHeaders = new HttpHeaders();
-			requestHeaders.setContentType(MediaType.APPLICATION_JSON);
-			HttpEntity requestEntity = new HttpEntity(requestHeaders);
 
-			RestTemplate restTemplate = new RestTemplate();
-			restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-			final ResponseEntity<MerchantVO> merchantInfos = restTemplate.exchange(
-					getResources().getString(R.string.merchant_json_url) + "/name/" + user_id,
-					HttpMethod.GET,
-					requestEntity, MerchantVO.class);
+			final ResponseEntity<MerchantVO> merchantInfos = Utils.MyRestemplate.getInstance().getForEntity(
+					getResources().getString(R.string.merchant_json_url) + user_id,
+					MerchantVO.class);
 			if (merchantInfos.getStatusCode().equals(HttpStatus.OK)) {
                 merchant = merchantInfos.getBody();
 				// displayName.setText("aksldjl");
@@ -112,11 +96,9 @@ public class ProfileActivity extends ActionBarParentActivity {
 				productFeed.setText(merchant.getShopInfoVO().getFeed());
 				website.setText(merchant.getShopInfoVO().getWebsite());
 
-				final ResponseEntity<UserVO> user = restTemplate.exchange(
-						getResources().getString(R.string.users_json_url) + "/" +
-                                merchant.getShopInfoVO().getPrimaryAccountEmail(),
-						HttpMethod.GET,
-						requestEntity, UserVO.class);
+				final ResponseEntity<UserVO> user = Utils.MyRestemplate.getInstance().getForEntity(
+						getResources().getString(R.string.users_json_url) + "/merchant/" +
+                                user_id, UserVO.class);
 
 				btnShowItem
 						.setOnClickListener(new View.OnClickListener() {
@@ -133,40 +115,12 @@ public class ProfileActivity extends ActionBarParentActivity {
 							}
 						});
 
-				if (user.getStatusCode().equals(HttpStatus.OK)
-						&& !user.getBody().getPhoto().equalsIgnoreCase("")) {
-					String avtString = "";
-					if (Utils.checkFacebookAvt(user.getBody().getPhoto())) {
-						avtString = user.getBody().getPhoto();
-					} else {
-						avtString = user.getBody().getPhoto();
-					}
-					Ion.with(ProfileActivity.this, avtString)
-							.withBitmap()
-							.resize(200, 200)
-							.centerCrop()
-							.placeholder(R.drawable.ic_small_avatar)
-							.error(R.drawable.ic_small_avatar)
-							.asBitmap()
-							.setCallback(
-									new FutureCallback<Bitmap>() {
-
-										@Override
-										public void onCompleted(
-												Exception arg0,
-												Bitmap bitmap) {
-											// TODO Auto-generated
-											// method stub
-											if (bitmap != null) {
-												RoundedAvatarDrawable avtDrawable = new RoundedAvatarDrawable(
-														bitmap);
-												avt.setImageDrawable(avtDrawable);
-											}
-										}
-
-									});
-
-				}
+                Utils.MyPicasso.with(ProfileActivity.this)
+                        .load(user.getBody().getPhoto())
+                        .resize(200, 200).centerCrop()
+                        .placeholder(R.drawable.ic_small_avatar)
+                        .error(R.drawable.ic_small_avatar)
+                        .into(avt);
 			}
 			dialogPrg.cancel();
 		} catch (Exception e) {

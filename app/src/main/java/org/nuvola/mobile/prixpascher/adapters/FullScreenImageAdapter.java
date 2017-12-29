@@ -8,10 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
-import com.koushikdutta.ion.Ion;
+
 import org.nuvola.mobile.prixpascher.ImagePreviewActivity;
 import org.nuvola.mobile.prixpascher.R;
 import org.nuvola.mobile.prixpascher.business.TouchImageView;
+import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.confs.constants;
 
 import java.util.ArrayList;
@@ -47,12 +48,19 @@ public class FullScreenImageAdapter extends PagerAdapter {
 		View viewLayout = inflater.inflate(R.layout.full_preview_item,
 				container, false);
 
-		imgDisplay = (TouchImageView) viewLayout.findViewById(R.id.imgDisplay);
-		Ion.with(activity, paths.get(position)).withBitmap()
+		imgDisplay = viewLayout.findViewById(R.id.imgDisplay);
+		Utils.MyPicasso.with(activity)
+				.load(paths.get(position))
+				.placeholder(R.drawable.no_photo)
+				.into(imgDisplay);
+
+		/*Ion.with(activity)
+                .load(paths.get(position))
+                .withBitmap()
 				.error(R.drawable.no_photo).placeholder(R.drawable.no_photo)
-				.intoImageView(imgDisplay);
+				.intoImageView(imgDisplay);*/
+
 		(container).addView(viewLayout);
-      //  imgDisplay.setT
 
         imgDisplay.setOnClickListener(new View.OnClickListener() {
 

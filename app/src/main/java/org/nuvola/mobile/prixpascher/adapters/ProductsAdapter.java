@@ -1,4 +1,3 @@
-
 package org.nuvola.mobile.prixpascher.adapters;
 
 import android.content.Context;
@@ -11,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import org.nuvola.mobile.prixpascher.R;
+import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.dto.ProductVO;
 
 import java.text.NumberFormat;
@@ -37,7 +37,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
     @Override
     public void onBindViewHolder(ProductsViewHolder holder, int position) {
         if (holder.thumb != null) {
-            Picasso.with(context)
+            Utils.MyPicasso.with(context)
                     .load(products.get(position).getImage())
                     .placeholder(R.drawable.no_photo)
                     .into(holder.thumb);
@@ -57,9 +57,20 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
                     .getString(R.string.negotiate_label));
         }
 
+        holder.promoFlag.setVisibility(products.get(position).getPromoted() ? View.VISIBLE : View.INVISIBLE);
+
         if (holder.shop != null) {
             holder.shop.setImageResource(getDrawable(context, products.get(position).getShopName() + "_large"));
         }
+    }
+
+    public void clear() {
+        products.clear();
+        notifyDataSetChanged();
+    }
+
+    public void addAll(List<ProductVO> list) {
+        products.addAll(list);
     }
 
     public class ProductsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -68,14 +79,16 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
            TextView price;
            ImageView thumb;
            ImageView shop;
+           ImageView promoFlag;
 
             ProductsViewHolder(View itemView){
-               super(itemView);
-               cv = (CardView)itemView.findViewById(R.id.cv);
-               title = (TextView)itemView.findViewById(R.id.title);
-               price=(TextView)itemView.findViewById(R.id.price);
-               thumb = (ImageView)itemView.findViewById(R.id.thumb);
-               shop = (ImageView)itemView.findViewById(R.id.shop);
+                super(itemView);
+                cv = itemView.findViewById(R.id.cv);
+                title = itemView.findViewById(R.id.title);
+                price = itemView.findViewById(R.id.price);
+                thumb = itemView.findViewById(R.id.thumb);
+                shop = itemView.findViewById(R.id.shop);
+                promoFlag = itemView.findViewById(R.id.flag);
                 itemView.setOnClickListener(this);
            }
 

@@ -17,10 +17,11 @@
         style="@style/common_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:ems="10"
+        android:layout_marginTop="3dp"
+        android:textSize="14sp"
+        android:maxLength="10"
         android:gravity="left|top"
-        android:inputType="text"
+        android:inputType="numberSigned"
         android:hint="@string/your_price">
         <requestFocus />
     </EditText>
@@ -30,10 +31,10 @@
         style="@style/common_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:ems="10"
+        android:layout_marginTop="3dp"
+        android:textSize="14sp"
         android:gravity="left|top"
-        android:inputType="text"
+        android:inputType="textEmailAddress"
         android:hint="@string/your_email">
     </EditText>
 

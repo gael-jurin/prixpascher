@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/devis_mail"
+        android:textColor="@color/cardview_dark_background"
+        android:layout_marginBottom="5dp"
+        style="@style/common_text_view" />
+
+    <fr.ganfra.materialspinner.MaterialSpinner
+        android:id="@+id/cities_spinner"
+        app:ms_baseColor="@color/base_color"
+        app:ms_highlightColor="@color/base_color"
+        app:ms_arrowColor="@color/base_color"
+        app:ms_arrowSize="16dp"
+        app:ms_thickness="0.8dp"
+        app:ms_alignLabels="false"
+        android:layout_width="fill_parent"
+        android:layout_height="90dp" />
+
+    <EditText
+        android:id="@+id/titleDevisInput"
+        style="@style/common_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:textSize="14sp"
+        android:editable="false"
+        android:gravity="left|top"
+        android:hint="@string/dummy_text">
+    </EditText>
+
+    <EditText
+        android:id="@+id/infoDevisUserInput"
+        style="@style/common_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:textSize="14sp"
+        android:gravity="left|top"
+        android:lines="4"
+        android:inputType="textMultiLine"
+        android:hint="@string/your_info">
+    </EditText>
+
+    <EditText
+        android:id="@+id/priceDevisUserInput"
+        style="@style/common_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:textSize="14sp"
+        android:maxLength="10"
+        android:gravity="left|top"
+        android:inputType="numberSigned"
+        android:hint="@string/your_price">
+        <requestFocus />
+    </EditText>
+
+    <EditText
+        android:id="@+id/qtyDevisUserInput"
+        style="@style/common_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:textSize="14sp"
+        android:maxLength="10"
+        android:gravity="left|top"
+        android:inputType="numberSigned"
+        android:hint="@string/your_qty">
+    </EditText>
+
+    <EditText
+        android:id="@+id/emailDevisUserInput"
+        style="@style/common_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:textSize="14sp"
+        android:gravity="left|top"
+        android:inputType="textEmailAddress"
+        android:hint="@string/your_email">
+    </EditText>
+
+    <EditText
+        android:id="@+id/telDevisUserInput"
+        style="@style/common_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:textSize="14sp"
+        android:gravity="left|top"
+        android:inputType="phone"
+        android:hint="@string/your_phone">
+    </EditText>
+
+    <com.gc.materialdesign.views.ButtonFlat
+        android:id="@+id/sendRequest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        style="@style/common_button"
+        android:layout_weight="1"
+        android:text="@string/send"
+        android:textColor="@color/white" />
+
+</LinearLayout>

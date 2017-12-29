@@ -1,7 +1,10 @@
 package org.nuvola.mobile.prixpascher.business;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
@@ -10,31 +13,38 @@ import android.graphics.Point;
 import android.graphics.Shader.TileMode;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Environment;
+import android.text.format.DateUtils;
 import android.view.Display;
 import android.view.WindowManager;
 
 import com.facebook.AccessToken;
+import com.jakewharton.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
+import org.nuvola.mobile.prixpascher.R;
 import org.nuvola.mobile.prixpascher.models.User;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class Utils {
 	public static boolean isConnectingToInternet(Context context) {
-		ConnectivityManager connectivity = (ConnectivityManager) context
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
-		if (connectivity != null) {
-			NetworkInfo[] info = connectivity.getAllNetworkInfo();
-			if (info != null)
-				for (int i = 0; i < info.length; i++)
-					if (info[i].getState() == NetworkInfo.State.CONNECTED) {
-						return true;
-					}
-		}
-		return false;
+		final ConnectivityManager conMgr = (ConnectivityManager)
+				context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
+		return activeNetwork != null && activeNetwork.getState() == NetworkInfo.State.CONNECTED;
 	}
 
 	public static File createDirOnSDCard(String dirName) {
@@ -130,15 +140,79 @@ public class Utils {
 	}
 
 	public static String getFacebookAvt(String fbId, int width, int height) {
-		return "http://graph.facebook.com/" + fbId + "/picture?width=" + width
+		return "https://graph.facebook.com/" + fbId + "/picture?width=" + width
 				+ "&height=" + height;
 	}
 
 	public static Boolean checkFacebookAvt(String path) {
-		if (path.indexOf("http://graph.facebook.com") == -1) {
+		if (path.indexOf("https://graph.facebook.com") == -1) {
 			return false;
 		}
 		return true;
+	}
+
+	public static class MyPicasso {
+        private static Picasso instance;
+
+        public static Picasso with(Context context) {
+            if (instance == null) {
+                instance =
+                new Picasso.Builder(context)
+                        .downloader(new OkHttp3Downloader(context))
+                        .listener(new Picasso.Listener() {
+                            @Override
+                            public void onImageLoadFailed(Picasso picasso, Uri uri, Exception exception) {
+                                exception.printStackTrace();
+                            }})
+                        .build();
+
+            }
+            return instance;
+        }
+
+        private MyPicasso() {
+            throw new AssertionError("No instances.");
+        }
+	}
+
+	public static class MyRestemplate {
+        private static RestTemplate instance;
+
+        public static RestTemplate getInstance() {
+            if (instance == null) {
+                List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
+                interceptors.add(new HeaderRequestInterceptor("Accept", MediaType.APPLICATION_JSON_VALUE));
+
+                RestTemplate restTemplate = new RestTemplate();
+                restTemplate.setInterceptors(interceptors);
+                restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+                instance = restTemplate;
+            }
+            return instance;
+        }
+    }
+
+	public static String buildImageUri(String imageId) {
+        return "https://www.prixpascher.ma/api/bucket/picture/" + imageId;
+    }
+
+	public static String formatToYesterdayOrToday(Date dateTime) {
+		String date = new SimpleDateFormat("dd/MM/yyyy").format(dateTime);
+		String time = new SimpleDateFormat("HH:mm:ss").format(dateTime);
+		try {
+			if (DateUtils.isToday(dateTime.getTime())) {
+				return "Aujourd'hui à " + time;
+			} else {
+                long sourceDuration = new Date().getTime() - dateTime.getTime();
+                if (TimeUnit.DAYS.convert(sourceDuration, TimeUnit.MILLISECONDS) == 1) {
+                    return "Hier à " + time;
+                } else {
+                    return "le " + date + " à " + time;
+                }
+            }
+		} catch (Exception e) {
+			return "le " + date + " à " + time;
+		}
 	}
 
 	public static User parseUser(JSONObject jsonObj) {
@@ -169,4 +243,23 @@ public class Utils {
 		return user;
 	}
 
+	public static void showCommingSoon(final Activity context) {
+        ((Activity) context).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder buidler = new AlertDialog.Builder(context);
+                buidler.setMessage(context.getString(R.string.coming_soon_label));
+                buidler.setPositiveButton(context.getResources().getString(R.string.ok_label),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO Auto-generated method
+                                // stub
+                            }
+                        });
+                AlertDialog dialog = buidler.create();
+                dialog.show();
+            }
+        });
+    }
 }

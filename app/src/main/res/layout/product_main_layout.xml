@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical">
-    <include layout="@layout/detail_layout" />
+    <include layout="@layout/product_layout" />
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/btnMenu"
@@ -60,10 +60,20 @@
             fab:fab_label="Acheter IcI" />
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/btnEmail"
+            android:id="@+id/btnAlert"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_mail"
+            android:src="@drawable/ic_alert"
+            style="@style/MenuButtonsStyle"
+            fab:fab_colorRipple="#99FFFFFF"
+            fab:fab_size="mini"
+            fab:fab_label="@string/send_enquiry" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/btnAskDevis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_ask"
             style="@style/MenuButtonsStyle"
             fab:fab_colorRipple="#99FFFFFF"
             fab:fab_size="mini"

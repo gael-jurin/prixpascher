@@ -95,7 +95,7 @@
                 style="@style/common_text_view"/>
 
             <com.rengwuxian.materialedittext.MaterialEditText
-                android:id="@+id/phone"
+                android:id="@+id/trackingDate"
                 style="@style/common_text"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"

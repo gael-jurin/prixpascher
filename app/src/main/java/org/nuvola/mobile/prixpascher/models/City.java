@@ -50,6 +50,6 @@ public enum City {
     }
 
     public static String[] names() {
-        return Arrays.toString(ShopType.values()).replaceAll("^.|.$", "").split(", ");
+        return Arrays.toString(City.values()).replaceAll("_", " ").replaceAll("^.|.$", "").split(", ");
     }
 }

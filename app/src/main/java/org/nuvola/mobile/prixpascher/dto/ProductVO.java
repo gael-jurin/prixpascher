@@ -3,12 +3,13 @@ package org.nuvola.mobile.prixpascher.dto;
 import org.nuvola.mobile.prixpascher.models.Category;
 import org.nuvola.mobile.prixpascher.models.ProductSource;
 import org.nuvola.mobile.prixpascher.models.ShopType;
+import org.nuvola.mobile.prixpascher.models.Taskable;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class ProductVO implements Serializable {
+public class ProductVO implements Serializable, Taskable {
     private String id;
     private ShopType shopType;
     private String shopInfoBannerScript;

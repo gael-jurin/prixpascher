@@ -1,7 +1,6 @@
 
 package org.nuvola.mobile.prixpascher;
 
-import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -20,43 +19,40 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import butterknife.Bind;
-import butterknife.ButterKnife;
+
 import org.nuvola.mobile.prixpascher.adapters.ProductsAdapter;
+import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.dto.ProductVO;
 import org.nuvola.mobile.prixpascher.dto.SearchFilterVO;
-import org.nuvola.mobile.prixpascher.models.PagedResponse;
+import org.nuvola.mobile.prixpascher.models.ProductsResponse;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressLint("NewApi")
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class SearchActivity extends ActionBarParentActivity {
     List<ProductVO> productsList = new ArrayList<>();
     SearchFilterVO searchFilter = new SearchFilterVO();
     ProductsAdapter adapter;
-    String TAG = "ProductsActivity";
+    String TAG = "SearchActivity";
 
     int COUNT_ITEM_LOAD_MORE = 40;
     int first = 0, pastVisiblesItems, visibleItemCount, totalItemCount;
     boolean loadingMore = true;
 
-    @Bind(R.id.activity_main_swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
-    @Bind(R.id.rv) RecyclerView rv;
-    @Bind(R.id.btnAll) Button btnAll;
-    @Bind(R.id.btnBest) Button btnBest;
-    @Bind(R.id.btnPromo) Button btnPromo;
-    @Bind(R.id.prgLoadMore) LinearLayout loadMorePrg;
-    @Bind(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
+    @BindView(R.id.rv) RecyclerView rv;
+    @BindView(R.id.btnAll) Button btnAll;
+    @BindView(R.id.btnBest) Button btnBest;
+    @BindView(R.id.btnPromo) Button btnPromo;
+    @BindView(R.id.prgLoadMore) LinearLayout loadMorePrg;
+    @BindView(R.id.toolbar) Toolbar toolbar;
 
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -103,6 +99,8 @@ public class SearchActivity extends ActionBarParentActivity {
     }
 
     private void handleIntent(Intent intent) {
+        resetSearch();
+
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String title = intent.getStringExtra(SearchManager.QUERY);
             Log.i(TAG, title);
@@ -186,7 +184,7 @@ public class SearchActivity extends ActionBarParentActivity {
         adapter.SetOnItemClickListener(new ProductsAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                Intent intent = new Intent(SearchActivity.this, DetailActivity.class);
+                Intent intent = new Intent(SearchActivity.this, ProductActivity.class);
                 intent.putExtra(constants.COMMON_KEY, productsList.get(position)
                         .getId());
                 startActivity(intent);
@@ -201,7 +199,7 @@ public class SearchActivity extends ActionBarParentActivity {
                 totalItemCount = llm.getItemCount();
                 pastVisiblesItems = llm.findFirstVisibleItemPosition();
                 if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
-                    loadingMore = false;
+                    loadingMore = true;
                     first += COUNT_ITEM_LOAD_MORE;
 
                     searchFilter.setPage(first);
@@ -221,18 +219,13 @@ public class SearchActivity extends ActionBarParentActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (productsList != null && productsList.size() != 0) {
+                swipeRefreshLayout.setRefreshing(productsList != null && productsList.size() != 0);
 
-                    searchFilter.setPage(first);
-                    searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                        new PullToRefreshDataTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    } else {
-                        new PullToRefreshDataTask().execute();
-                    }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    new PullToRefreshDataTask()
+                            .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 } else {
-                    swipeRefreshLayout.setRefreshing(false);
+                    new PullToRefreshDataTask().execute();
                 }
             }
         });
@@ -244,7 +237,6 @@ public class SearchActivity extends ActionBarParentActivity {
             adapter.notifyDataSetChanged();
             loadMorePrg.setVisibility(View.GONE);
         } catch (Exception e) {
-            
             e.printStackTrace();
             loadingMore = true;
             loadMorePrg.setVisibility(View.GONE);
@@ -264,27 +256,18 @@ public class SearchActivity extends ActionBarParentActivity {
         }
     }
 
-    private List<ProductVO> feedJson() {
+    private List<ProductVO> feedJson(boolean refresh) {
         try {
-            HttpHeaders requestHeaders = new HttpHeaders();
-            requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+            if (refresh) {
+                productsList.clear();
+                resetSearch();
+                searchFilter.setPage(0);
+            }
 
-            searchFilter.setSearchText("*");
-            searchFilter.setPage(first);
-            searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
-            searchFilter.setType(null);
-            searchFilter.setUserId(null);
-            searchFilter.setBrand(null);
-            searchFilter.setCity(null);
-
-            HttpEntity<SearchFilterVO> requestEntity = new HttpEntity<>(searchFilter, requestHeaders);
-
-            RestTemplate restTemplate = new RestTemplate();
-            restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-            ResponseEntity<PagedResponse> products = restTemplate.exchange(
+            HttpEntity<SearchFilterVO> requestEntity = new HttpEntity<>(searchFilter);
+            ResponseEntity<ProductsResponse> products = Utils.MyRestemplate.getInstance().postForEntity(
                     getResources().getString(R.string.products_json_url),
-                    HttpMethod.POST,
-                    requestEntity, PagedResponse.class);
+                    requestEntity, ProductsResponse.class);
 
             productsList.addAll(products.getBody().getPayload());
         } catch (Exception e) {
@@ -301,7 +284,7 @@ public class SearchActivity extends ActionBarParentActivity {
             if (isCancelled()) {
                 return null;
             }
-            return feedJson();
+            return feedJson(false);
         }
 
         @Override
@@ -330,7 +313,7 @@ public class SearchActivity extends ActionBarParentActivity {
         public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                 long arg3) {
             
-            Intent intent = new Intent(SearchActivity.this, DetailActivity.class);
+            Intent intent = new Intent(SearchActivity.this, ProductActivity.class);
             intent.putExtra(constants.COMMON_KEY, productsList.get(arg2)
                     .getId());
             startActivity(intent);
@@ -348,7 +331,7 @@ public class SearchActivity extends ActionBarParentActivity {
             if (isCancelled()) {
                 return null;
             }
-            return feedJson();
+            return feedJson(true);
         }
 
         @Override
@@ -364,6 +347,16 @@ public class SearchActivity extends ActionBarParentActivity {
             swipeRefreshLayout.setRefreshing(false);
             //mPullToRefreshLayout.setRefreshComplete();
         }
+    }
+
+    private void resetSearch() {
+        searchFilter.setPage(first);
+        searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
+        searchFilter.setType(null);
+        searchFilter.setUserId(null);
+        searchFilter.setBrand(null);
+        searchFilter.setCity(null);
+        searchFilter.setCategory(null);
     }
 
 }

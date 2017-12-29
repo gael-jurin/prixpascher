@@ -37,7 +37,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.nuvola.mobile.prixpascher.business.JSONFetchTask;
+import org.nuvola.mobile.prixpascher.tasks.JSONFetchTask;
 import org.nuvola.mobile.prixpascher.business.UserSessionManager;
 import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.confs.constants;

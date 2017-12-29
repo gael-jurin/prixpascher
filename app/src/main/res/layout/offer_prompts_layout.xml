@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="10dp" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/devis_mail"
+        style="@style/common_text_view" />
+
+    <EditText
+        android:id="@+id/priceOfferUserInput"
+        style="@style/common_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:ems="10"
+        android:gravity="left|top"
+        android:inputType="numberSigned"
+        android:textDirection="rtl"
+        android:hint="@string/your_price">
+        <requestFocus />
+    </EditText>
+
+    <EditText
+        android:id="@+id/qtyOfferUserInput"
+        style="@style/common_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:ems="10"
+        android:gravity="left|top"
+        android:inputType="textEmailAddress"
+        android:hint="@string/your_qty">
+    </EditText>
+
+    <com.gc.materialdesign.views.ButtonFlat
+        android:id="@+id/sendAlert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        style="@style/common_button"
+        android:layout_weight="1"
+        android:text="@string/send"
+        android:textColor="@color/white" />
+
+</LinearLayout>

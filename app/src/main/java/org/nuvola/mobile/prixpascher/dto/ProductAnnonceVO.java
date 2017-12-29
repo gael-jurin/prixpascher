@@ -5,11 +5,13 @@ import org.nuvola.mobile.prixpascher.models.AnnounceType;
 import org.nuvola.mobile.prixpascher.models.Category;
 import org.nuvola.mobile.prixpascher.models.City;
 import org.nuvola.mobile.prixpascher.models.ProductSource;
+import org.nuvola.mobile.prixpascher.models.Taskable;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class ProductAnnonceVO {
+public class ProductAnnonceVO implements Serializable, Taskable {
     private String id;
     private String parentId;
     private String feedId;

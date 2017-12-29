@@ -22,6 +22,7 @@ public class UserSessionManager {
 	public static final int IS_LOGOUT = 0;
 	public static final int PRIVATE_MODE = 0;
 	public static final String SHARED_PREF_NAME = "user";
+	public static final String SHARED_PREF_DATA = "data";
 	public Context context;
 	SharedPreferences sharePre;
 	Editor editor;
@@ -41,7 +42,7 @@ public class UserSessionManager {
 				SHARED_PREF_NAME, PRIVATE_MODE);
 		Editor editor = sharePre.edit();
 		editor.putString(TAG_ID, user.getId());
-		// editor.putString(TAG_FB_ID, user.getProviderUserId());
+		editor.putString(TAG_FB_ID, user.getProviderUserId());
 		editor.putString(TAG_FULL_NAME, user.getUserName());
 		editor.putString(TAG_EMAIL, user.getEmail());
 		editor.putString(TAG_PHONE, "");
@@ -71,7 +72,7 @@ public class UserSessionManager {
 			if (isLogIn == IS_LOGIN) {
 				User user = new User();
 				user.setId(sharePre.getString(TAG_ID, "0"));
-				// user.setFbId(sharePre.getString(TAG_FB_ID, null));
+				user.setFbId(sharePre.getString(TAG_FB_ID, null));
 				user.setEmail(sharePre.getString(TAG_EMAIL, null));
 				user.setAddress(sharePre.getString(TAG_ADDRESS, null));
 				user.setPhone(sharePre.getString(TAG_PHONE, null));

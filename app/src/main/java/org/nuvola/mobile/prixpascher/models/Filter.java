@@ -1,6 +1,5 @@
 package org.nuvola.mobile.prixpascher.models;
 
-
 public abstract class Filter {
     private Integer page;
     private Integer size;

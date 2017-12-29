@@ -1,29 +1,12 @@
 package org.nuvola.mobile.prixpascher;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -32,19 +15,30 @@ import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import org.nuvola.mobile.prixpascher.business.RoundedAvatarDrawable;
-import org.nuvola.mobile.prixpascher.business.Utils;
+import com.gc.materialdesign.views.ButtonFlat;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.nuvola.mobile.prixpascher.business.UserSessionManager;
+import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.models.User;
-import com.gc.materialdesign.views.ButtonFlat;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 @SuppressLint({"NewApi", "ShowToast"})
 public class UpdateProfileActivity extends ActionBarParentActivity {
@@ -73,7 +67,7 @@ public class UpdateProfileActivity extends ActionBarParentActivity {
 
         website = (EditText) findViewById(R.id.websites);
         address = (EditText) findViewById(R.id.address);
-        phone = (EditText) findViewById(R.id.phone);
+        phone = (EditText) findViewById(R.id.trackingDate);
         avt = (ImageView) findViewById(R.id.avt);
         if (getIntent().getExtras() != null
                 && getIntent().getExtras().containsKey(constants.COMMON_KEY)) {
@@ -85,27 +79,14 @@ public class UpdateProfileActivity extends ActionBarParentActivity {
         address.setText(user.getAddress());
         phone.setText(user.getPhone());
         if (user.getAvt() != null && !user.getAvt().equalsIgnoreCase("")) {
-            String avtString = "";
-            if (Utils.checkFacebookAvt(user.getAvt())) {
-                avtString = user.getAvt();
-            } else {
-                avtString = getResources().getString(R.string.domain_url)
-                        + user.getAvt();
-            }
-            Ion.with(this, avtString).withBitmap()
-                    .placeholder(R.drawable.ic_avatar).resize(200, 200)
-                    .centerCrop().error(R.drawable.ic_avatar).asBitmap()
-                    .setCallback(new FutureCallback<Bitmap>() {
-                        @Override
-                        public void onCompleted(Exception arg0, Bitmap bitmap) {
-                            // TODO Auto-generated method stub
-                            if (bitmap != null) {
-                                RoundedAvatarDrawable avtDrawable = new RoundedAvatarDrawable(
-                                        bitmap);
-                                avt.setImageDrawable(avtDrawable);
-                            }
-                        }
-                    });
+            String avtString = user.getAvt();
+
+            Utils.MyPicasso.with(this)
+                    .load(avtString)
+                    .resize(200, 200).centerCrop()
+                    .placeholder(R.drawable.ic_avatar)
+                    .error(R.drawable.ic_avatar)
+                    .into(avt);
         }
 
         btnUpdate.setOnClickListener(new View.OnClickListener() {
@@ -120,7 +101,7 @@ public class UpdateProfileActivity extends ActionBarParentActivity {
                             .isConnectingToInternet(UpdateProfileActivity.this)) {
                         showMsg(getResources().getString(R.string.open_network));
                     } else {
-                        upload();
+                        Utils.showCommingSoon(UpdateProfileActivity.this);
                     }
                 } else {
                     Intent intent = new Intent(UpdateProfileActivity.this,
@@ -191,11 +172,11 @@ public class UpdateProfileActivity extends ActionBarParentActivity {
                 case SELECT_PICTURE:
                     final String selectAbpath = getPath(data.getData());
                     Log.i(TAG, selectAbpath);
-                    Ion.with(this, new File(selectAbpath).getAbsoluteFile())
-                            .withBitmap().placeholder(R.drawable.ic_small_avatar)
+                    Utils.MyPicasso.with(this).load(new File(selectAbpath).getAbsoluteFile())
+                            .placeholder(R.drawable.ic_small_avatar)
                             .error(R.drawable.ic_small_avatar).resize(200, 200)
-                            .centerCrop().asBitmap()
-                            .setCallback(new FutureCallback<Bitmap>() {
+                            .centerCrop();
+                            /*.setCallback(new FutureCallback<Bitmap>() {
                                 @Override
                                 public void onCompleted(Exception arg0,
                                                         Bitmap bitmap) {
@@ -210,16 +191,16 @@ public class UpdateProfileActivity extends ActionBarParentActivity {
                                         // TODO: handle exception
                                     }
                                 }
-                            });
+                            });*/
                     break;
 
                 case TAKE_PICTURE:
                     if (tmpFile.exists()) {
-                        Ion.with(this, tmpFile.getAbsoluteFile()).withBitmap()
+                        Utils.MyPicasso.with(this).load(tmpFile.getAbsoluteFile())
                                 .placeholder(R.drawable.ic_small_avatar)
                                 .error(R.drawable.ic_small_avatar).resize(200, 200)
-                                .centerCrop().asBitmap()
-                                .setCallback(new FutureCallback<Bitmap>() {
+                                .centerCrop();
+                                /*.setCallback(new FutureCallback<Bitmap>() {
                                     @Override
                                     public void onCompleted(Exception arg0,
                                                             Bitmap bitmap) {
@@ -229,7 +210,7 @@ public class UpdateProfileActivity extends ActionBarParentActivity {
                                         avt.setImageDrawable(avtDrawable);
                                         avtPath = tmpFile.getAbsolutePath();
                                     }
-                                });
+                                });*/
                     }
                     break;
                 default:
@@ -260,12 +241,13 @@ public class UpdateProfileActivity extends ActionBarParentActivity {
     }
 
     private void upload() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             new Upload().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
             new Upload().execute();
-        }
-        // }
+        }*/
+
+
     }
 
     ProgressDialog dialog;
@@ -306,9 +288,9 @@ public class UpdateProfileActivity extends ActionBarParentActivity {
                 HttpPost post = new HttpPost(handleInserUrl);
                 MultipartEntity reqEntity = new MultipartEntity();
 
-                String websiteText = website.getText().toString();
-                String addressText = address.getText().toString();
-                String phoneText = phone.getText().toString();
+                // String websiteText = website.getText().toString();
+                // String addressText = address.getText().toString();
+                // String phoneText = phone.getText().toString();
 
                 // reqEntity.addPart("id", new StringBody(user.getId() + ""));
                 // reqEntity.addPart("fb_id", new StringBody(user.getFbId()));
@@ -375,5 +357,4 @@ public class UpdateProfileActivity extends ActionBarParentActivity {
         AlertDialog dialog = buidler.create();
         dialog.show();
     }
-
 }

@@ -10,7 +10,7 @@
         />
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/activity_main_swipe_refresh_layout"
+        android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -66,7 +66,7 @@
             android:layout_weight="1"
             android:background="@drawable/tab_categories"
             android:minHeight="40dp"
-            android:text="@string/best_label"
+            android:text="@string/recent_label"
             android:textColor="@color/white"
             android:textSize="12dp" />
 

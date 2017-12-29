@@ -1,10 +1,7 @@
 package org.nuvola.mobile.prixpascher.adapters;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.nuvola.mobile.prixpascher.R;
-import org.nuvola.mobile.prixpascher.business.RoundedAvatarDrawable;
+import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.models.DrawerMenuItem;
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
+
+import java.util.ArrayList;
 
 public class DrawerMenuAdapter extends BaseAdapter {
 
@@ -56,21 +53,12 @@ public class DrawerMenuAdapter extends BaseAdapter {
 		TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
 		if (drawerItems.get(position).getAvt() != null
 				&& !drawerItems.get(position).getAvt().equals("")) {
-			Ion.with(context, drawerItems.get(position).getAvt()).withBitmap()
-					.placeholder(R.drawable.ic_small_avatar).resize(64, 64)
-					.centerCrop().error(R.drawable.ic_small_avatar).asBitmap()
-					.setCallback(new FutureCallback<Bitmap>() {
-						@Override
-						public void onCompleted(Exception arg0, Bitmap bitmap) {
-							// TODO Auto-generated method stub
-							if (bitmap != null) {
-								RoundedAvatarDrawable avtDrawable = new RoundedAvatarDrawable(
-										bitmap);
-								imgIcon.setImageDrawable(avtDrawable);
-							}
-						}
-					});
-
+			Utils.MyPicasso.with(context)
+					.load(drawerItems.get(position).getAvt())
+					.resize(64, 64).centerCrop()
+					.placeholder(R.drawable.ic_small_avatar)
+					.error(R.drawable.ic_small_avatar)
+					.into(imgIcon);
 		} else {
 			imgIcon.setImageResource(drawerItems.get(position).getIcon());
 		}

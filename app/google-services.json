@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "258511272831",
+    "firebase_url": "https://prix-pas-cher-760.firebaseio.com",
+    "project_id": "prix-pas-cher-760",
+    "storage_bucket": "prix-pas-cher-760.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:258511272831:android:a5e8254ac9e3e63f",
+        "android_client_info": {
+          "package_name": "org.nuvola.mobile.prixpascher"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "258511272831-q0jmrrpukagconbca0e6dkgnp2gpdhue.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "258511272831-808l29trhhq0qc2vg9s6rm4nmtd9dl3f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLzLHbbm24Yo9tWY0vG6JSTL-3yYgux6g"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,14 +1,5 @@
 package org.nuvola.mobile.prixpascher;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -21,8 +12,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.confs.constants;
-import com.koushikdutta.ion.Ion;
 
 public class UpdateImagePreviewActivity extends Activity {
 	public static final String TAG = "UpdateImagePreviewActivity";
@@ -45,9 +43,10 @@ public class UpdateImagePreviewActivity extends Activity {
 		images_id = intent.getIntExtra(constants.COMMON_KEY, 0);
 		product_id = intent.getIntExtra(constants.PRODUCT_ID, 0);
 		images = (ImageView) findViewById(R.id.images);
-		Ion.with(UpdateImagePreviewActivity.this, paths).withBitmap()
+		Utils.MyPicasso.with(UpdateImagePreviewActivity.this)
+				.load(paths)
 				.resize(256, 256).centerCrop().placeholder(R.drawable.no_photo)
-				.error(R.drawable.no_photo).intoImageView(images);
+				.error(R.drawable.no_photo).into(images);
 
 		btnClose.setOnClickListener(new View.OnClickListener() {
 			@Override
