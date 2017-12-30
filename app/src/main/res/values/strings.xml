@@ -73,7 +73,7 @@
     <string name="promotions_label">Promotions</string>
     <string name="devis_label">Demandes d\'achat</string>
     <string name="offers_label">Offres sur devis</string>
-    <string name="news_label">News !</string>
+    <string name="news_label">New !</string>
     <string name="all_label">{faw-refresh}</string>
     <string name="announce_sell_label">{faw-bullhorn}</string>
     <string name="announce_offer_label">{faw-handshake_o}</string>
@@ -160,9 +160,10 @@
     <string name="products_json_url">https://www.prixpascher.ma/api/products/products/list</string>
     <string name="announces_json_url">https://www.prixpascher.ma/api/announces</string>
     <string name="announce_root_json_url">https://www.prixpascher.ma/annonce/api/annonce/</string>
+    <string name="offer_root_json_url">https://www.prixpascher.ma/api/offer/</string>
     <string name="product_root_json_url">https://www.prixpascher.ma/article/api/products/</string>
 
-    <string name="users_json_url">https://www.prixpascher.ma/api/user/</string>
+    <string name="users_json_url">https://www.prixpascher.ma/api/user/merchant/</string>
     <string name="merchant_json_url">https://www.prixpascher.ma/api/merchant/</string>
     <string name="announce_send_json_url">https://www.prixpascher.ma/api/annonce/persist/mobile</string>
     <string name="announce_notif_json_url">https://www.prixpascher.ma/api/message/annonce/</string>

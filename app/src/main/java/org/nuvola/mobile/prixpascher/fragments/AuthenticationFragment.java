@@ -48,16 +48,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 import io.cloudboost.CloudException;
 import io.cloudboost.CloudNotification;
 import io.cloudboost.CloudNotificationCallback;
 import io.cloudboost.CloudObject;
+import io.cloudboost.CloudObjectArrayCallback;
 import io.cloudboost.CloudObjectCallback;
-import io.cloudboost.CloudPush;
-import io.cloudboost.CloudStringCallback;
+import io.cloudboost.CloudQuery;
 
 @SuppressLint("NewApi")
 public class AuthenticationFragment extends Fragment {
@@ -305,24 +305,33 @@ public class AuthenticationFragment extends Fragment {
 		dialog.show();
 	}
 
-    private void registerForNotification(UserVO mobileUser) {
-        String[] channels = {"global"};
-        String[] channels2 = {"global", "affiliates"};
-
-        if (mobileUser.getPrimaryShopClasse() != null && mobileUser.getTypeAnnonceur().equals(TypeAnnonceur.PROFESSIONAL)) {
-            channels = channels2;
+    private void registerForNotification(final UserVO mobileUser) {
+        final String[] channels = {"global", "affiliates"};
+        if (mobileUser.getTypeAnnonceur().equals(TypeAnnonceur.PROFESSIONAL)) {
             String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+            CloudQuery query = new CloudQuery("Device");
+            query.equalTo("deviceToken", refreshedToken);
             try {
-                new CloudPush().addDevice(refreshedToken, TimeZone.getDefault().getDisplayName(),
-                        channels, "prixpascher",
-                        new CloudObjectCallback() {
-                            @Override
-                            public void done(CloudObject x, CloudException t) throws CloudException {
-                                subscribeForNotification();
-                            }
-                        });
+                query.find(new CloudObjectArrayCallback() {
+                    @Override
+                    public void done(CloudObject[] x, CloudException t) throws CloudException {
+                        CloudObject obj = x[0];
+                        try {
+                            obj.set("userid", mobileUser.getProviderUserId());
+                            obj.set("channels", channels);
+                            obj.save(new CloudObjectCallback() {
+                                @Override
+                                public void done(CloudObject x, CloudException t) throws CloudException {
+                                    Log.i(TAG, "OK");
+                                }
+                            });
+                        } catch (Exception e) {
+                            Log.e(TAG, e.getMessage());
+                        }
+                    }
+                });
             } catch (CloudException e) {
-                Log.e(TAG, e.getMessage());
+                e.printStackTrace();
             }
         } else {
             unsubscribeForNotification();
@@ -330,16 +339,31 @@ public class AuthenticationFragment extends Fragment {
     }
 
     private void unsubscribeForNotification() {
+        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
+        final String[] channels = {"global"};
+        CloudQuery query = new CloudQuery("Device");
+        query.equalTo("deviceToken", refreshedToken);
         try {
-            String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-            CloudNotification.off("affiliates", new CloudStringCallback() {
+            query.find(new CloudObjectArrayCallback() {
                 @Override
-                public void done(String x, CloudException e) throws CloudException {
-                    Log.i(TAG, "Unregistered as affiliated");
+                public void done(CloudObject[] x, CloudException t) throws CloudException {
+                    CloudObject obj = x[0];
+                    try {
+                        obj.set("channels", channels);
+                        obj.setExpires(Calendar.getInstance());
+                        obj.save(new CloudObjectCallback() {
+                            @Override
+                            public void done(CloudObject x, CloudException t) throws CloudException {
+                                Log.i(TAG, "OK");
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         } catch (CloudException e) {
-            Log.e(TAG, e.getMessage());
+            e.printStackTrace();
         }
     }
 

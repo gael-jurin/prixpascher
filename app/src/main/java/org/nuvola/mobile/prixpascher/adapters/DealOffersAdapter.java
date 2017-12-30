@@ -1,4 +1,3 @@
-
 package org.nuvola.mobile.prixpascher.adapters;
 
 import android.content.Context;
@@ -14,25 +13,26 @@ import android.widget.TextView;
 
 import org.nuvola.mobile.prixpascher.R;
 import org.nuvola.mobile.prixpascher.business.Utils;
-import org.nuvola.mobile.prixpascher.dto.ProductVO;
+import org.nuvola.mobile.prixpascher.dto.OfferVO;
+import org.nuvola.mobile.prixpascher.models.OfferStatus;
 
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class DealProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class DealOffersAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
-    private List<ProductVO> products;
+    private List<OfferVO> offers;
     OnItemClickListener mItemClickListener;
 
-    public DealProductsAdapter(Context context, List<ProductVO> products){
+    public DealOffersAdapter(Context context, List<OfferVO> offers){
         this.context=context;
-        this.products=products;
+        this.offers = offers;
     }
 
     @Override
     public DealsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.deals_products_layout, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.deals_offers_layout, parent, false);
         DealsViewHolder pvh = new DealsViewHolder(v);
         return pvh;
     }
@@ -42,19 +42,19 @@ public class DealProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         DealsViewHolder myHolder = (DealsViewHolder) holder;
         if (myHolder.thumb != null) {
             Utils.MyPicasso.with(context)
-                    .load(products.get(position).getImage())
+                    .load(offers.get(position).getProductAnnonce().getImage())
                     .placeholder(R.drawable.no_photo)
                     .into(myHolder.thumb);
         }
 
         if (myHolder.title != null) {
-            myHolder.title.setText(products.get(position).getTitle());
+            myHolder.title.setText(offers.get(position).getProductAnnonce().getTitle());
         }
 
-        if (products.get(position).getPrice() != null && myHolder.price != null) {
-            if (products.get(position).getPromoted()) {
-                Double delta = products.get(position).getPrice() -
-                        products.get(position).getPrices().get(0).getPrice();
+        if (offers.get(position).getTargetPrice() != null && myHolder.price != null) {
+            if (offers.get(position).getOfferStatus().equals(OfferStatus.CHALLENGED)) {
+                Double delta = Double.valueOf(offers.get(position).getTargetPrice()) -
+                        offers.get(position).getProductAnnonce().getPrice();
                 if (delta < 1) {
                     Animation anim = new AlphaAnimation(0.0f, 1.0f);
                     anim.setDuration(400);
@@ -66,14 +66,14 @@ public class DealProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                     myHolder.price.setText(NumberFormat.getInstance(Locale.FRANCE).format(delta) + " Dhs");
                 }
             } else {
-                Double delta = products.get(position).getPrice();
+                /*Double delta = products.get(position).getPrice();
                 if (!products.get(position).getAlerts().isEmpty()) {
                     delta = products.get(position).getAlerts().get(0).getTargetPrice();
-                }
+                }*/
 
                 myHolder.price.setTextColor(context.getResources().getColor(R.color.green));
                 myHolder.price.setVisibility(View.VISIBLE);
-                myHolder.price.setText("Prix discount : " + NumberFormat.getInstance(Locale.FRANCE).format(delta) + " Dhs");
+                // myHolder.price.setText("Prix discount : " + NumberFormat.getInstance(Locale.FRANCE).format(delta) + " Dhs");
             }
         } else {
             myHolder.price.setText(
@@ -82,7 +82,8 @@ public class DealProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
         if (myHolder.shop != null) {
-            myHolder.shop.setImageResource(getDrawable(context, products.get(position).getShopName() + "_large"));
+            myHolder.shop.setImageResource(getDrawable(context,
+                    offers.get(position).getShop().getName() + "_large"));
         }
     }
 
@@ -127,7 +128,7 @@ public class DealProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
-        return products.size();
+        return offers.size();
     }
 }
 

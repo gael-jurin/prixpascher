@@ -4,6 +4,7 @@ import org.nuvola.mobile.prixpascher.models.AnnounceType;
 import org.nuvola.mobile.prixpascher.models.Category;
 import org.nuvola.mobile.prixpascher.models.City;
 import org.nuvola.mobile.prixpascher.models.Filter;
+import org.nuvola.mobile.prixpascher.models.OfferStatus;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ public class SearchFilterVO extends Filter {
     private String userId;
     private City city;
     private AnnounceType type;
+    private OfferStatus ostatus;
     private Double minPrice;
     private Double maxPrice;
     private String searchText;
@@ -47,6 +49,14 @@ public class SearchFilterVO extends Filter {
 
     public void setCity(City city) {
         this.city = city;
+    }
+
+    public OfferStatus getOstatus() {
+        return ostatus;
+    }
+
+    public void setOstatus(OfferStatus ostatus) {
+        this.ostatus = ostatus;
     }
 
     public Boolean getEnValidation() {

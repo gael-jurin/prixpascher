@@ -55,6 +55,7 @@
             android:layout_weight="1"
             android:background="@drawable/tab_categories"
             android:minHeight="40dp"
+            android:tooltipText="All in Store"
             android:text="@string/all_label"
             android:textColor="@color/white"
             android:textSize="12dp" />
@@ -66,6 +67,7 @@
             android:layout_weight="1"
             android:background="@drawable/tab_categories"
             android:minHeight="40dp"
+            android:tooltipText="New in Store"
             android:text="@string/recent_label"
             android:textColor="@color/white"
             android:textSize="12dp" />
@@ -77,6 +79,7 @@
             android:layout_weight="1"
             android:background="@drawable/tab_categories"
             android:minHeight="40dp"
+            android:tooltipText="Promos in Store"
             android:text="@string/buy_label"
             android:textColor="@color/white"
             android:textSize="12dp" />
