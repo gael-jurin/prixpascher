@@ -39,7 +39,6 @@ public class ProductAnnonceVO implements Serializable, Taskable {
     private Date viewed;
     private String detail;
     private String specification;
-    private List<OfferVO> offers;
     private UserVO user;
     private String cityName;
     private String categoryName;
@@ -214,14 +213,6 @@ public class ProductAnnonceVO implements Serializable, Taskable {
 
     public void setUserGroupChain(String userGroupChain) {
         this.userGroupChain = userGroupChain;
-    }
-
-    public List<OfferVO> getOffers() {
-        return offers;
-    }
-
-    public void setOffers(List<OfferVO> offers) {
-        this.offers = offers;
     }
 
     public String getDetail() {

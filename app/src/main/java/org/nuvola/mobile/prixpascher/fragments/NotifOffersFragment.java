@@ -1,6 +1,5 @@
 package org.nuvola.mobile.prixpascher.fragments;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +15,10 @@ import android.view.ViewGroup;
 import com.clockbyte.admobadapter.AdmobRecyclerAdapterWrapper;
 import com.google.android.gms.ads.MobileAds;
 
-import org.nuvola.mobile.prixpascher.ProductActivity;
 import org.nuvola.mobile.prixpascher.R;
-import org.nuvola.mobile.prixpascher.adapters.DealProductsAdapter;
-import org.nuvola.mobile.prixpascher.confs.constants;
-import org.nuvola.mobile.prixpascher.dto.ProductVO;
-import org.nuvola.mobile.prixpascher.tasks.ProductFetchTask;
+import org.nuvola.mobile.prixpascher.adapters.DealOffersAdapter;
+import org.nuvola.mobile.prixpascher.dto.OfferVO;
+import org.nuvola.mobile.prixpascher.tasks.OfferFetchTask;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,10 +32,10 @@ import static org.nuvola.mobile.prixpascher.business.UserSessionManager.PRIVATE_
 import static org.nuvola.mobile.prixpascher.business.UserSessionManager.SHARED_PREF_DATA;
 
 public class NotifOffersFragment extends Fragment {
-    String TAG = "NotifPromosFragment";
+    String TAG = "NotifOffersFragment";
 
-    ArrayList<ProductVO> deals = new ArrayList<>();
-    DealProductsAdapter adapter;
+    ArrayList<OfferVO> deals = new ArrayList<>();
+    DealOffersAdapter adapter;
     int user_id = 0, pastVisiblesItems, visibleItemCount, totalItemCount;
 
     @BindView(R.id.rv)
@@ -74,7 +72,7 @@ public class NotifOffersFragment extends Fragment {
 
         final LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
-        adapter = new DealProductsAdapter(getActivity(), deals);
+        adapter = new DealOffersAdapter(getActivity(), deals);
 
         adapterWrapper = new AdmobRecyclerAdapterWrapper(getContext(),
                 "ca-app-pub-1074284300135896/6213979568");
@@ -84,20 +82,13 @@ public class NotifOffersFragment extends Fragment {
         adapterWrapper.setFirstAdIndex(3);
         rv.setAdapter(adapterWrapper);
 
-        adapter.SetOnItemClickListener(new DealProductsAdapter.OnItemClickListener() {
+        adapter.SetOnItemClickListener(new DealOffersAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 if (user_id == 0) {
-                    Intent intent = new Intent(getActivity(), ProductActivity.class);
-                    intent.putExtra(constants.COMMON_KEY, deals.get(position)
-                            .getId());
-                    startActivity(intent);
+                    Log.i(TAG, "Concurrents User offers");
                 } else {
-                    Intent intent = new Intent(getActivity(), ProductActivity.class);
-                    intent.putExtra(constants.COMMON_KEY, deals.get(position)
-                            .getId());
-                    intent.putExtra(constants.USER_ID_KEY, user_id);
-                    startActivity(intent);
+                    Log.i(TAG, "User offers");
                 }
             }
         });
@@ -135,20 +126,20 @@ public class NotifOffersFragment extends Fragment {
     private void loadUnreadNotifications() {
         SharedPreferences sharePre = getApplicationContext().getSharedPreferences(
                 SHARED_PREF_DATA, PRIVATE_MODE);
-        final Set<String> notifs = sharePre.getStringSet("OFFERS", new HashSet<String>());
-        for (final String pid: notifs) {
-            new ProductFetchTask(getResources().getString(
-                    R.string.product_root_json_url)
+        final Set<String> offers = sharePre.getStringSet("OFFERS", new HashSet<String>());
+        for (final String pid: offers) {
+            new OfferFetchTask(getResources().getString(
+                    R.string.offer_root_json_url)
                     + pid,
                         new Handler() {
                         public void handleMessage(android.os.Message msg) {
                             Bundle bundle = msg.getData();
                             if (bundle.containsKey(pid)) {
-                                ProductVO product = (ProductVO) bundle
+                                OfferVO product = (OfferVO) bundle
                                         .getSerializable(pid);
 
                                 deals.add(product);
-                                if (deals.size() == notifs.size() && isAdded()) {
+                                if (deals.size() == offers.size() && isAdded()) {
                                     adapter.notifyDataSetChanged();
                                     swipeRefreshLayout.setRefreshing(false);
                                 }

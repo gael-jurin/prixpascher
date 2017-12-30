@@ -51,6 +51,7 @@
             android:layout_weight="1"
             android:background="@drawable/tab_categories"
             android:minHeight="40dp"
+            android:tooltipText="En vente"
             android:text="@string/announce_sell_label"
             android:textColor="@color/white"
             android:textSize="12dp" />
@@ -62,6 +63,7 @@
             android:layout_weight="1"
             android:background="@drawable/tab_categories"
             android:minHeight="40dp"
+            android:tooltipText="Demande de devis"
             android:text="@string/announce_offer_label"
             android:textColor="@color/white"
             android:textSize="12dp" />

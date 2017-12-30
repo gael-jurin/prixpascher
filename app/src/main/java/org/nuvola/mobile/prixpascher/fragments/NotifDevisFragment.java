@@ -34,7 +34,7 @@ import static org.nuvola.mobile.prixpascher.business.UserSessionManager.PRIVATE_
 import static org.nuvola.mobile.prixpascher.business.UserSessionManager.SHARED_PREF_DATA;
 
 public class NotifDevisFragment extends Fragment {
-    String TAG = "NotifPromosFragment";
+    String TAG = "NotifDevisFragment";
 
     ArrayList<ProductAnnonceVO> deals = new ArrayList<>();
     DealDevisAdapter adapter;
