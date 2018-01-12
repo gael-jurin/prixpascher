@@ -18,8 +18,10 @@ import com.google.android.gms.ads.MobileAds;
 import org.nuvola.mobile.prixpascher.AnnounceActivity;
 import org.nuvola.mobile.prixpascher.R;
 import org.nuvola.mobile.prixpascher.adapters.DealDevisAdapter;
+import org.nuvola.mobile.prixpascher.business.UserSessionManager;
 import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.dto.ProductAnnonceVO;
+import org.nuvola.mobile.prixpascher.models.User;
 import org.nuvola.mobile.prixpascher.tasks.AnnounceFetchTask;
 
 import java.util.ArrayList;
@@ -133,26 +135,31 @@ public class NotifDevisFragment extends Fragment {
     }
 
     private void loadUnreadNotifications() {
-        SharedPreferences sharePre = getApplicationContext().getSharedPreferences(
-                SHARED_PREF_DATA, PRIVATE_MODE);
-        final Set<String> notifs = sharePre.getStringSet("DEVIS", new HashSet<String>());
-        for (final String pid: notifs) {
-            new AnnounceFetchTask(getResources().getString(
-                    R.string.announce_root_json_url)
-                    + pid,
+        UserSessionManager sessionManager = new UserSessionManager(getActivity());
+        User user = sessionManager.getUserSession();
+        if (user != null) {
+            SharedPreferences sharePre = getApplicationContext().getSharedPreferences(
+                    SHARED_PREF_DATA, PRIVATE_MODE);
+            final Set<String> notifs = sharePre.getStringSet("DEVIS", new HashSet<String>());
+            for (final String pid : notifs) {
+                new AnnounceFetchTask(getResources().getString(
+                        R.string.announce_root_json_url)
+                        + pid,
                         new Handler() {
-                        public void handleMessage(android.os.Message msg) {
-                            Bundle bundle = msg.getData();
-                            if (bundle.containsKey(pid)) {
-                                ProductAnnonceVO annonce = (ProductAnnonceVO) bundle
-                                        .getSerializable(pid);
-                                deals.add(annonce);
-                                if (deals.size() == notifs.size() && isAdded()) {
-                                    adapter.notifyDataSetChanged();
-                                    swipeRefreshLayout.setRefreshing(false);
+                            public void handleMessage(android.os.Message msg) {
+                                Bundle bundle = msg.getData();
+                                if (bundle.containsKey(pid)) {
+                                    ProductAnnonceVO annonce = (ProductAnnonceVO) bundle
+                                            .getSerializable(pid);
+                                    deals.add(annonce);
+                                    if (deals.size() == notifs.size() && isAdded()) {
+                                        adapter.notifyDataSetChanged();
+                                        swipeRefreshLayout.setRefreshing(false);
+                                    }
                                 }
                             }
-                        }}).execute();
+                        }).execute();
+            }
         }
     }
 }

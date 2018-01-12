@@ -46,7 +46,7 @@ public class FcmListenerService extends FirebaseMessagingService {
             intent = new Intent(this, AnnounceActivity.class);
         }
 
-        if (title.toLowerCase().contains("offre")) {
+        if (title.toLowerCase().contains("offre") || body.toLowerCase().contains("offre")) {
             intent = new Intent(this, InNotificationActivity.class);
         }
 
@@ -95,8 +95,8 @@ public class FcmListenerService extends FirebaseMessagingService {
             devis.add(body);
         }
 
-        if (title.toLowerCase().contains("offre")) {
-            offers.add(body);
+        if (title.toLowerCase().contains("offre") || body.toLowerCase().contains("offre")) {
+            offers.add(body.split(":")[1].trim());
         }
 
         SharedPreferences.Editor editor = sharePre.edit();

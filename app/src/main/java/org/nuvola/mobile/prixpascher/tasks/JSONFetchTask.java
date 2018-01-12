@@ -54,11 +54,11 @@ public class JSONFetchTask extends AsyncTask<Void, Void, String> {
 			is = httpEntity.getContent();
 
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage());
 		} catch (ClientProtocolException e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage());
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage());
 		}
 		try {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(

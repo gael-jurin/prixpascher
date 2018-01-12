@@ -16,6 +16,8 @@ import com.twitter.sdk.android.core.TwitterConfig;
 import org.nuvola.mobile.prixpascher.business.BadgeUtils;
 import org.nuvola.mobile.prixpascher.confs.constants;
 
+import java.util.HashSet;
+
 import io.cloudboost.CloudApp;
 
 import static org.nuvola.mobile.prixpascher.business.UserSessionManager.PRIVATE_MODE;
@@ -59,11 +61,12 @@ public class SplashActivity extends Activity {
 		// TODO: The badge will be cleared once the notifications has expired
 		SharedPreferences sharePre = getApplicationContext().getSharedPreferences(
 				SHARED_PREF_DATA, PRIVATE_MODE);
-		/*BadgeUtils.clearBadge(this);
+		// BadgeUtils.clearBadge(this);
 		SharedPreferences.Editor editor = sharePre.edit();
-		editor.putStringSet("PROMOS", BadgeUtils.promos);
-		editor.putStringSet("DEVIS", BadgeUtils.devis);
-		editor.putStringSet("OFFERS", BadgeUtils.offers);
-		editor.commit();*/
+		// editor.putStringSet("PROMOS", BadgeUtils.promos);
+		// editor.putStringSet("DEVIS", BadgeUtils.devis);
+		// BadgeUtils.offers = new HashSet<>();
+		// editor.putStringSet("OFFERS", BadgeUtils.offers);
+		// editor.commit();
 	}
 }

@@ -85,7 +85,7 @@ public class ProfileActivity extends ActionBarParentActivity {
 	private MerchantVO getMerchant() {
 		try {
 
-			final ResponseEntity<MerchantVO> merchantInfos = Utils.MyRestemplate.getInstance().getForEntity(
+			final ResponseEntity<MerchantVO> merchantInfos = Utils.MyRestemplate.getInstance(this).getForEntity(
 					getResources().getString(R.string.merchant_json_url) + user_id,
 					MerchantVO.class);
 			if (merchantInfos.getStatusCode().equals(HttpStatus.OK)) {
@@ -96,7 +96,7 @@ public class ProfileActivity extends ActionBarParentActivity {
 				productFeed.setText(merchant.getShopInfoVO().getFeed());
 				website.setText(merchant.getShopInfoVO().getWebsite());
 
-				final ResponseEntity<UserVO> user = Utils.MyRestemplate.getInstance().getForEntity(
+				final ResponseEntity<UserVO> user = Utils.MyRestemplate.getInstance(this).getForEntity(
 						getResources().getString(R.string.users_json_url) + "/merchant/" +
                                 user_id, UserVO.class);
 
@@ -124,7 +124,7 @@ public class ProfileActivity extends ActionBarParentActivity {
 			}
 			dialogPrg.cancel();
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage());
 		}
 		return merchant;
 	}

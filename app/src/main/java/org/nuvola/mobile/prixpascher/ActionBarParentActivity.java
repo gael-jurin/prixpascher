@@ -20,6 +20,7 @@ import com.gc.materialdesign.widgets.Dialog;
 import com.mikepenz.iconics.context.IconicsLayoutInflater2;
 
 import org.nuvola.mobile.prixpascher.business.BadgeUtils;
+import org.nuvola.mobile.prixpascher.business.Utils;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -96,13 +97,15 @@ public class ActionBarParentActivity extends AppCompatActivity {
 
         updateHotCount(notifs.size() + devis.size() + offers.size());
 
-        alertCount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), InNotificationActivity.class);
-                startActivity(intent);
-            }
-        });
+		if (Utils.isConnectingToInternet(this)) {
+			alertCount.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					Intent intent = new Intent(getApplicationContext(), InNotificationActivity.class);
+					startActivity(intent);
+				}
+			});
+		}
 
 		alertIcon.setOnClickListener(new View.OnClickListener() {
 			@Override

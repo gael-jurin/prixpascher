@@ -118,7 +118,7 @@ public class UploadTask extends AsyncTask<Void, Void, Boolean> {
 
                             Log.i(TAG, "upload");
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            Log.e(TAG, e.getMessage());
                         }
                     }
                 });*/
@@ -192,7 +192,7 @@ public class UploadTask extends AsyncTask<Void, Void, Boolean> {
                                 }
 
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                Log.e(TAG, e.getMessage());
                             }
                         }
                     });*/

@@ -207,7 +207,7 @@ public class ServicesTask extends AsyncTask<Void, Void, Boolean> {
 
             try {
                 HttpEntity<PriceAlertVO> requestEntity = new HttpEntity<>(priceAlertVO);
-                ResponseEntity<String> resEntity = Utils.MyRestemplate.getInstance().postForEntity(
+                ResponseEntity<String> resEntity = Utils.MyRestemplate.getInstance(context).postForEntity(
                         context.getResources().getString(R.string.alert_send_url),
                         requestEntity, String.class);
 
@@ -246,7 +246,7 @@ public class ServicesTask extends AsyncTask<Void, Void, Boolean> {
 
             try {
                 HttpEntity<ProductAnnonceVO> requestEntity = new HttpEntity<>(annonce);
-                ResponseEntity<AnnounceStatus> resEntity = Utils.MyRestemplate.getInstance().postForEntity(
+                ResponseEntity<AnnounceStatus> resEntity = Utils.MyRestemplate.getInstance(context).postForEntity(
                         context.getResources().getString(R.string.announce_send_json_url),
                         requestEntity, AnnounceStatus.class);
 
@@ -256,7 +256,7 @@ public class ServicesTask extends AsyncTask<Void, Void, Boolean> {
                         showDialog(context.getResources().getString(R.string.spam_msg));
                     } else {
                         // Send alert if OK
-                        ResponseEntity<String> responseEntity = Utils.MyRestemplate.getInstance().postForEntity(
+                        ResponseEntity<String> responseEntity = Utils.MyRestemplate.getInstance(context).postForEntity(
                                 context.getResources().getString(R.string.announce_notif_json_url),
                                 requestEntity, String.class);
                     }
@@ -276,7 +276,7 @@ public class ServicesTask extends AsyncTask<Void, Void, Boolean> {
                 HttpEntity<ContactMailVO> requestEntity =
                         new HttpEntity<>(contact);
 
-                ResponseEntity<String> resEntity = Utils.MyRestemplate.getInstance().postForEntity(
+                ResponseEntity<String> resEntity = Utils.MyRestemplate.getInstance(context).postForEntity(
                         context.getResources().getString(R.string.msg_send_url),
                         requestEntity, String.class);
 

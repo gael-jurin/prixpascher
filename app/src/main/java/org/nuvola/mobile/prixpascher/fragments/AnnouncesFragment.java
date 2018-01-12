@@ -10,6 +10,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -40,6 +41,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class AnnouncesFragment extends Fragment {
+    public static String TAG = "AnnouncesFragment";
+
     List<ProductAnnonceVO> announces = new ArrayList<>();
     SearchFilterVO searchFilter = new SearchFilterVO();
     int COUNT_ITEM_LOAD_MORE = 40;
@@ -75,6 +78,7 @@ public class AnnouncesFragment extends Fragment {
             btn.setBackground(getActivity().getResources()
                     .getDrawable(drawable));
         }
+        searchFilter.setType(AnnounceType.COMMON_SELL);
     }
 
     @Override
@@ -135,7 +139,7 @@ public class AnnouncesFragment extends Fragment {
                     try {
                         title = URLEncoder.encode(title, "utf-8");
                     } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, e.getMessage());
                     }
                     searchFilter.setSearchText(title);
                 }
@@ -185,7 +189,7 @@ public class AnnouncesFragment extends Fragment {
 
         }
 
-        setButtonFocus(btnOffer, R.drawable.tab_categories_pressed);
+        setButtonFocus(btnSell, R.drawable.tab_categories_pressed);
 
         btnOffer.setOnClickListener(new OnClickListener() {
             @Override
@@ -261,7 +265,7 @@ public class AnnouncesFragment extends Fragment {
             adapter.notifyDataSetChanged();
             loadMorePrg.setVisibility(View.GONE);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
         }
     }
 
@@ -273,7 +277,7 @@ public class AnnouncesFragment extends Fragment {
         }
 
         HttpEntity<SearchFilterVO> requestEntity = new HttpEntity<>(searchFilter);
-        ResponseEntity<AnnouncesResponse> products = Utils.MyRestemplate.getInstance().postForEntity(
+        ResponseEntity<AnnouncesResponse> products = Utils.MyRestemplate.getInstance(getContext()).postForEntity(
                 getResources().getString(R.string.announces_json_url),
                 requestEntity, AnnouncesResponse.class);
 

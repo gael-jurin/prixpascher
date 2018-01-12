@@ -10,6 +10,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -39,6 +40,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ProductsFragment extends Fragment {
+    public static String TAG = "ProductsFragment";
+
     List<ProductVO> productsList = new ArrayList<>();
     SearchFilterVO searchFilter = new SearchFilterVO();
     int COUNT_ITEM_LOAD_MORE = 40;
@@ -140,7 +143,7 @@ public class ProductsFragment extends Fragment {
                     try {
                         title = URLEncoder.encode(title, "utf-8");
                     } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, e.getMessage());
                     }
                     searchFilter.setSearchText(title);
                 }
@@ -286,7 +289,7 @@ public class ProductsFragment extends Fragment {
             adapter.notifyDataSetChanged();
             loadMorePrg.setVisibility(View.GONE);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
         }
     }
 
@@ -298,7 +301,7 @@ public class ProductsFragment extends Fragment {
         }
 
         HttpEntity<SearchFilterVO> requestEntity = new HttpEntity<>(searchFilter);
-        ResponseEntity<ProductsResponse> products = Utils.MyRestemplate.getInstance().postForEntity(
+        ResponseEntity<ProductsResponse> products = Utils.MyRestemplate.getInstance(getContext()).postForEntity(
                 getResources().getString(R.string.products_json_url),
                 requestEntity, ProductsResponse.class);
 

@@ -58,7 +58,7 @@ public class UpdateProductActivity extends ActionBarParentActivity {
 	int[] categories_id, county_id, city_id;
 	Spinner categoriesSpinner, countySpinner, aimSpinner, citiesSpinner,
 			conditionSpinner;
-	String TAG = "UploadActivity";
+	static String TAG = "UpdateProductActivity";
 	static final String KEY_CATEGORIES_RESPONSE = "KEY_CATEGORIES_RESPONSE",
 			KEY_COUNTY_RESPONSE = "KEY_COUNTY_RESPONSE",
 			KEY_CITIES_RESPONSE = "KEY_CITIES_RESPONSE";
@@ -133,7 +133,7 @@ public class UpdateProductActivity extends ActionBarParentActivity {
 							.execute();
 				} catch (Exception e) {
 					// TODO: handle exception
-					e.printStackTrace();
+					Log.e(TAG, e.getMessage());
 				}
 			}
 		};
@@ -189,7 +189,7 @@ public class UpdateProductActivity extends ActionBarParentActivity {
 
 				} catch (Exception e) {
 					// TODO: handle exception
-					e.printStackTrace();
+					Log.e(TAG, e.getMessage());
 				}
 			}
 		};
@@ -250,7 +250,7 @@ public class UpdateProductActivity extends ActionBarParentActivity {
 							UpdateProductActivity.this,
 							android.R.layout.simple_list_item_1, city_name);
 					citiesSpinner.setAdapter(adapter);
-					e.printStackTrace();
+					Log.e(TAG, e.getMessage());
 					Log.i("x", e.toString());
 				}
 			}
@@ -301,7 +301,7 @@ public class UpdateProductActivity extends ActionBarParentActivity {
 			// lng = gpsTracker.getLng() + "";
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage());
 			// TODO: handle exception
 		}
 	}
@@ -543,7 +543,7 @@ public class UpdateProductActivity extends ActionBarParentActivity {
 								dialog.dismiss();
 								Log.i(TAG, "upload");
 							} catch (Exception e) {
-								e.printStackTrace();
+								Log.e(TAG, e.getMessage());
 							}
 						}
 					});

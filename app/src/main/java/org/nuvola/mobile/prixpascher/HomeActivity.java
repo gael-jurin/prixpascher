@@ -22,6 +22,7 @@ import org.nuvola.mobile.prixpascher.fragments.AboutUsFragment;
 import org.nuvola.mobile.prixpascher.fragments.AnnouncesFragment;
 import org.nuvola.mobile.prixpascher.fragments.CategoriesFragment;
 import org.nuvola.mobile.prixpascher.fragments.FanpageFragment;
+import org.nuvola.mobile.prixpascher.fragments.NetworkErrorFragment;
 import org.nuvola.mobile.prixpascher.fragments.ProductsFragment;
 import org.nuvola.mobile.prixpascher.fragments.ProfileFragment;
 import org.nuvola.mobile.prixpascher.fragments.ShopGeoFragment;
@@ -116,40 +117,40 @@ public class HomeActivity extends ActionBarParentActivity implements
 	private void loadView(int position) {
 		Fragment fragment = null;
 		if (!Utils.isConnectingToInternet(HomeActivity.this)) {
-			showMsg(getResources().getString(R.string.open_network));
-		}
-		switch (position) {
-			case 0:
-				UserSessionManager userSessionManager = new UserSessionManager(this);
-				if (userSessionManager.getUserSession() != null) {
-					fragment = ProfileFragment.newInstance();
-				} else {
-					Intent intent = new Intent(this, AuthenticationActivity.class);
-					startActivity(intent);
-				}
-				changeActionBarTitle(getResources().getString(
-						R.string.profile_label));
-				break;
+			fragment = NetworkErrorFragment.newInstance(toolbar);
+		} else {
+            switch (position) {
+                case 0:
+                    UserSessionManager userSessionManager = new UserSessionManager(this);
+                    if (userSessionManager.getUserSession() != null) {
+                        fragment = ProfileFragment.newInstance();
+                    } else {
+                        Intent intent = new Intent(this, AuthenticationActivity.class);
+                        startActivity(intent);
+                    }
+                    changeActionBarTitle(getResources().getString(
+                            R.string.profile_label));
+                    break;
 
-			case 1:
-				fragment = ProductsFragment.newInstance(toolbar);
-				changeActionBarTitle(getResources().getString(R.string.app_name));
-				break;
-			case 2:
-				fragment = AnnouncesFragment.newInstance(toolbar);
-				changeActionBarTitle(getResources().getString(
-						R.string.app_name));
-				break;
-            case 3:
-				fragment = CategoriesFragment.newInstance();
-				changeActionBarTitle(getResources().getString(
-						R.string.categories_label));
-				break;
-			case 4:
-				fragment = new ShopGeoFragment();
-				changeActionBarTitle(getResources()
-						.getString(R.string.shop_label));
-				break;
+                case 1:
+                    fragment = ProductsFragment.newInstance(toolbar);
+                    changeActionBarTitle(getResources().getString(R.string.app_name));
+                    break;
+                case 2:
+                    fragment = AnnouncesFragment.newInstance(toolbar);
+                    changeActionBarTitle(getResources().getString(
+                            R.string.app_name));
+                    break;
+                case 3:
+                    fragment = CategoriesFragment.newInstance();
+                    changeActionBarTitle(getResources().getString(
+                            R.string.categories_label));
+                    break;
+                case 4:
+                    fragment = new ShopGeoFragment();
+                    changeActionBarTitle(getResources()
+                            .getString(R.string.shop_label));
+                    break;
 
 		/*case 4:
 			fragment = CitiesFragment.newInstance();
@@ -163,30 +164,31 @@ public class HomeActivity extends ActionBarParentActivity implements
 					.getString(R.string.filter_label));
 			break;*/
 
-			case 5:
-				fragment = FanpageFragment.newInstance();
-				changeActionBarTitle(getResources().getString(R.string.fan_page));
-				break;
+                case 5:
+                    fragment = FanpageFragment.newInstance();
+                    changeActionBarTitle(getResources().getString(R.string.fan_page));
+                    break;
 
-			case 6:
-				fragment = AboutUsFragment.newInstance();
-				changeActionBarTitle(getResources().getString(
-						R.string.about_us_label));
-				break;
-			default:
-				break;
-		}
+                case 6:
+                    fragment = AboutUsFragment.newInstance();
+                    changeActionBarTitle(getResources().getString(
+                            R.string.about_us_label));
+                    break;
+                default:
+                    break;
+            }
+        }
 
-		if (fragment != null) {
-			FragmentManager fragmentManager = getSupportFragmentManager();
-			fragmentManager.beginTransaction().replace(R.id.content, fragment)
-					.commit();
-			lst.setItemChecked(position, true);
-			lst.setSelection(position);
-			drawerLayout.closeDrawer(lst);
-		} else {
-			Log.e("HomeActivity", "Error creating fragment");
-		}
+        if (fragment != null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.content, fragment)
+                    .commit();
+            lst.setItemChecked(position, true);
+            lst.setSelection(position);
+            drawerLayout.closeDrawer(lst);
+        } else {
+            Log.e("HomeActivity", "Error creating fragment");
+        }
 	}
 
 	@Override

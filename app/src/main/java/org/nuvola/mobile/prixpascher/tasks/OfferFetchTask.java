@@ -60,7 +60,7 @@ public class OfferFetchTask extends AsyncTask<Void, Void, OfferVO> {
 		// TODO Auto-generated method stub
 		try {
 			Bundle bundle = new Bundle();
-            bundle.putSerializable(this.keyResponse.getProductAnnonce().getId(), result);
+            bundle.putSerializable(this.keyResponse.getOfferId(), result);
 			Message msg = new Message();
 			msg.setData(bundle);
 			mHandler.sendMessage(msg);

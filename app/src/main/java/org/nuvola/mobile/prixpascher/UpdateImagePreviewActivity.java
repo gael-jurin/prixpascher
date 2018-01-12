@@ -23,7 +23,7 @@ import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.confs.constants;
 
 public class UpdateImagePreviewActivity extends Activity {
-	public static final String TAG = "UpdateImagePreviewActivity";
+	public static final String TAG = "UpdateImagePreviewAct";
 	String paths, thumbPaths;
 	Button btnClose, btnSetAsThumbnail, btnDelete;
 	ImageView images;
@@ -89,7 +89,7 @@ public class UpdateImagePreviewActivity extends Activity {
 										try {
 											prgDialog.dismiss();
 										} catch (Exception e) {
-											e.printStackTrace();
+											Log.e(TAG, e.getMessage());
 										}
 									}
 								});
@@ -155,7 +155,7 @@ public class UpdateImagePreviewActivity extends Activity {
 															UpdateImagePreviewActivity.this
 																	.finish();
 														} catch (Exception e) {
-															e.printStackTrace();
+															Log.e(TAG, e.getMessage());
 														}
 													}
 												});

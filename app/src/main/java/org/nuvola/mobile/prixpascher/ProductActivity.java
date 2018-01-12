@@ -344,7 +344,7 @@ public class ProductActivity extends ActionBarParentActivity {
                     ratingBar.setRating(ratingText);
                 } catch (Exception e) {
                     Log.e(TAG, "error parse rate");
-                    e.printStackTrace();
+                    Log.e(TAG, e.getMessage());
                     // TODO: handle exception
                 }
             }
@@ -369,13 +369,11 @@ public class ProductActivity extends ActionBarParentActivity {
 
         @Override
         protected void onPreExecute() {
-
             super.onPreExecute();
         }
 
         @Override
         protected void onCancelled() {
-
         }
     }
 
@@ -384,14 +382,14 @@ public class ProductActivity extends ActionBarParentActivity {
             org.springframework.http.HttpEntity<ProductVO> requestEntity =
                     new org.springframework.http.HttpEntity<>(product);
             byte[] encodedId = Base64.encode(productId.getBytes(), Base64.NO_WRAP);
-            ResponseEntity<ProductVO[]> products = Utils.MyRestemplate.getInstance().exchange(
+            ResponseEntity<ProductVO[]> products = Utils.MyRestemplate.getInstance(this).exchange(
                     getResources().getString(R.string.product_root_json_url) + new String(encodedId) + "/similar",
                     HttpMethod.POST,
                     requestEntity, ProductVO[].class);
 
             productsList.addAll(Arrays.asList(products.getBody()));
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
         }
 
         return productsList;
@@ -401,7 +399,7 @@ public class ProductActivity extends ActionBarParentActivity {
         try {
             productsAdapter.notifyDataSetChanged();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
         }
     }
 
@@ -514,7 +512,7 @@ public class ProductActivity extends ActionBarParentActivity {
                     + "api/products_api/comment?id=" + productId);*/
         } catch (Exception e) {
             // TODO: handle exception
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
         }
     }
 
@@ -553,7 +551,7 @@ public class ProductActivity extends ActionBarParentActivity {
                 }*/
             } catch (Exception e) {
                 // TODO: handle exception
-                e.printStackTrace();
+                Log.e(TAG, e.getMessage());
             }
         }
     };

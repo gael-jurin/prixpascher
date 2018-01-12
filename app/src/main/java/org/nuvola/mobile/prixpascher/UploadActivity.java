@@ -127,7 +127,7 @@ public class UploadActivity extends ActionBarParentActivity {
 					}
 				} catch (Exception e) {
 					// TODO: handle exception
-					e.printStackTrace();
+					Log.e(TAG, e.getMessage());
 				}
 			}
 		};
@@ -197,7 +197,7 @@ public class UploadActivity extends ActionBarParentActivity {
 
 				} catch (Exception e) {
 					// TODO: handle exception
-					e.printStackTrace();
+					Log.e(TAG, e.getMessage());
 				}
 			}
 		};
@@ -253,7 +253,7 @@ public class UploadActivity extends ActionBarParentActivity {
 							UploadActivity.this,
 							android.R.layout.simple_list_item_1, city_name);
 					citiesSpinner.setAdapter(adapter);
-					e.printStackTrace();
+					Log.e(TAG, e.getMessage());
 				}
 			}
 		};

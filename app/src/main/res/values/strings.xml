@@ -22,7 +22,7 @@
     <string name="offer_price">Prix / Offre (TTC)</string>
     <string name="your_qty">Qté</string>
     <string name="offer_promo">Code Promo spécial</string>
-    <string name="offer_msg">Infos utiles pour le client...</string>
+    <string name="offer_msg">Infos utiles pour le client (Délais de livraison, adresse,...)</string>
     <string name="offer_qty">Qté disponible</string>
     <string name="this_user_not_share_phone_number">This users not share phone number</string>
     <string name="cannot_rating_for_yourself">You can not rating for your self</string>
@@ -40,6 +40,7 @@
     <string name="download_ok">Download completion</string>
     <string name="download_failed">Download failed, file not found</string>
     <string name="open_network">Check your internet connection</string>
+    <string name="open_network_label">Please check your internet connection and try again...</string>
     <string name="download_in_progress">Download in progress</string>
     <string name="download_cancel">Download cancel</string>
     <string name="please_wait_msg">Please wait...</string>
@@ -60,7 +61,7 @@
     <string name="upload_label">Submit your product</string>
     <string name="what_you_want">Select images</string>
     <string name="incorrect_info">Remplir tous les champs du formulaire!</string>
-    <string name="incorrect_offer">Infos Prix / Offre et Qté obligatoires !</string>
+    <string name="incorrect_offer">Prix et Qté obligatoires !</string>
     <string name="type_message">Please type your message</string>
     <string name="alert">Alert</string>
     <string name="offer_alert">Votre offre sera autovalidée par PrixPasCher et visible directment et exclusivement par le client</string>
@@ -81,6 +82,7 @@
     <string name="follow_label">Suivre</string>
     <string name="product">Produits</string>
     <string name="similar_products">Produits Similaires</string>
+    <string name="open_offers">Autres offres</string>
     <string name="bookmarked_product">Mark Products</string>
     <string name="logout">{faw-sign_out}</string>
     <string name="close_label">Fermer</string>
@@ -93,7 +95,7 @@
     <string name="addToCart">Acheter IcI</string>
     <string name="priceHistory">Evolution Prix</string>
     <string name="alert_mail">Je souhaite recevoir une alerte email sur toute baisse de prix de ce produit</string>
-    <string name="devis_mail">Demande de devis</string>
+    <string name="devis_mail">Demande d\'achat sur devis</string>
     <string name="devis_offer_label">Vous vendez cet article, Envoyer votre offre</string>
 
     <!-- USER PROFILE -->
@@ -156,11 +158,14 @@
     <string name="county_json_url">http://www.prixpascher.ma/api/county_api/</string>
     <string name="cities_json_url">http://www.prixpascher.ma/api/cities_api/</string>
 
-    <string name="images_json_url">http://www.prixpascher.ma/api/bucket/picture/</string>
+    <string name="images_json_url">https://www.prixpascher.ma/api/bucket/picture/</string>
+    <string name="images_thumb_url">https://www.prixpascher.ma/thumb/</string>
     <string name="products_json_url">https://www.prixpascher.ma/api/products/products/list</string>
     <string name="announces_json_url">https://www.prixpascher.ma/api/announces</string>
     <string name="announce_root_json_url">https://www.prixpascher.ma/annonce/api/annonce/</string>
     <string name="offer_root_json_url">https://www.prixpascher.ma/api/offer/</string>
+    <string name="offers_user_json_url">https://www.prixpascher.ma/api/offers/user</string>
+    <string name="annonce_offers_json_url">https://www.prixpascher.ma/api/offers/annonce/</string>
     <string name="product_root_json_url">https://www.prixpascher.ma/article/api/products/</string>
 
     <string name="users_json_url">https://www.prixpascher.ma/api/user/merchant/</string>
@@ -219,7 +224,7 @@
     <string name="fan_page">Fanpage</string>
     <string name="fan_page_link">https://m.facebook.com/prixpascherMa</string>
     <string name="spam_msg">You can not send email after 2 minutes remind</string>
-    <string name="devis_success_msg">Votre devis a été envoyé avec succès !</string>
+    <string name="devis_success_msg">Votre offre a été envoyé avec succès !</string>
     <string name="delete_successfull">Delete successfully</string>
     <string name="confirm_del">Are you sure you want delete this ?</string>
     <string name="enquiry_alert">You cannot send enquiry to your self !</string>
@@ -234,10 +239,10 @@
 
     <!--update 10-5-2015-->
     <string name="condition_msg">Condition</string>
-    <string name="info_msg">Info !</string>
+    <string name="info_msg">Info</string>
     <string name="contact">Contact</string>
     <string name="infomation">Informations</string>
-    <string name="offer">Offre de devis</string>
+    <string name="offer">Offre de vente sur Devis</string>
     <string name="gallery">Gallery</string>
     <string-array name="condition_name">
         <item>New</item>

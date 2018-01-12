@@ -16,8 +16,10 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.jakewharton.picasso.OkHttp3Downloader;
@@ -28,10 +30,13 @@ import org.nuvola.mobile.prixpascher.R;
 import org.nuvola.mobile.prixpascher.models.User;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,6 +45,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Utils {
+	private final static String TAG = "Utils.class";
 	public static boolean isConnectingToInternet(Context context) {
 		final ConnectivityManager conMgr = (ConnectivityManager)
 				context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -178,7 +184,7 @@ public class Utils {
 	public static class MyRestemplate {
         private static RestTemplate instance;
 
-        public static RestTemplate getInstance() {
+        public static RestTemplate getInstance(final Context context) {
             if (instance == null) {
                 List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
                 interceptors.add(new HeaderRequestInterceptor("Accept", MediaType.APPLICATION_JSON_VALUE));
@@ -188,6 +194,24 @@ public class Utils {
                 restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
                 instance = restTemplate;
             }
+
+            instance.setErrorHandler(new ResponseErrorHandler() {
+				@Override
+				public boolean hasError(ClientHttpResponse response) throws IOException {
+					return false;
+				}
+
+				@Override
+				public void handleError(ClientHttpResponse response) throws IOException {
+                    Toast ts = Toast.makeText(
+                            context,
+                            context.getResources().getString(
+                                    R.string.open_network),
+                            Toast.LENGTH_LONG);
+                    ts.show();
+				}
+			});
+
             return instance;
         }
     }
@@ -237,7 +261,7 @@ public class Utils {
 			/*String phone = jsonObj.getString(User.TAG_PHONE);
 			user.setPhone(phone);*/
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage());
 			return user;
 		}
 		return user;
