@@ -249,7 +249,7 @@ public class AuthenticationFragment extends Fragment {
             org.springframework.http.HttpEntity<UserVO> requestEntity =
                     new org.springframework.http.HttpEntity<>(userVO);
 
-            ResponseEntity<UserVO> mobileUser = Utils.MyRestemplate.getInstance().exchange(
+            ResponseEntity<UserVO> mobileUser = Utils.MyRestemplate.getInstance(getContext()).exchange(
                     getResources().getString(R.string.users_json_url) + userVO.getProviderUserId(),
                     HttpMethod.GET,
                     null, UserVO.class);
@@ -275,7 +275,7 @@ public class AuthenticationFragment extends Fragment {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
         }
     }
 
@@ -331,7 +331,7 @@ public class AuthenticationFragment extends Fragment {
                     }
                 });
             } catch (CloudException e) {
-                e.printStackTrace();
+                Log.e(TAG, e.getMessage());
             }
         } else {
             unsubscribeForNotification();
@@ -358,21 +358,8 @@ public class AuthenticationFragment extends Fragment {
                             }
                         });
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        Log.e(TAG, e.getMessage());
                     }
-                }
-            });
-        } catch (CloudException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void subscribeForNotification() {
-        try {
-            CloudNotification.on("affiliates", new CloudNotificationCallback() {
-                @Override
-                public void done(Object x, CloudException t) throws CloudException {
-                    Log.i(TAG, "Registered as affiliated");
                 }
             });
         } catch (CloudException e) {
@@ -497,7 +484,7 @@ public class AuthenticationFragment extends Fragment {
 				}
 			} catch (Exception e) {
 				// TODO: handle exception
-				e.printStackTrace();
+				Log.e(TAG, e.getMessage());
 			}
 		}
 	}*/

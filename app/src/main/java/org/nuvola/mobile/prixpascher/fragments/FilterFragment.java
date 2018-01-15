@@ -106,7 +106,7 @@ public class FilterFragment extends Fragment {
 					}
 				} catch (Exception e) {
 					// TODO: handle exception
-					e.printStackTrace();
+					Log.e(TAG, e.getMessage());
 				}
 			}
 		};
@@ -176,7 +176,7 @@ public class FilterFragment extends Fragment {
 
 				} catch (Exception e) {
 					// TODO: handle exception
-					e.printStackTrace();
+					Log.e(TAG, e.getMessage());
 				}
 			}
 		};
@@ -232,8 +232,8 @@ public class FilterFragment extends Fragment {
 							getActivity(),
 							android.R.layout.simple_list_item_1, city_name);
 					citiesSpinner.setAdapter(adapter);
-					e.printStackTrace();
-					e.printStackTrace();
+					Log.e(TAG, e.getMessage());
+					Log.e(TAG, e.getMessage());
 				}
 			}
 		};

@@ -26,6 +26,7 @@ import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.confs.constants;
 
 public class VerifiedAccountActivity extends ActionBarParentActivity {
+	private final static String TAG = "VerifiedAccountActivity";
 	ProgressDialog dialog;
 	String email;
 	String code;
@@ -99,7 +100,7 @@ public class VerifiedAccountActivity extends ActionBarParentActivity {
 								try {
 									// dialog.dismiss();
 								} catch (Exception e) {
-									e.printStackTrace();
+									Log.e(TAG, e.getMessage());
 								}
 							}
 						});
@@ -159,7 +160,7 @@ public class VerifiedAccountActivity extends ActionBarParentActivity {
 								dialog.dismiss();
 
 							} catch (Exception e) {
-								e.printStackTrace();
+								Log.e(TAG, e.getMessage());
 							}
 						}
 					});
@@ -233,7 +234,7 @@ public class VerifiedAccountActivity extends ActionBarParentActivity {
 									return;
 								}
 							} catch (Exception e) {
-								e.printStackTrace();
+								Log.e(TAG, e.getMessage());
 							}
 						}
 					});

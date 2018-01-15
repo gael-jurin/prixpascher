@@ -63,7 +63,7 @@
             android:layout_weight="1"
             android:background="@drawable/tab_categories"
             android:minHeight="40dp"
-            android:tooltipText="Demande de devis"
+            android:tooltipText="Demande d'achat sur devis"
             android:text="@string/announce_offer_label"
             android:textColor="@color/white"
             android:textSize="12dp" />

@@ -27,6 +27,7 @@ import org.nuvola.mobile.prixpascher.dto.ProductVO;
 import org.nuvola.mobile.prixpascher.dto.SearchFilterVO;
 import org.nuvola.mobile.prixpascher.models.ProductsResponse;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 import java.text.SimpleDateFormat;
@@ -237,7 +238,7 @@ public class SearchActivity extends ActionBarParentActivity {
             adapter.notifyDataSetChanged();
             loadMorePrg.setVisibility(View.GONE);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
             loadingMore = true;
             loadMorePrg.setVisibility(View.GONE);
         }
@@ -250,7 +251,7 @@ public class SearchActivity extends ActionBarParentActivity {
             loadMorePrg.setVisibility(View.GONE);
         } catch (Exception e) {
             loadingMore = false;
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
             // mPullToRefreshLayout.setRefreshComplete();
             swipeRefreshLayout.setRefreshing(false);
         }
@@ -265,13 +266,14 @@ public class SearchActivity extends ActionBarParentActivity {
             }
 
             HttpEntity<SearchFilterVO> requestEntity = new HttpEntity<>(searchFilter);
-            ResponseEntity<ProductsResponse> products = Utils.MyRestemplate.getInstance().postForEntity(
+            ResponseEntity<ProductsResponse> products = Utils.MyRestemplate.getInstance(this).exchange(
                     getResources().getString(R.string.products_json_url),
+                    HttpMethod.POST,
                     requestEntity, ProductsResponse.class);
 
             productsList.addAll(products.getBody().getPayload());
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
         }
 
         return productsList;

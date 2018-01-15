@@ -33,6 +33,7 @@ import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.dto.ContactMailVO;
 import org.nuvola.mobile.prixpascher.dto.OfferVO;
 import org.nuvola.mobile.prixpascher.dto.ProductAnnonceVO;
+import org.nuvola.mobile.prixpascher.dto.UserVO;
 import org.nuvola.mobile.prixpascher.models.AnnounceType;
 import org.nuvola.mobile.prixpascher.models.User;
 import org.nuvola.mobile.prixpascher.tasks.AnnounceFetchTask;
@@ -55,7 +56,8 @@ public class AnnounceActivity extends ActionBarParentActivity {
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.full_name) TextView fullName;
     @BindView(R.id.merchantAvt) ImageView merchantAvt;
-    @BindView(R.id.address) TextView address;
+    @BindView(R.id.views) TextView views;
+    @BindView(R.id.city) TextView city;
     @BindView(R.id.price) TextView price;
     @BindView(R.id.title) TextView title;
     @BindView(R.id.qty) TextView qty;
@@ -118,7 +120,15 @@ public class AnnounceActivity extends ActionBarParentActivity {
         btnProviderEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new ServicesTask(ServiceType.REPLY_OFFER, AnnounceActivity.this, announce).execute();
+                UserSessionManager sessionManager = new UserSessionManager(AnnounceActivity.this);
+                logedUser = sessionManager.getUserSession();
+                if (logedUser != null) {
+                    Utils.showCommingSoon(AnnounceActivity.this);
+                } else {
+                    Intent intent = new Intent(AnnounceActivity.this,
+                            AuthenticationActivity.class);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -225,7 +235,6 @@ public class AnnounceActivity extends ActionBarParentActivity {
                     // ratingBar.setRating(ratingText);
                 } catch (Exception e) {
                     Log.e(TAG, "error parse rate");
-                    e.printStackTrace();
                 }
             }
         };
@@ -292,7 +301,7 @@ public class AnnounceActivity extends ActionBarParentActivity {
             btnProviderCall.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (phoneText.length() > 0) {
+                    if (phoneText != null && phoneText.length() > 0) {
                         Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneText, null));
                         startActivity(intent);
                     }
@@ -309,7 +318,8 @@ public class AnnounceActivity extends ActionBarParentActivity {
             String titleText = jsonObj.getTitle();
             title.setText(titleText);
             String addressText = jsonObj.getViews() + " nombres de vues";
-            address.setText(addressText);
+            views.setText(addressText);
+            city.setText("{faw-map_marker} " + jsonObj.getVille().name().replaceAll("_", " "));
             String date = "Posté " + Utils.formatToYesterdayOrToday(jsonObj.getTrackingDate());
             trackingDate.setText(date);
 
@@ -376,7 +386,7 @@ public class AnnounceActivity extends ActionBarParentActivity {
             /*comment.loadUrl(getResources().getString(R.string.domain_url)
                     + "api/products_api/comment?id=" + announceId);*/
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
         }
     }
 
@@ -392,12 +402,19 @@ public class AnnounceActivity extends ActionBarParentActivity {
         if (qtyText != null && !qtyText.equalsIgnoreCase("")
             && priceText != null && !priceText.equalsIgnoreCase("")) {
             try {
+                UserVO userVO = new UserVO();
+                userVO.setId(user.getId());
+                userVO.setProviderUserId(user.getFbId());
+                userVO.setEmail(user.getEmail());
+
                 OfferVO newOffer = new OfferVO();
                 newOffer.setProductAnnonce(announce);
-                newOffer.setTargetPrice(priceText);
-                newOffer.setStock(qtyText);
+                newOffer.setTargetPrice(Double.valueOf(priceText));
+                newOffer.setStock(Long.valueOf(qtyText));
                 newOffer.setPosted(new Date());
                 newOffer.setCodePromo(codeText);
+                newOffer.setInfos(notesText);
+                newOffer.setAnnonceur(userVO);
 
                 //TODO : Removed this redundant in server side
                 if (user.getEmail() == null || user.getEmail().isEmpty()) {
@@ -482,7 +499,7 @@ public class AnnounceActivity extends ActionBarParentActivity {
                     });
                 }*/
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, e.getMessage());
             }
         }
     };

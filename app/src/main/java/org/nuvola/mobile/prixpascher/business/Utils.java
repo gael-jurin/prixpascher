@@ -5,9 +5,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Shader.TileMode;
@@ -15,32 +17,41 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.design.widget.Snackbar;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.Display;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.facebook.AccessToken;
 import com.jakewharton.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
+import org.nuvola.mobile.prixpascher.MarketApp;
 import org.nuvola.mobile.prixpascher.R;
 import org.nuvola.mobile.prixpascher.models.User;
-import org.springframework.http.MediaType;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.nuvola.mobile.prixpascher.receivers.NetworkStateReceiver;
+import org.nuvola.mobile.prixpascher.receivers.NetworkStateReceiver.ConnectivityReceiverListener;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Utils {
-	public static boolean isConnectingToInternet(Context context) {
+	private final static String TAG = "Utils.class";
+    private static NetworkStateReceiver connectivityReceiver;
+
+    public static boolean isConnectingToInternet(Context context) {
 		final ConnectivityManager conMgr = (ConnectivityManager)
 				context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		final NetworkInfo activeNetwork = conMgr.getActiveNetworkInfo();
@@ -178,16 +189,25 @@ public class Utils {
 	public static class MyRestemplate {
         private static RestTemplate instance;
 
-        public static RestTemplate getInstance() {
+        public static RestTemplate getInstance(final Context context) {
             if (instance == null) {
-                List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
-                interceptors.add(new HeaderRequestInterceptor("Accept", MediaType.APPLICATION_JSON_VALUE));
-
                 RestTemplate restTemplate = new RestTemplate();
-                restTemplate.setInterceptors(interceptors);
                 restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
                 instance = restTemplate;
             }
+
+            instance.setErrorHandler(new ResponseErrorHandler() {
+				@Override
+				public boolean hasError(ClientHttpResponse response) throws IOException {
+					return false;
+				}
+
+				@Override
+				public void handleError(ClientHttpResponse response) throws IOException {
+                    Log.e(TAG, response.getStatusText());
+				}
+			});
+
             return instance;
         }
     }
@@ -237,7 +257,7 @@ public class Utils {
 			/*String phone = jsonObj.getString(User.TAG_PHONE);
 			user.setPhone(phone);*/
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage());
 			return user;
 		}
 		return user;
@@ -262,4 +282,42 @@ public class Utils {
             }
         });
     }
+
+    public static void registerNetworkContext(Context context) {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+
+        connectivityReceiver = new NetworkStateReceiver();
+        context.registerReceiver(connectivityReceiver, intentFilter);
+
+        /*register connection status listener*/
+        MarketApp.getInstance().setConnectivityListener((ConnectivityReceiverListener) context);
+    }
+
+    public static void unregisterNetworkContext(Context context) {
+        context.unregisterReceiver(connectivityReceiver);
+    }
+
+    public static void showSnack(View cView, boolean isConnected) {
+		String message;
+		int color;
+		if (!isConnected) {
+			message = "No internet connection, try later";
+			color = Color.RED;
+
+
+			Snackbar snackbar = Snackbar
+					.make(cView, message, Snackbar.LENGTH_LONG)
+					.setAction("Dismiss", new View.OnClickListener() {
+						@Override
+						public void onClick(View view) {
+						}
+					});
+
+			View sbView = snackbar.getView();
+			TextView textView = sbView.findViewById(android.support.design.R.id.snackbar_text);
+			textView.setTextColor(color);
+			snackbar.show();
+		}
+	}
 }

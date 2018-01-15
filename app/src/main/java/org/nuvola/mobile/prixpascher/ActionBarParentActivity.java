@@ -3,8 +3,10 @@ package org.nuvola.mobile.prixpascher;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -20,6 +22,8 @@ import com.gc.materialdesign.widgets.Dialog;
 import com.mikepenz.iconics.context.IconicsLayoutInflater2;
 
 import org.nuvola.mobile.prixpascher.business.BadgeUtils;
+import org.nuvola.mobile.prixpascher.business.Utils;
+import org.nuvola.mobile.prixpascher.receivers.NotificationFiredReceiver;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -29,7 +33,7 @@ import java.util.Set;
 import static org.nuvola.mobile.prixpascher.business.UserSessionManager.PRIVATE_MODE;
 import static org.nuvola.mobile.prixpascher.business.UserSessionManager.SHARED_PREF_DATA;
 
-public class ActionBarParentActivity extends AppCompatActivity {
+public class ActionBarParentActivity extends AppCompatActivity implements NotificationFiredReceiver.NotificationFiredListener {
 	private LinkedHashSet<Integer> enableItems = new LinkedHashSet<>();
 	private LinkedHashSet<Integer> disableItems = new LinkedHashSet<>();
 	private Iterator<Integer> iter;
@@ -51,6 +55,17 @@ public class ActionBarParentActivity extends AppCompatActivity {
         sharePre = getApplicationContext().getSharedPreferences(
                 SHARED_PREF_DATA, PRIVATE_MODE);
 		super.onCreate(savedInstanceState);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(new NotificationFiredReceiver(),
+                new IntentFilter("inbox"));
+
+        /*register Notification fired listener*/
+		MarketApp.getInstance().setNotificationFiredListener(this);
 	}
 
 	@Override
@@ -96,13 +111,15 @@ public class ActionBarParentActivity extends AppCompatActivity {
 
         updateHotCount(notifs.size() + devis.size() + offers.size());
 
-        alertCount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), InNotificationActivity.class);
-                startActivity(intent);
-            }
-        });
+		if (Utils.isConnectingToInternet(this)) {
+			alertCount.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					Intent intent = new Intent(getApplicationContext(), InNotificationActivity.class);
+					startActivity(intent);
+				}
+			});
+		}
 
 		alertIcon.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -190,5 +207,14 @@ public class ActionBarParentActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public void onNotificationFired() {
+        Set<String> notifs = sharePre.getStringSet("PROMOS", new HashSet<String>());
+        Set<String> devis = sharePre.getStringSet("DEVIS", new HashSet<String>());
+        Set<String> offers = sharePre.getStringSet("OFFERS", new HashSet<String>());
+
+        updateHotCount(notifs.size() + devis.size() + offers.size());
     }
 }

@@ -15,6 +15,7 @@ import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.dto.MerchantVO;
 import org.nuvola.mobile.prixpascher.dto.UserVO;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -85,8 +86,9 @@ public class ProfileActivity extends ActionBarParentActivity {
 	private MerchantVO getMerchant() {
 		try {
 
-			final ResponseEntity<MerchantVO> merchantInfos = Utils.MyRestemplate.getInstance().getForEntity(
-					getResources().getString(R.string.merchant_json_url) + user_id,
+			final ResponseEntity<MerchantVO> merchantInfos = Utils.MyRestemplate.getInstance(this)
+                    .exchange(getResources().getString(R.string.merchant_json_url) + user_id,
+					HttpMethod.GET, null,
 					MerchantVO.class);
 			if (merchantInfos.getStatusCode().equals(HttpStatus.OK)) {
                 merchant = merchantInfos.getBody();
@@ -96,9 +98,10 @@ public class ProfileActivity extends ActionBarParentActivity {
 				productFeed.setText(merchant.getShopInfoVO().getFeed());
 				website.setText(merchant.getShopInfoVO().getWebsite());
 
-				final ResponseEntity<UserVO> user = Utils.MyRestemplate.getInstance().getForEntity(
+				final ResponseEntity<UserVO> user = Utils.MyRestemplate.getInstance(this)
+                        .exchange(
 						getResources().getString(R.string.users_json_url) + "/merchant/" +
-                                user_id, UserVO.class);
+                                user_id, HttpMethod.GET, null, UserVO.class);
 
 				btnShowItem
 						.setOnClickListener(new View.OnClickListener() {
@@ -124,7 +127,7 @@ public class ProfileActivity extends ActionBarParentActivity {
 			}
 			dialogPrg.cancel();
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e(TAG, e.getMessage());
 		}
 		return merchant;
 	}

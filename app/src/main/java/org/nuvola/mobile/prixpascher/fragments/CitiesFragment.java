@@ -90,7 +90,7 @@ public class CitiesFragment extends Fragment {
 				} catch (Exception e) {
 					// TODO: handle exception
 					loadMorePrg.setVisibility(View.GONE);
-					e.printStackTrace();
+					Log.e(TAG, e.getMessage());
 				}
 			}
 		};

@@ -29,6 +29,25 @@
                 />
 
             <ImageView
+                android:id="@+id/shop"
+                android:layout_width="45dp"
+                android:layout_height="15dp"
+                android:scaleType="fitXY"
+                android:layout_toRightOf="@+id/thumb"
+                android:layout_alignParentTop="true"
+                android:background="@android:color/transparent"
+                />
+
+            <TextView
+                android:id="@+id/shopText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/thumb"
+                android:layout_alignParentTop="true"
+                android:background="@android:color/transparent"
+                />
+
+            <ImageView
                 android:id="@+id/details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -45,7 +64,7 @@
                 android:layout_below="@+id/details"
                 android:text="@string/dummy_text"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="25dp"
                 android:textAppearance="@style/NotifTextAppearance"
                 />
 
@@ -57,7 +76,7 @@
                 android:layout_toRightOf="@+id/thumb"
                 android:layout_alignParentRight="true"
                 android:text="@string/dummy_text"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="25dp"
                 android:textAppearance="@style/NotifTextAppearance"
                 />
 

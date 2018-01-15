@@ -35,6 +35,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class UpdateGalleryActivity extends ActionBarParentActivity {
+	private static final String TAG = "UpdateGalleryActivity";
 	ButtonFlat btnImagePicker, btnSubmit;
 	GridView gallery;
 	int product_id;
@@ -87,7 +88,7 @@ public class UpdateGalleryActivity extends ActionBarParentActivity {
 							thumbPaths, ids, columnWidth);
 					gallery.setAdapter(adapter);
 				} catch (Exception e) {
-					e.printStackTrace();
+					Log.e(TAG, e.getMessage());
 					adapter = new UpdateGalleryAdapter(
 							UpdateGalleryActivity.this, product_id, paths,
 							thumbPaths, ids, columnWidth);
@@ -198,7 +199,7 @@ public class UpdateGalleryActivity extends ActionBarParentActivity {
 												prgDialog.dismiss();
 												reload();
 											} catch (Exception e) {
-												e.printStackTrace();
+												Log.e(TAG, e.getMessage());
 											}
 										}
 									});

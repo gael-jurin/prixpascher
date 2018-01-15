@@ -12,19 +12,20 @@ public class OfferVO implements Serializable, Taskable {
     private String offerId;
     private String email;
     private Date posted;
+    private String infos;
+    private Long stock;
+    private String codePromo;
+    private Double targetPrice;
+    private String attachedDevis;
     private OfferStatus offerStatus;
-    private String targetPrice;
+    private UserVO annonceur;
     private ShopInfoVO shop;
     private ProductAnnonceVO productAnnonce;
-    private String stock;
-    private String attachedDevis;
-    private String codePromo;
-
 
     public OfferVO() {
     }
 
-    public OfferVO(String email, String targetPrice) {
+    public OfferVO(String email, Double targetPrice) {
         this.email = email;
         this.targetPrice = targetPrice;
         this.offerStatus = OfferStatus.SUBMITTED;
@@ -36,6 +37,22 @@ public class OfferVO implements Serializable, Taskable {
 
     public void setOfferId(String offerId) {
         this.offerId = offerId;
+    }
+
+    public UserVO getAnnonceur() {
+        return annonceur;
+    }
+
+    public void setAnnonceur(UserVO annonceur) {
+        this.annonceur = annonceur;
+    }
+
+    public String getInfos() {
+        return infos;
+    }
+
+    public void setInfos(String infos) {
+        this.infos = infos;
     }
 
     public Date getPosted() {
@@ -70,11 +87,11 @@ public class OfferVO implements Serializable, Taskable {
         this.productAnnonce = productAnnonce;
     }
 
-    public String getStock() {
+    public Long getStock() {
         return stock;
     }
 
-    public void setStock(String stock) {
+    public void setStock(Long stock) {
         this.stock = stock;
     }
 
@@ -102,11 +119,11 @@ public class OfferVO implements Serializable, Taskable {
         this.email = email;
     }
 
-    public String getTargetPrice() {
+    public Double getTargetPrice() {
         return targetPrice;
     }
 
-    public void setTargetPrice(String targetPrice) {
+    public void setTargetPrice(Double targetPrice) {
         this.targetPrice = targetPrice;
     }
 

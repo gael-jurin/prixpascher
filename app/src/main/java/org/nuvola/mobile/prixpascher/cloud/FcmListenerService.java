@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -27,6 +28,13 @@ import static org.nuvola.mobile.prixpascher.business.UserSessionManager.PRIVATE_
 import static org.nuvola.mobile.prixpascher.business.UserSessionManager.SHARED_PREF_DATA;
 
 public class FcmListenerService extends FirebaseMessagingService {
+    private LocalBroadcastManager broadcaster;
+
+    @Override
+    public void onCreate() {
+        broadcaster = LocalBroadcastManager.getInstance(this);
+    }
+
     @Override
     public void onMessageReceived(RemoteMessage message){
         String from = message.getFrom();
@@ -40,13 +48,15 @@ public class FcmListenerService extends FirebaseMessagingService {
     }
 
     public void sendNotification(String from, String title, String body, String icon) {
+        Intent broadcastIntent = new Intent("inbox");
+
         Intent intent = new Intent(this, ProductActivity.class);
 
         if (title.toLowerCase().contains("devis")) {
             intent = new Intent(this, AnnounceActivity.class);
         }
 
-        if (title.toLowerCase().contains("offre")) {
+        if (title.toLowerCase().contains("offre") || body.toLowerCase().contains("offre")) {
             intent = new Intent(this, InNotificationActivity.class);
         }
 
@@ -95,8 +105,8 @@ public class FcmListenerService extends FirebaseMessagingService {
             devis.add(body);
         }
 
-        if (title.toLowerCase().contains("offre")) {
-            offers.add(body);
+        if (title.toLowerCase().contains("offre") || body.toLowerCase().contains("offre")) {
+            offers.add(body.split(":")[1].trim());
         }
 
         SharedPreferences.Editor editor = sharePre.edit();
@@ -115,6 +125,8 @@ public class FcmListenerService extends FirebaseMessagingService {
         Integer count = BadgeUtils.promos.size() + BadgeUtils.devis.size() +
                 BadgeUtils.offers.size();
         BadgeUtils.setBadge(FcmListenerService.this, count);
+
+        broadcaster.sendBroadcast(broadcastIntent);
     }
 
     @Override

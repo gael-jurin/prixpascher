@@ -329,7 +329,7 @@ public class UpdateProfileActivity extends ActionBarParentActivity {
                                 dialog.dismiss();
                                 Log.i(TAG, "upload");
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                Log.e(TAG, e.getMessage());
                             }
                         }
                     });

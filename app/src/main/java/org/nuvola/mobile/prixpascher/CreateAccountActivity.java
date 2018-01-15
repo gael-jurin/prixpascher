@@ -1,14 +1,5 @@
 package org.nuvola.mobile.prixpascher;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -21,13 +12,24 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import com.gc.materialdesign.views.ButtonFlat;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.business.Validator;
 import org.nuvola.mobile.prixpascher.confs.constants;
-import com.gc.materialdesign.views.ButtonFlat;
 
 @SuppressLint("InlinedApi")
 public class CreateAccountActivity extends ActionBarParentActivity {
+	public static String TAG = "CreateAccountActivity";
+
 	String email, userName, fullName, address, phone, websites, pwd, cmfPwd;
 	EditText emailText, userNameText, fullNameText, addressText, phoneText,
 			pwdText, cmfPwdText;
@@ -193,7 +195,7 @@ public class CreateAccountActivity extends ActionBarParentActivity {
 									return;
 								}
 							} catch (Exception e) {
-								e.printStackTrace();
+								Log.e(TAG, e.getMessage());
 							}
 						}
 					});

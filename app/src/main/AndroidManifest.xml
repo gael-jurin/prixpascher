@@ -32,11 +32,28 @@
         android:required="false" />
 
     <application
+        android:name=".MarketApp"
         android:allowBackup="true"
         android:icon="@drawable/ic_logo"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:theme="@style/AppTheme" >
+
+        <receiver
+            android:name=".receivers.NetworkStateReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".receivers.NotificationFiredReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="inbox" />
+            </intent-filter>
+        </receiver>
+
         <activity
             android:screenOrientation="portrait"
             android:name="org.nuvola.mobile.prixpascher.SplashActivity"
@@ -166,6 +183,15 @@
 
         <activity
             android:screenOrientation="portrait"
+            android:name=".OfferActivity"
+            android:launchMode="singleTop">
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".SearchActivity" />
+        </activity>
+
+        <activity
+            android:screenOrientation="portrait"
             android:name="ImagePreviewActivity"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
@@ -267,13 +293,5 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <receiver
-            android:name=".service.push.receiver.PushReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter android:priority="0">
-                <action android:name="io.esparta.notifications.BROADCAST_NOTIFICATION" />
-            </intent-filter>
-        </receiver>
     </application>
 </manifest>
