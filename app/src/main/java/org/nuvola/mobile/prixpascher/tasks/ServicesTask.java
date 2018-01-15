@@ -23,13 +23,13 @@ import org.nuvola.mobile.prixpascher.dto.ContactMailVO;
 import org.nuvola.mobile.prixpascher.dto.PriceAlertVO;
 import org.nuvola.mobile.prixpascher.dto.ProductAnnonceVO;
 import org.nuvola.mobile.prixpascher.dto.ProductVO;
-import org.nuvola.mobile.prixpascher.dto.UserVO;
 import org.nuvola.mobile.prixpascher.models.AnnounceStatus;
 import org.nuvola.mobile.prixpascher.models.AnnounceType;
 import org.nuvola.mobile.prixpascher.models.City;
 import org.nuvola.mobile.prixpascher.models.ProductSource;
 import org.nuvola.mobile.prixpascher.models.Taskable;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -207,8 +207,9 @@ public class ServicesTask extends AsyncTask<Void, Void, Boolean> {
 
             try {
                 HttpEntity<PriceAlertVO> requestEntity = new HttpEntity<>(priceAlertVO);
-                ResponseEntity<String> resEntity = Utils.MyRestemplate.getInstance(context).postForEntity(
+                ResponseEntity<String> resEntity = Utils.MyRestemplate.getInstance(context).exchange(
                         context.getResources().getString(R.string.alert_send_url),
+                        HttpMethod.POST,
                         requestEntity, String.class);
 
                 if (resEntity != null) {
@@ -221,8 +222,6 @@ public class ServicesTask extends AsyncTask<Void, Void, Boolean> {
                 }
             } catch (Exception ex) {
                 dialog.dismiss();
-                showDialog(context.getResources().getString(
-                        R.string.error_alert));
                 Log.e("Debug", "error: " + ex.getMessage(), ex);
                 return false;
             }
@@ -246,8 +245,9 @@ public class ServicesTask extends AsyncTask<Void, Void, Boolean> {
 
             try {
                 HttpEntity<ProductAnnonceVO> requestEntity = new HttpEntity<>(annonce);
-                ResponseEntity<AnnounceStatus> resEntity = Utils.MyRestemplate.getInstance(context).postForEntity(
+                ResponseEntity<AnnounceStatus> resEntity = Utils.MyRestemplate.getInstance(context).exchange(
                         context.getResources().getString(R.string.announce_send_json_url),
+                        HttpMethod.POST,
                         requestEntity, AnnounceStatus.class);
 
                 if (resEntity != null) {
@@ -256,8 +256,9 @@ public class ServicesTask extends AsyncTask<Void, Void, Boolean> {
                         showDialog(context.getResources().getString(R.string.spam_msg));
                     } else {
                         // Send alert if OK
-                        ResponseEntity<String> responseEntity = Utils.MyRestemplate.getInstance(context).postForEntity(
+                        ResponseEntity<String> responseEntity = Utils.MyRestemplate.getInstance(context).exchange(
                                 context.getResources().getString(R.string.announce_notif_json_url),
+                                HttpMethod.POST,
                                 requestEntity, String.class);
                     }
                     dialog.dismiss();
@@ -265,7 +266,6 @@ public class ServicesTask extends AsyncTask<Void, Void, Boolean> {
                 }
             } catch (Exception ex) {
                 dialog.dismiss();
-                showDialog(context.getResources().getString(R.string.error_alert));
                 Log.e("Debug", "error: " + ex.getMessage(), ex);
                 return false;
             }
@@ -276,8 +276,9 @@ public class ServicesTask extends AsyncTask<Void, Void, Boolean> {
                 HttpEntity<ContactMailVO> requestEntity =
                         new HttpEntity<>(contact);
 
-                ResponseEntity<String> resEntity = Utils.MyRestemplate.getInstance(context).postForEntity(
+                ResponseEntity<String> resEntity = Utils.MyRestemplate.getInstance(context).exchange(
                         context.getResources().getString(R.string.msg_send_url),
+                        HttpMethod.POST,
                         requestEntity, String.class);
 
                 if (resEntity != null) {
@@ -291,7 +292,7 @@ public class ServicesTask extends AsyncTask<Void, Void, Boolean> {
                 }
             } catch (Exception ex) {
                 dialog.dismiss();
-                showDialog(context.getResources().getString(R.string.error_alert));
+                // showDialog(context.getResources().getString(R.string.error_alert));
                 Log.e("Debug", "error: " + ex.getMessage(), ex);
                 return false;
             }

@@ -29,12 +29,9 @@ import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.dto.ContactMailVO;
 import org.nuvola.mobile.prixpascher.interfaces.ProfileComunicator;
 import org.nuvola.mobile.prixpascher.models.User;
-import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
 
 public class ProfileFragment extends Fragment {
 
@@ -264,15 +261,11 @@ public class ProfileFragment extends Fragment {
                     userProfile.getUserName() + " - " + userProfile.getWebsite());
 
 			try {
-				HttpHeaders requestHeaders = new HttpHeaders();
-				requestHeaders.setContentType(MediaType.APPLICATION_JSON);
 				org.springframework.http.HttpEntity<ContactMailVO> requestEntity =
-						new org.springframework.http.HttpEntity<>(contactVO, requestHeaders);
-
-				RestTemplate restTemplate = new RestTemplate();
-				restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
-				ResponseEntity<String> resEntity = restTemplate.postForEntity(
+						new org.springframework.http.HttpEntity<>(contactVO);
+				ResponseEntity<String> resEntity = Utils.MyRestemplate.getInstance(getContext()).exchange(
 						getResources().getString(R.string.msg_send_url),
+						HttpMethod.POST,
 						requestEntity, String.class);
 
 				if (resEntity != null) {

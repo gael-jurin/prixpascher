@@ -1,6 +1,7 @@
 package org.nuvola.mobile.prixpascher;
 
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -8,18 +9,21 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 
+import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.fragments.NotifDevisFragment;
 import org.nuvola.mobile.prixpascher.fragments.NotifOffersFragment;
 import org.nuvola.mobile.prixpascher.fragments.NotifPromosFragment;
+import org.nuvola.mobile.prixpascher.receivers.NetworkStateReceiver.ConnectivityReceiverListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class InNotificationActivity extends ActionBarParentActivity {
+public class InNotificationActivity extends ActionBarParentActivity implements ConnectivityReceiverListener {
     private Toolbar toolbar;
     private ViewPager viewPager;
     private TabLayout tabs;
     private Fragment mCurrentFragment;
+    private CoordinatorLayout coordinator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +35,7 @@ public class InNotificationActivity extends ActionBarParentActivity {
         setSupportActionBar(toolbar);
 
         viewPager = findViewById(R.id.pager);
+        coordinator = findViewById(R.id.coordinator);
         tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
         setupViewPager(viewPager);
@@ -55,6 +60,28 @@ public class InNotificationActivity extends ActionBarParentActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Utils.registerNetworkContext(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        Utils.unregisterNetworkContext(this);
+    }
+
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        Utils.showSnack(coordinator, isConnected);
+        if (!isConnected) {
+            mCurrentFragment.onStop();
+        }
     }
 
     private void setupViewPager(ViewPager viewPager) {

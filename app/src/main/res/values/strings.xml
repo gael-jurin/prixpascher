@@ -40,6 +40,8 @@
     <string name="download_ok">Download completion</string>
     <string name="download_failed">Download failed, file not found</string>
     <string name="open_network">Check your internet connection</string>
+    <string name="http_call_error">An error occurred, please try again later</string>
+    <string name="network_error">No internet connection, please check !</string>
     <string name="open_network_label">Please check your internet connection and try again...</string>
     <string name="download_in_progress">Download in progress</string>
     <string name="download_cancel">Download cancel</string>

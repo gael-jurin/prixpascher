@@ -29,6 +29,7 @@ import org.nuvola.mobile.prixpascher.models.Category;
 import org.nuvola.mobile.prixpascher.models.ProductsResponse;
 import org.nuvola.mobile.prixpascher.models.SortField;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 import java.io.UnsupportedEncodingException;
@@ -57,6 +58,8 @@ public class ProductsFragment extends Fragment {
     @BindView(R.id.prgLoadMore) LinearLayout loadMorePrg;
     ProductsAdapter adapter;
     static Toolbar toolbar;
+    private LoadMoreDataTask loadMoreDataTask = new LoadMoreDataTask();
+    private PullToRefreshDataTask pullToRefreshDataTask = new PullToRefreshDataTask();
 
     @Override
     public void onAttach(Context context) {
@@ -67,6 +70,14 @@ public class ProductsFragment extends Fragment {
         ProductsFragment fragment = new ProductsFragment();
         toolbar = otoolbar;
         return fragment;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        loadMoreDataTask.cancel(true);
+        pullToRefreshDataTask.cancel(true);
     }
 
     @SuppressWarnings("deprecation")
@@ -126,9 +137,11 @@ public class ProductsFragment extends Fragment {
                     searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                        new LoadMoreDataTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        loadMoreDataTask = new LoadMoreDataTask();
+                        loadMoreDataTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     } else {
-                        new LoadMoreDataTask().execute();
+                        loadMoreDataTask = new LoadMoreDataTask();
+                        loadMoreDataTask.execute();
                     }
                 }
             }
@@ -210,7 +223,8 @@ public class ProductsFragment extends Fragment {
                 loadingMore = false;
                 productsList.clear();
                 adapter.notifyDataSetChanged();
-                new LoadMoreDataTask().execute();
+                loadMoreDataTask = new LoadMoreDataTask();
+                loadMoreDataTask.execute();
             }
         });
 
@@ -230,7 +244,8 @@ public class ProductsFragment extends Fragment {
                 loadingMore = false;
                 productsList.clear();
                 adapter.notifyDataSetChanged();
-                new LoadMoreDataTask().execute();
+                loadMoreDataTask = new LoadMoreDataTask();
+                loadMoreDataTask.execute();
             }
         });
 
@@ -251,21 +266,23 @@ public class ProductsFragment extends Fragment {
                 loadingMore = false;
                 productsList.clear();
                 adapter.notifyDataSetChanged();
-                new LoadMoreDataTask().execute();
+                loadMoreDataTask = new LoadMoreDataTask();
+                loadMoreDataTask.execute();
             }
         });
 
-        new LoadMoreDataTask().execute();
+        loadMoreDataTask.execute();
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(productsList != null && productsList.size() != 0);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    new PullToRefreshDataTask()
-                            .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    pullToRefreshDataTask = new PullToRefreshDataTask();
+                    pullToRefreshDataTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 } else {
-                    new PullToRefreshDataTask().execute();
+                    pullToRefreshDataTask = new PullToRefreshDataTask();
+                    pullToRefreshDataTask.execute();
                 }
             }
         });
@@ -301,11 +318,15 @@ public class ProductsFragment extends Fragment {
         }
 
         HttpEntity<SearchFilterVO> requestEntity = new HttpEntity<>(searchFilter);
-        ResponseEntity<ProductsResponse> products = Utils.MyRestemplate.getInstance(getContext()).postForEntity(
-                getResources().getString(R.string.products_json_url),
-                requestEntity, ProductsResponse.class);
-
-        productsList.addAll(products.getBody().getPayload());
+        try {
+            ResponseEntity<ProductsResponse> products = Utils.MyRestemplate.getInstance(getContext()).exchange(
+                    getResources().getString(R.string.products_json_url),
+                    HttpMethod.POST,
+                    requestEntity, ProductsResponse.class);
+            productsList.addAll(products.getBody().getPayload());
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
         return productsList;
     }
 
@@ -318,6 +339,7 @@ public class ProductsFragment extends Fragment {
         searchFilter.setBrand(null);
         searchFilter.setCity(null);
         // searchFilter.setCategory(null);
+        loadMoreDataTask = new LoadMoreDataTask();
     }
 
     private class LoadMoreDataTask extends AsyncTask<Void, Void, List<ProductVO>> {

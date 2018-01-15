@@ -2,6 +2,7 @@ package org.nuvola.mobile.prixpascher.fragments;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -46,6 +47,7 @@ public class NotifPromosFragment extends Fragment {
     SwipeRefreshLayout swipeRefreshLayout;
 
     AdmobRecyclerAdapterWrapper adapterWrapper;
+    private AsyncTask<Void, Void, ProductVO> loadMoreDataTask;
 
     public static NotifPromosFragment newInstance() {
         NotifPromosFragment fragment = new NotifPromosFragment();
@@ -60,6 +62,13 @@ public class NotifPromosFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        loadMoreDataTask.cancel(true);
     }
 
     @Override
@@ -137,7 +146,7 @@ public class NotifPromosFragment extends Fragment {
                 SHARED_PREF_DATA, PRIVATE_MODE);
         final Set<String> notifs = sharePre.getStringSet("PROMOS", new HashSet<String>());
         for (final String pid: notifs) {
-            new ProductFetchTask(getResources().getString(
+            loadMoreDataTask = new ProductFetchTask(getResources().getString(
                     R.string.product_root_json_url)
                     + pid,
                         new Handler() {
@@ -153,7 +162,8 @@ public class NotifPromosFragment extends Fragment {
                                     swipeRefreshLayout.setRefreshing(false);
                                 }
                             }
-                        }}).execute();
+                        }});
+            loadMoreDataTask.execute();
         }
     }
 }

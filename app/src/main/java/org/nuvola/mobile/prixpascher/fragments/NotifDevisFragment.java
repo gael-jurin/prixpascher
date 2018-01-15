@@ -2,6 +2,7 @@ package org.nuvola.mobile.prixpascher.fragments;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -48,6 +49,7 @@ public class NotifDevisFragment extends Fragment {
     SwipeRefreshLayout swipeRefreshLayout;
 
     AdmobRecyclerAdapterWrapper adapterWrapper;
+    private AsyncTask<Void, Void, ProductAnnonceVO> loadMoreDataTask;
 
     public static NotifDevisFragment newInstance() {
         NotifDevisFragment fragment = new NotifDevisFragment();
@@ -62,6 +64,13 @@ public class NotifDevisFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        loadMoreDataTask.cancel(true);
     }
 
     @Override
@@ -142,7 +151,7 @@ public class NotifDevisFragment extends Fragment {
                     SHARED_PREF_DATA, PRIVATE_MODE);
             final Set<String> notifs = sharePre.getStringSet("DEVIS", new HashSet<String>());
             for (final String pid : notifs) {
-                new AnnounceFetchTask(getResources().getString(
+                loadMoreDataTask =  new AnnounceFetchTask(getResources().getString(
                         R.string.announce_root_json_url)
                         + pid,
                         new Handler() {
@@ -158,7 +167,8 @@ public class NotifDevisFragment extends Fragment {
                                     }
                                 }
                             }
-                        }).execute();
+                        });
+                loadMoreDataTask.execute();
             }
         }
     }

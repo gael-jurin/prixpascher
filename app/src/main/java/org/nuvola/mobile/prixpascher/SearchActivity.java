@@ -27,6 +27,7 @@ import org.nuvola.mobile.prixpascher.dto.ProductVO;
 import org.nuvola.mobile.prixpascher.dto.SearchFilterVO;
 import org.nuvola.mobile.prixpascher.models.ProductsResponse;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 import java.text.SimpleDateFormat;
@@ -265,8 +266,9 @@ public class SearchActivity extends ActionBarParentActivity {
             }
 
             HttpEntity<SearchFilterVO> requestEntity = new HttpEntity<>(searchFilter);
-            ResponseEntity<ProductsResponse> products = Utils.MyRestemplate.getInstance(this).postForEntity(
+            ResponseEntity<ProductsResponse> products = Utils.MyRestemplate.getInstance(this).exchange(
                     getResources().getString(R.string.products_json_url),
+                    HttpMethod.POST,
                     requestEntity, ProductsResponse.class);
 
             productsList.addAll(products.getBody().getPayload());

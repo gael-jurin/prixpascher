@@ -30,6 +30,7 @@ import org.nuvola.mobile.prixpascher.models.AnnouncesResponse;
 import org.nuvola.mobile.prixpascher.models.Category;
 import org.nuvola.mobile.prixpascher.models.SortField;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
 import java.io.UnsupportedEncodingException;
@@ -57,10 +58,20 @@ public class AnnouncesFragment extends Fragment {
     @BindView(R.id.prgLoadMore) LinearLayout loadMorePrg;
     AnnouncesAdapter adapter;
     static Toolbar toolbar;
+    private LoadMoreDataTask loadMoreDataTask = new LoadMoreDataTask();
+    private PullToRefreshDataTask pullToRefreshDataTask = new PullToRefreshDataTask();
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        loadMoreDataTask.cancel(true);
+        pullToRefreshDataTask.cancel(true);
     }
 
     public static final AnnouncesFragment newInstance(Toolbar otoolbar) {
@@ -123,9 +134,11 @@ public class AnnouncesFragment extends Fragment {
                     searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                        new LoadMoreDataTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        loadMoreDataTask = new LoadMoreDataTask();
+                        loadMoreDataTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     } else {
-                        new LoadMoreDataTask().execute();
+                        loadMoreDataTask = new LoadMoreDataTask();
+                        loadMoreDataTask.execute();
                     }
                 }
             }
@@ -207,7 +220,8 @@ public class AnnouncesFragment extends Fragment {
                 loadingMore = false;
                 announces.clear();
                 adapter.notifyDataSetChanged();
-                new LoadMoreDataTask().execute();
+                loadMoreDataTask = new LoadMoreDataTask();
+                loadMoreDataTask.execute();
             }
         });
 
@@ -227,21 +241,23 @@ public class AnnouncesFragment extends Fragment {
                 loadingMore = false;
                 announces.clear();
                 adapter.notifyDataSetChanged();
-                new LoadMoreDataTask().execute();
+                loadMoreDataTask = new LoadMoreDataTask();
+                loadMoreDataTask.execute();
             }
         });
 
-        new LoadMoreDataTask().execute();
+        loadMoreDataTask.execute();
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 swipeRefreshLayout.setRefreshing(announces != null && announces.size() != 0);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    new PullToRefreshDataTask()
-                            .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    pullToRefreshDataTask = new PullToRefreshDataTask();
+                    pullToRefreshDataTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 } else {
-                    new PullToRefreshDataTask().execute();
+                    pullToRefreshDataTask = new PullToRefreshDataTask();
+                    pullToRefreshDataTask.execute();
                 }
             }
         });
@@ -276,12 +292,17 @@ public class AnnouncesFragment extends Fragment {
             searchFilter.setPage(0);
         }
 
-        HttpEntity<SearchFilterVO> requestEntity = new HttpEntity<>(searchFilter);
-        ResponseEntity<AnnouncesResponse> products = Utils.MyRestemplate.getInstance(getContext()).postForEntity(
-                getResources().getString(R.string.announces_json_url),
-                requestEntity, AnnouncesResponse.class);
+        try {
+            HttpEntity<SearchFilterVO> requestEntity = new HttpEntity<>(searchFilter);
+            ResponseEntity<AnnouncesResponse> products = Utils.MyRestemplate.getInstance(getContext()).exchange(
+                    getResources().getString(R.string.announces_json_url),
+                    HttpMethod.POST,
+                    requestEntity, AnnouncesResponse.class);
 
-        announces.addAll(products.getBody().getPayload());
+            announces.addAll(products.getBody().getPayload());
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
         return announces;
     }
 
@@ -294,6 +315,8 @@ public class AnnouncesFragment extends Fragment {
         searchFilter.setBrand(null);
         searchFilter.setCity(null);
         searchFilter.setCategory(null);
+        loadMoreDataTask = new LoadMoreDataTask();
+
     }
 
     private class LoadMoreDataTask extends AsyncTask<Void, Void, List<ProductAnnonceVO>> {
