@@ -185,11 +185,9 @@ public class AnnouncesFragment extends Fragment {
 
             if (bundle.containsKey(constants.USER_ID_KEY)) {
                 String id = bundle.getString(constants.USER_ID_KEY);
-                // if (id != 0) {
-                    // query += "&user_id=" + id;
-                    // user_id = id;
-
-                // }
+                if (id != "0") {
+                    searchFilter.setUserId(id);
+                }
             }
 
             if (bundle.containsKey(constants.USER_POST_KEY)) {
@@ -294,12 +292,19 @@ public class AnnouncesFragment extends Fragment {
 
         try {
             HttpEntity<SearchFilterVO> requestEntity = new HttpEntity<>(searchFilter);
-            ResponseEntity<AnnouncesResponse> products = Utils.MyRestemplate.getInstance(getContext()).exchange(
-                    getResources().getString(R.string.announces_json_url),
-                    HttpMethod.POST,
-                    requestEntity, AnnouncesResponse.class);
-
-            announces.addAll(products.getBody().getPayload());
+            if (searchFilter.getUserId() == null) {
+                ResponseEntity<AnnouncesResponse> products = Utils.MyRestemplate.getInstance(getContext()).exchange(
+                        getResources().getString(R.string.announces_json_url),
+                        HttpMethod.POST,
+                        requestEntity, AnnouncesResponse.class);
+                announces.addAll(products.getBody().getPayload());
+            } else {
+                ResponseEntity<AnnouncesResponse> products = Utils.MyRestemplate.getInstance(getContext()).exchange(
+                        getResources().getString(R.string.user_announces_url),
+                        HttpMethod.POST,
+                        requestEntity, AnnouncesResponse.class);
+                announces.addAll(products.getBody().getPayload());
+            }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
@@ -310,7 +315,7 @@ public class AnnouncesFragment extends Fragment {
         searchFilter.setSearchText("*");
         searchFilter.setPage(first);
         searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
-        // searchFilter.setType(AnnounceType.COMMON_SELL);
+        searchFilter.setUserId(null);
         searchFilter.setUserId(null);
         searchFilter.setBrand(null);
         searchFilter.setCity(null);

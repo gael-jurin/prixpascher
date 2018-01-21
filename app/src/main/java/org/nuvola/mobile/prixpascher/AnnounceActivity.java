@@ -3,12 +3,15 @@ package org.nuvola.mobile.prixpascher;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -39,8 +42,13 @@ import org.nuvola.mobile.prixpascher.models.User;
 import org.nuvola.mobile.prixpascher.tasks.AnnounceFetchTask;
 import org.nuvola.mobile.prixpascher.tasks.ServiceType;
 import org.nuvola.mobile.prixpascher.tasks.ServicesTask;
+import org.nuvola.mobile.prixpascher.tasks.UploadCompletedListener;
+import org.nuvola.mobile.prixpascher.tasks.UploadTask;
+import org.nuvola.mobile.prixpascher.tasks.UploadType;
 
+import java.io.File;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -51,6 +59,8 @@ import butterknife.ButterKnife;
 
 @SuppressLint({ "NewApi", "HandlerLeak" })
 public class AnnounceActivity extends ActionBarParentActivity {
+    private static final int SELECT_PICTURE = 0;
+    private static final int TAKE_PICTURE = 1;
 
     // @BindView(R.id.btn_edit_desc) ImageButton btnUpdateDesc;
     @BindView(R.id.toolbar) Toolbar toolbar;
@@ -73,9 +83,16 @@ public class AnnounceActivity extends ActionBarParentActivity {
     @BindView(R.id.msgOfferUserInput) EditText msgOfferUserInput;
     @BindView(R.id.codePromoOfferUserInput) EditText codePromoOfferUserInput;
     @BindView(R.id.sendOffer) ButtonFlat btnSendOffer;
-    // @BindView(R.id.btnUpload) ButtonFlat btnUpload;
-    @BindView(R.id.layout_offer)
-    LinearLayout layout_offer;
+
+    // Attach a picture
+    @BindView(R.id.btn_pick_photo_1) ImageView btnPickPhoto_1;
+    Cursor cursor;
+    int currentChooserPhotoId = 0;
+    String photoPath1 = null;
+    File tmpFile;
+    CharSequence[] items;
+
+    @BindView(R.id.layout_offer) LinearLayout layout_offer;
 
     private FullScreenImageAdapter imageAdapter;
     private ProgressDialog dialog;
@@ -338,6 +355,38 @@ public class AnnounceActivity extends ActionBarParentActivity {
                     .load(jsonObj.getUser().getPhoto())
                     .placeholder(R.drawable.ic_avatar)
                     .into(merchantAvt);
+
+            items = getResources().getStringArray(R.array.choose_photo);
+
+            items[0] = getResources().getString(R.string.sd_card);
+            items[1] = getResources().getString(R.string.camera);
+
+
+            btnPickPhoto_1 = findViewById(R.id.btn_pick_photo_1);
+            btnPickPhoto_1.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    // TODO Auto-generated method stub
+                    showChoosePhotoMethod();
+                    currentChooserPhotoId = R.id.btn_pick_photo_1;
+                }
+            });
+
+/*		btnPickPhoto_2 = (ImageView) findViewById(R.id.btn_pick_photo_2);
+		btnPickPhoto_2.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				showChoosePhotoMethod();
+				currentChooserPhotoId = R.id.btn_pick_photo_2;
+			}
+		});
+		btnPickPhoto_3 = (ImageView) findViewById(R.id.btn_pick_photo_3);
+		btnPickPhoto_3.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				showChoosePhotoMethod();
+				currentChooserPhotoId = R.id.btn_pick_photo_3;
+			}
+		});*/
             
             /*            String conditionText = jsonObj.getString("condition");
             String[] condition_id = getResources().getStringArray(
@@ -415,6 +464,9 @@ public class AnnounceActivity extends ActionBarParentActivity {
                 newOffer.setCodePromo(codeText);
                 newOffer.setInfos(notesText);
                 newOffer.setAnnonceur(userVO);
+                if (tmpFile != null) {
+                    newOffer.setAttachedDevis(user.getId() + "_" + tmpFile.getName());
+                }
 
                 //TODO : Removed this redundant in server side
                 if (user.getEmail() == null || user.getEmail().isEmpty()) {
@@ -460,12 +512,65 @@ public class AnnounceActivity extends ActionBarParentActivity {
             UserSessionManager sessionManager = new UserSessionManager(this);
             User user = sessionManager.getUserSession();
             if (user != null) {
-                new ServicesTask(ServiceType.REPLY_OFFER, AnnounceActivity.this,
-                        contactMailVO).execute();
+                new UploadTask(UploadType.OFFER, user.getFbId(), user.getId(),
+                        tmpFile, this, new UploadCompletedListener() {
+                    @Override
+                    public void onUploadCompleted(boolean result) {
+                        if (result) {
+                            new ServicesTask(ServiceType.REPLY_OFFER, AnnounceActivity.this,
+                                    contactMailVO).execute();
+                        } else {
+                            showDialog(getString(R.string.upload_failed));
+                        }
+                    }
+                }).execute();
             } else {
                 Intent intent = new Intent(this, AuthenticationActivity.class);
                 startActivity(intent);
             }
+        }
+    }
+
+    private void showChoosePhotoMethod() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getResources().getString(R.string.what_you_want));
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                switch (item) {
+                    case 0:
+                        pickPhoto();
+                        break;
+
+                    case 1:
+                        capturePhoto();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private void pickPhoto() {
+        Intent intent = new Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(Intent.createChooser(intent, "Select"),
+                SELECT_PICTURE);
+    }
+
+    private void capturePhoto() {
+        String ts = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
+                .format(new Date());
+        File dir = Utils.createDirOnSDCard(getResources().getString(
+                R.string.folder_save_photo));
+        tmpFile = new File(dir.getPath() + "/Photo_" + ts + ".jpg");
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (tmpFile != null) {
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(tmpFile));
+            startActivityForResult(intent, TAKE_PICTURE);
         }
     }
 
@@ -504,29 +609,7 @@ public class AnnounceActivity extends ActionBarParentActivity {
         }
     };
 
-    public void showSuccessDialog() {
-        AlertDialog.Builder buidler = new AlertDialog.Builder(this);
-        buidler.setMessage(getResources()
-                .getString(R.string.delete_successfull));
-        buidler.setPositiveButton(getResources().getString(R.string.ok_label),
-                new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // stub
-                        Intent intent = new Intent(AnnounceActivity.this,
-                                HomeActivity.class);
-                        intent.putExtra(constants.USER_ID_KEY, user_id);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                    }
-                });
-        AlertDialog dialog = buidler.create();
-        dialog.show();
-    }
-
-    public void showDialogConfirmDelete(String msg) {
+    private void showDialogConfirmDelete(String msg) {
         AlertDialog.Builder buidler = new AlertDialog.Builder(this);
         buidler.setMessage(msg);
         buidler.setPositiveButton(getResources().getString(R.string.ok_label),
@@ -550,9 +633,81 @@ public class AnnounceActivity extends ActionBarParentActivity {
         dialog.show();
     }
 
-    private int getDrawable(Context context, String name)
-    {
-        return context.getResources().getIdentifier(name,
-                "drawable", context.getPackageName());
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            final ImageView currentImageView = findViewById(currentChooserPhotoId);
+            switch (requestCode) {
+                case SELECT_PICTURE:
+                    String selectAbpath = getPath(data.getData());
+                    Utils.MyPicasso.with(getApplicationContext())
+                            .load(new File(selectAbpath))
+                            .resize(200, 200).centerCrop()
+                            .into(currentImageView);
+                    switch (currentChooserPhotoId) {
+                        case R.id.btn_pick_photo_1:
+                            photoPath1 = selectAbpath;
+                            tmpFile = new File(photoPath1);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+
+                case TAKE_PICTURE:
+                    if (tmpFile.exists()) {
+                        Utils.MyPicasso.with(getApplicationContext())
+                                .load(tmpFile)
+                                .resize(200, 200).centerCrop()
+                                .into(currentImageView);
+                    }
+                    switch (currentChooserPhotoId) {
+                        case R.id.btn_pick_photo_1:
+                            photoPath1 = tmpFile.getAbsolutePath();
+                            tmpFile = new File(photoPath1);
+                            break;
+                        default:
+                            break;
+                    }
+                    Log.i(TAG, tmpFile.getAbsolutePath());
+                    // tmpFile = null;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private String getPath(Uri uri) {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        cursor = getContentResolver().query(uri, projection, null, null, null);
+        int column_index = cursor
+                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        String filePath = cursor.getString(column_index);
+        return filePath;
+    }
+
+    private void showSuccessDialog() {
+        AlertDialog.Builder buidler = new AlertDialog.Builder(this);
+        buidler.setMessage(getResources()
+                .getString(R.string.delete_successfull));
+        buidler.setPositiveButton(getResources().getString(R.string.ok_label),
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // stub
+                        Intent intent = new Intent(AnnounceActivity.this,
+                                HomeActivity.class);
+                        intent.putExtra(constants.USER_ID_KEY, user_id);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
+                });
+        AlertDialog dialog = buidler.create();
+        dialog.show();
     }
 }

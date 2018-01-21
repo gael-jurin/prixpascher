@@ -13,10 +13,7 @@ import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterConfig;
 
-import org.nuvola.mobile.prixpascher.business.BadgeUtils;
 import org.nuvola.mobile.prixpascher.confs.constants;
-
-import java.util.HashSet;
 
 import io.cloudboost.CloudApp;
 

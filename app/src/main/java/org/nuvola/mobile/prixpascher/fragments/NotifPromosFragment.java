@@ -1,5 +1,7 @@
 package org.nuvola.mobile.prixpascher.fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -14,11 +16,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.clockbyte.admobadapter.AdmobRecyclerAdapterWrapper;
+import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.ads.MobileAds;
 
 import org.nuvola.mobile.prixpascher.ProductActivity;
 import org.nuvola.mobile.prixpascher.R;
 import org.nuvola.mobile.prixpascher.adapters.DealProductsAdapter;
+import org.nuvola.mobile.prixpascher.business.BadgeUtils;
 import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.dto.ProductVO;
 import org.nuvola.mobile.prixpascher.tasks.ProductFetchTask;
@@ -43,11 +47,15 @@ public class NotifPromosFragment extends Fragment {
 
     @BindView(R.id.rv)
     RecyclerView rv;
+    @BindView(R.id.btnClear)
+    FloatingActionButton btnClear;
     @BindView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout swipeRefreshLayout;
 
     AdmobRecyclerAdapterWrapper adapterWrapper;
     private AsyncTask<Void, Void, ProductVO> loadMoreDataTask;
+    private SharedPreferences sharePre = getApplicationContext().getSharedPreferences(
+            SHARED_PREF_DATA, PRIVATE_MODE);
 
     public static NotifPromosFragment newInstance() {
         NotifPromosFragment fragment = new NotifPromosFragment();
@@ -68,7 +76,9 @@ public class NotifPromosFragment extends Fragment {
     public void onStop() {
         super.onStop();
 
-        loadMoreDataTask.cancel(true);
+        if (loadMoreDataTask != null) {
+            loadMoreDataTask.cancel(true);
+        }
     }
 
     @Override
@@ -96,14 +106,17 @@ public class NotifPromosFragment extends Fragment {
         adapter.SetOnItemClickListener(new DealProductsAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
+                int originalContentPosition = adapterWrapper
+                        .getAdapterCalculator().getOriginalContentPosition(position,
+                                adapterWrapper.getFetchedAdsCount(), adapter.getItemCount());
                 if (user_id == 0) {
                     Intent intent = new Intent(getActivity(), ProductActivity.class);
-                    intent.putExtra(constants.COMMON_KEY, deals.get(position)
+                    intent.putExtra(constants.COMMON_KEY, deals.get(originalContentPosition)
                             .getId());
                     startActivity(intent);
                 } else {
                     Intent intent = new Intent(getActivity(), ProductActivity.class);
-                    intent.putExtra(constants.COMMON_KEY, deals.get(position)
+                    intent.putExtra(constants.COMMON_KEY, deals.get(originalContentPosition)
                             .getId());
                     intent.putExtra(constants.USER_ID_KEY, user_id);
                     startActivity(intent);
@@ -133,12 +146,49 @@ public class NotifPromosFragment extends Fragment {
         });
         loadUnreadNotifications();
 
+        btnClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialogConfirmDelete(getString(R.string.confirm_del));
+            }
+        });
+
         return view;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    private void showDialogConfirmDelete(String msg) {
+        AlertDialog.Builder buidler = new AlertDialog.Builder(getActivity());
+        buidler.setMessage(msg);
+        buidler.setPositiveButton(getResources().getString(R.string.ok_label),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        SharedPreferences.Editor editor = sharePre.edit();
+                        BadgeUtils.promos = new HashSet<>();
+                        editor.putStringSet("PROMOS", BadgeUtils.promos);
+                        editor.apply();
+                        editor.commit();
+                        deals.clear();
+                        adapter.notifyDataSetChanged();
+                        Intent broadcastIntent = new Intent("inbox");
+                        getActivity().sendBroadcast(broadcastIntent);
+                    }
+                }).setNegativeButton(
+                getResources().getString(R.string.cancel_label),
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO Auto-generated method stub
+                    }
+                });
+        AlertDialog dialog = buidler.create();
+        dialog.show();
     }
 
     private void loadUnreadNotifications() {

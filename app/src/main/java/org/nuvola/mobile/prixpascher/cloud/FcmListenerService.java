@@ -122,10 +122,6 @@ public class FcmListenerService extends FirebaseMessagingService {
         BadgeUtils.devis.addAll(devis);
         BadgeUtils.offers.addAll(offers);
 
-        Integer count = BadgeUtils.promos.size() + BadgeUtils.devis.size() +
-                BadgeUtils.offers.size();
-        BadgeUtils.setBadge(FcmListenerService.this, count);
-
         broadcaster.sendBroadcast(broadcastIntent);
     }
 

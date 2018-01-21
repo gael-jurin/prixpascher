@@ -26,6 +26,7 @@ import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.dto.ProductVO;
 import org.nuvola.mobile.prixpascher.dto.SearchFilterVO;
 import org.nuvola.mobile.prixpascher.models.ProductsResponse;
+import org.nuvola.mobile.prixpascher.models.SortField;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -107,6 +108,8 @@ public class SearchActivity extends ActionBarParentActivity {
             Log.i(TAG, title);
             if (title != null && title != "") {
                 searchFilter.setSearchText(title);
+                searchFilter.setDefaultSort(SortField.PRICE);
+                searchFilter.setDefaultOrder(true);
             }
         }
 
@@ -121,6 +124,8 @@ public class SearchActivity extends ActionBarParentActivity {
                 String title = bundle.getString(constants.TITLE_KEY);
                 if (title != null && title != "") {
                     searchFilter.setSearchText(title);
+                    searchFilter.setDefaultSort(SortField.PRICE);
+                    searchFilter.setDefaultOrder(true);
                 }
             }
         }
@@ -171,6 +176,8 @@ public class SearchActivity extends ActionBarParentActivity {
                 setButtonFocus(btnPromo, R.drawable.tab_categories_normal);
                 first = 0;
 
+                searchFilter.setDefaultSort(SortField.MOST_VIEWED);
+                searchFilter.setDefaultOrder(true);
                 searchFilter.setPage(first);
                 searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
 
@@ -252,7 +259,6 @@ public class SearchActivity extends ActionBarParentActivity {
         } catch (Exception e) {
             loadingMore = false;
             Log.e(TAG, e.getMessage());
-            // mPullToRefreshLayout.setRefreshComplete();
             swipeRefreshLayout.setRefreshing(false);
         }
     }
@@ -340,14 +346,12 @@ public class SearchActivity extends ActionBarParentActivity {
         protected void onPostExecute(List<ProductVO> result) {
             parseAndPrepend();
             swipeRefreshLayout.setRefreshing(false);
-            // mPullToRefreshLayout.setRefreshComplete();
             super.onPostExecute(result);
         }
 
         @Override
         protected void onCancelled() {
             swipeRefreshLayout.setRefreshing(false);
-            //mPullToRefreshLayout.setRefreshComplete();
         }
     }
 
@@ -356,9 +360,7 @@ public class SearchActivity extends ActionBarParentActivity {
         searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
         searchFilter.setType(null);
         searchFilter.setUserId(null);
-        searchFilter.setBrand(null);
-        searchFilter.setCity(null);
-        searchFilter.setCategory(null);
+        searchFilter.setDefaultOrder(null);
     }
 
 }

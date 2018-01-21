@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 
 import org.nuvola.mobile.prixpascher.R;
+import org.nuvola.mobile.prixpascher.business.CustomWebViewClient;
 
 public class FanpageFragment extends Fragment {
 	public static final FanpageFragment newInstance() {
@@ -29,6 +30,7 @@ public class FanpageFragment extends Fragment {
 		View view = inflater.inflate(R.layout.fanpage_layout, null);
 		WebView content = (WebView) view.findViewById(R.id.content);
 		content.getSettings().setJavaScriptEnabled(true);
+		content.setWebViewClient(new CustomWebViewClient());
 		content.loadUrl(getResources().getString(R.string.fan_page_link));
 		return view;
 	}

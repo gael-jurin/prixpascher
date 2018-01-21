@@ -10,6 +10,7 @@ public enum ShopType {
     SHOPPEOS(new String[]{"LG", "RG", "SR", "SC", "PL", "PC"}),
     ATTIJARA(new String[]{"LG", "RG", "SR", "PL", "PC"}),
     TANGEROIS(new String[]{"LG", "SR", "GAR", "SAV", "PC"}),
+    CHIKOU(new String[]{"LG", "SR", "GAR", "SAV", "PC"}),
     BIOUGNACH(new String[]{"LG", "RP"}),
     PINKANDBLUE(new String[]{"LG", "RP"}),
     MAGANAT(new String[]{"LG", "RP"}),

@@ -100,7 +100,7 @@ public class ProductsFragment extends Fragment {
         final LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
 
-        resetSearch();
+        resetSearch(false);
         searchFilter.setCategory(null); // Only on create
 
         adapter = new ProductsAdapter(getActivity(), productsList);
@@ -159,6 +159,8 @@ public class ProductsFragment extends Fragment {
                         Log.e(TAG, e.getMessage());
                     }
                     searchFilter.setSearchText(title);
+                    searchFilter.setDefaultSort(SortField.PRICE);
+                    searchFilter.setDefaultOrder(true);
                 }
             }
 
@@ -260,7 +262,7 @@ public class ProductsFragment extends Fragment {
 
                 searchFilter.setPage(first);
                 searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
-                searchFilter.setPromotion(false);
+                searchFilter.setDefaultOrder(true);
                 searchFilter.setDefaultSort(SortField.MOST_VIEWED);
 
                 loadingMore = false;
@@ -313,7 +315,7 @@ public class ProductsFragment extends Fragment {
     private List<ProductVO> feedJson(boolean refresh) {
         if (refresh) {
             productsList.clear();
-            resetSearch();
+            resetSearch(refresh);
             searchFilter.setPage(0);
         }
 
@@ -330,7 +332,7 @@ public class ProductsFragment extends Fragment {
         return productsList;
     }
 
-    private void resetSearch() {
+    private void resetSearch(boolean refresh) {
         searchFilter.setSearchText("*");
         searchFilter.setPage(first);
         searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
@@ -338,7 +340,10 @@ public class ProductsFragment extends Fragment {
         searchFilter.setUserId(null);
         searchFilter.setBrand(null);
         searchFilter.setCity(null);
-        // searchFilter.setCategory(null);
+        if (!refresh) {
+            searchFilter.setDefaultSort(SortField.MOST_VIEWED);
+            searchFilter.setDefaultOrder(null);
+        }
         loadMoreDataTask = new LoadMoreDataTask();
     }
 
