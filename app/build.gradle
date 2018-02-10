@@ -26,7 +26,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -92,12 +92,13 @@ dependencies {
     compile 'com.facebook.android:facebook-share:[4,5)'
     compile 'io.socket:socket.io-client:0.6.3'
     compile group: 'io.cloudboost', name: 'JavaSDK', version: '1.0.7'
+    compile 'com.github.florent37:tutoshowcase:1.0.1'
+    compile 'org.adw.library:discrete-seekbar:1.0.1'
 
     compile 'com.twitter.sdk.android:twitter-core:3.1.1'
     /*compile 'com.twitter.sdk.android:tweet-ui:3.1.1'
     compile 'com.twitter.sdk.android:tweet-composer:3.1.1'*/
     compile 'com.twitter.sdk.android:twitter-mopub:3.1.1'
-    compile 'com.github.amlcurran.showcaseview:library:5.4.3'
 
     compile 'com.afollestad.material-dialogs:core:0.8.5.3'
 

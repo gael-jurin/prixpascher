@@ -20,7 +20,7 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class AnnouncesAdapter extends RecyclerView.Adapter<AnnouncesAdapter.AnnouncesViewHolder> {
+public class AnnouncesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
     private List<ProductAnnonceVO> annonceVOs;
     OnItemClickListener mItemClickListener;
@@ -38,7 +38,8 @@ public class AnnouncesAdapter extends RecyclerView.Adapter<AnnouncesAdapter.Anno
     }
 
     @Override
-    public void onBindViewHolder(AnnouncesViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder myHolder, int position) {
+        AnnouncesViewHolder holder = (AnnouncesViewHolder) myHolder;
         if (holder.thumb != null) {
             Utils.MyPicasso.with(context)
                     .load(Utils.buildImageUri(annonceVOs.get(position).getImage()))

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/price_label" />
+
+        <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
+            android:id="@+id/priceBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:dsb_min="2"
+            app:dsb_max="15" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/categories_label" />
+
+        <fr.ganfra.materialspinner.MaterialSpinner
+            android:id="@+id/categories_spinner"
+            app:ms_baseColor="@color/base_color"
+            app:ms_highlightColor="@color/base_color"
+            app:ms_arrowColor="@color/base_color"
+            app:ms_arrowSize="16dp"
+            app:ms_thickness="0.8dp"
+            app:ms_alignLabels="false"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"  />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/cities_filter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="vertical" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/city_label" />
+
+        <fr.ganfra.materialspinner.MaterialSpinner
+            android:id="@+id/cities_spinner"
+            app:ms_baseColor="@color/base_color"
+            app:ms_highlightColor="@color/base_color"
+            app:ms_arrowColor="@color/base_color"
+            app:ms_arrowSize="16dp"
+            app:ms_thickness="0.8dp"
+            app:ms_alignLabels="false"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="vertical" >
+
+        <com.gc.materialdesign.views.ButtonFlat
+            android:id="@+id/btn_filter"
+            style="@style/common_button"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:text="@string/apply_label" />
+    </LinearLayout>
+
+</LinearLayout>

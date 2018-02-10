@@ -79,14 +79,14 @@ public class NotifPromosFragment extends Fragment {
         View view = inflater.inflate(R.layout.deals_container_layout, null);
         ButterKnife.bind(this, view);
 
-        MobileAds.initialize(getApplicationContext(), "ca-app-pub-1074284300135896~4737246366");
+        MobileAds.initialize(getApplicationContext(), getString(R.string.admob_publisher_id));
 
         final LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
         adapter = new DealProductsAdapter(getActivity(), deals);
 
         adapterWrapper = new AdmobRecyclerAdapterWrapper(getContext(),
-                "ca-app-pub-1074284300135896/6213979568");
+                getString(R.string.public_admob_unit_id));
         adapterWrapper.setAdapter(adapter);
         adapterWrapper.setLimitOfAds(5);
         adapterWrapper.setNoOfDataBetweenAds(2);

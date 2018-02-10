@@ -62,7 +62,7 @@ public class SplashActivity extends Activity {
 		SharedPreferences sharePre = getApplicationContext().getSharedPreferences(
 				SHARED_PREF_DATA, PRIVATE_MODE);
 		// BadgeUtils.clearBadge(this);
-		SharedPreferences.Editor editor = sharePre.edit();
+		// SharedPreferences.Editor editor = sharePre.edit();
 		// editor.putStringSet("PROMOS", BadgeUtils.promos);
 		// editor.putStringSet("DEVIS", BadgeUtils.devis);
 		// BadgeUtils.offers = new HashSet<>();

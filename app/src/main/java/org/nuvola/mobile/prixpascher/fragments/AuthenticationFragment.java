@@ -257,29 +257,25 @@ public class AuthenticationFragment extends Fragment {
             if (mobileUser.getStatusCode().equals(HttpStatus.OK)) {
                 Log.i(TAG, mobileUser.getBody().getUserName() + "got connected");
                 try {
-                    dialogPrg.dismiss();
-                    UserSessionManager userSession = new UserSessionManager(
-                            getActivity());
-                    userSession.storeUserSession(mobileUser.getBody());
-                    registerForNotification(mobileUser.getBody());
-                    Intent intent = new Intent(
-                            getActivity(),
-                            HomeActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+                    completeAuthentication(mobileUser);
                 } catch (Exception e1) {
                     e1.printStackTrace();
                     showDialog(getActivity().getResources()
                             .getString(R.string.login_failed));
                 }
+            } else {
+                mobileUser = Utils.MyRestemplate.getInstance(getContext()).exchange(
+                        getResources().getString(R.string.users_add_url),
+                        HttpMethod.POST,
+                        requestEntity, UserVO.class);
+                completeAuthentication(mobileUser);
             }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
     }
 
-	@Override
+    @Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
@@ -304,6 +300,20 @@ public class AuthenticationFragment extends Fragment {
 		AlertDialog dialog = buidler.create();
 		dialog.show();
 	}
+
+    private void completeAuthentication(ResponseEntity<UserVO> mobileUser) {
+        dialogPrg.dismiss();
+        UserSessionManager userSession = new UserSessionManager(
+                getActivity());
+        userSession.storeUserSession(mobileUser.getBody());
+        registerForNotification(mobileUser.getBody());
+        Intent intent = new Intent(
+                getActivity(),
+                HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
+                | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
 
     private void registerForNotification(final UserVO mobileUser) {
         final String[] channels = {"global", "affiliates"};

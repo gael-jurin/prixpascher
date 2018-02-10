@@ -56,13 +56,13 @@
             android:textSize="12dp" />
 
         <Button
-            android:id="@+id/btnBest"
+            android:id="@+id/btnFilter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/tab_categories"
             android:minHeight="40dp"
-            android:tooltipText="New in Store"
+            android:tooltipText="Filtrer"
             android:text="@string/recent_label"
             android:textColor="@color/white"
             android:textSize="12dp" />

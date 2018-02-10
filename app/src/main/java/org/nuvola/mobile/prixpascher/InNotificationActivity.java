@@ -9,6 +9,8 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 
+import com.github.florent37.tutoshowcase.TutoShowcase;
+
 import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.fragments.NotifDevisFragment;
 import org.nuvola.mobile.prixpascher.fragments.NotifOffersFragment;
@@ -39,6 +41,14 @@ public class InNotificationActivity extends ActionBarParentActivity implements C
         tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
         setupViewPager(viewPager);
+
+        TutoShowcase.from(this)
+                .setContentView(R.layout.notifs_tab_layout)
+                .on(coordinator)
+                .displaySwipableLeft()
+                .delayed(500)
+                .animated(true)
+                .showOnce("NotifActivityDemo");
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabs));
         tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

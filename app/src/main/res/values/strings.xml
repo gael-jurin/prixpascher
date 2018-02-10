@@ -1,8 +1,4 @@
 <resources>
-
-    <string name="facebook_app_id">1415384325424737</string>
-    <string name="twitter_app_id">4wxTqQnKOp8FYVfCJn9xHAXeD</string>
-    <string name="twitter_app_secret">3bmVARzU0pw5TUwk6C1is3G7EcxJl68yeQrluPfUl1xpld9ZLp</string>
     <string name="app_name">PrixPasCher</string>
     <string name="download_label">Download</string>
     <string name="remove_label">Remove</string>
@@ -26,21 +22,22 @@
     <string name="offer_qty">Qté disponible</string>
     <string name="this_user_not_share_phone_number">This users not share phone number</string>
     <string name="cannot_rating_for_yourself">You can not rating for your self</string>
-    <string name="rate_this_product">Rate this product</string>
+    <string name="rate_this_product">Evaluer cet article</string>
 
     <string name="ok_label">OK</string>
+    <string name="apply_label">Appliquer</string>
     <string name="cancel_label">Annuler</string>
     <string name="del_label">Supprimer</string>
     <string name="dummy_text">...</string>
     <string name="comment_text">{faw-comment-o}</string>
-    <string name="rate_it">Rate it</string>
+    <string name="rate_it">Evaluer cet article</string>
     <string name="rating">Rating</string>
 
     <!-- DOWNLOAD MSG -->
     <string name="download_ok">Download completion</string>
     <string name="download_failed">Download failed, file not found</string>
     <string name="open_network">Check your internet connection</string>
-    <string name="http_call_error">An error occurred, please try again later</string>
+    <string name="http_call_error">Impossible de valider cette opération avec votre profile !</string>
     <string name="network_error">No internet connection, please check !</string>
     <string name="open_network_label">Please check your internet connection and try again...</string>
     <string name="download_in_progress">Download in progress</string>
@@ -69,8 +66,7 @@
     <string name="offer_alert">Votre offre sera autovalidée par PrixPasCher et visible directment et exclusivement par le client</string>
     <string name="aim_label">Purpose</string>
     <string name="confirm_take_photo">Please take an photo ?</string>
-    <string name="best_label">{faw-rss} New</string>
-    <string name="recent_label">{faw-rss}</string>
+    <string name="recent_label">{faw-filter}</string>
     <string name="buy_label">{faw-arrow_down}</string>
     <string name="low_price_label">Prix en baisse !</string>
     <string name="promotions_label">Promotions</string>
@@ -171,14 +167,19 @@
     <string name="product_root_json_url">https://www.prixpascher.ma/article/api/products/</string>
 
     <string name="users_json_url">https://www.prixpascher.ma/api/user/merchant/</string>
+    <string name="users_add_url">https://www.prixpascher.ma/api/user</string>
+    <string name="shop_json_url">https://www.prixpascher.ma/api/shop</string>
     <string name="merchant_json_url">https://www.prixpascher.ma/api/merchant/</string>
     <string name="announce_send_json_url">https://www.prixpascher.ma/api/annonce/persist/mobile</string>
     <string name="announce_notif_json_url">https://www.prixpascher.ma/api/message/annonce/</string>
     <string name="alert_send_url">https://www.prixpascher.ma/api/products/alert</string>
     <string name="msg_send_url">https://www.prixpascher.ma/api/message/contact</string>
+    <string name="review_send_url">https://www.prixpascher.ma/api/review</string>
 
     <string name="admob_publisher_id">ca-app-pub-1074284300135896~4737246366</string>
     <string name="admob_test_device_ids">TEST_EMULATOR</string>
+    <string name="affiliate_admob_unit_id">ca-app-pub-1074284300135896/3880819704</string>
+    <string name="public_admob_unit_id">ca-app-pub-1074284300135896/6213979568</string>
     <string name="copyright">Developed by Nuvola</string>
     <string name="loading">Loading...</string>
     <string name="about_us_label">A propos</string>
@@ -227,12 +228,13 @@
     <string name="fan_page_link">https://m.facebook.com/prixpascherMa</string>
     <string name="spam_msg">You can not send email after 2 minutes remind</string>
     <string name="devis_success_msg">Votre offre a été envoyé avec succès !</string>
+    <string name="review_success_msg">Votre avis a été envoyé avec succès !</string>
     <string name="delete_successfull">Delete successfully</string>
     <string name="confirm_del">Are you sure you want delete this ?</string>
     <string name="enquiry_alert">You cannot send enquiry to your self !</string>
     <string name="set_as_thumbnail">Set As Thumbnail</string>
     <string name="update_description">Update Description</string>
-    <string name="leave_an_comment">Leave an comment</string>
+    <string name="leave_an_comment">Ajouter un commentaire</string>
 
     <string-array name="choose_photo">
         <item>SD card</item>
@@ -263,7 +265,6 @@
         <item>Buy</item>
     </string-array>
     <string name="location">Location</string>
-    <string name="google_map_api">AIzaSyAyAY85G59yDZ6WyDyBPfQ7_s9Ar4G0mD4</string>
     <string name="registering_message">performing autoregistration...</string>
     <string name="show_notification">Afficher</string>
 </resources>

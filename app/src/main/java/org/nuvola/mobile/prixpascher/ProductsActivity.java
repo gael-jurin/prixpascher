@@ -22,8 +22,6 @@ public class ProductsActivity extends ActionBarParentActivity implements Connect
         toolbar.setTitle(R.string.app_name);
         setSupportActionBar(toolbar);
 
-        coordinator = findViewById(R.id.coordinator);
-
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             fragment = ProductsFragment.newInstance(toolbar);

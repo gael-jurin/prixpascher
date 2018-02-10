@@ -22,7 +22,6 @@ import com.gc.materialdesign.widgets.Dialog;
 import com.mikepenz.iconics.context.IconicsLayoutInflater2;
 
 import org.nuvola.mobile.prixpascher.business.BadgeUtils;
-import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.receivers.NotificationFiredReceiver;
 
 import java.util.HashSet;
@@ -55,6 +54,21 @@ public class ActionBarParentActivity extends AppCompatActivity implements Notifi
         sharePre = getApplicationContext().getSharedPreferences(
                 SHARED_PREF_DATA, PRIVATE_MODE);
 		super.onCreate(savedInstanceState);
+
+		/*TutoShowcase.from(this)
+				.setFitsSystemWindows(true)
+				.setContentView(R.layout.action_bar_notification)
+
+                .on(R.id.hotlist_bell)
+                .addCircle()
+                .withBorder()
+                .onClick(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                    }
+                })
+				//.showOnce("SearchFilterDemo")
+				.show();*/
 	}
 
 	@Override
@@ -111,15 +125,13 @@ public class ActionBarParentActivity extends AppCompatActivity implements Notifi
 
         updateHotCount(notifs.size() + devis.size() + offers.size());
 
-		if (Utils.isConnectingToInternet(this)) {
-			alertCount.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					Intent intent = new Intent(getApplicationContext(), InNotificationActivity.class);
-					startActivity(intent);
-				}
-			});
-		}
+		alertCount.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				Intent intent = new Intent(getApplicationContext(), InNotificationActivity.class);
+				startActivity(intent);
+			}
+		});
 
 		alertIcon.setOnClickListener(new View.OnClickListener() {
 			@Override

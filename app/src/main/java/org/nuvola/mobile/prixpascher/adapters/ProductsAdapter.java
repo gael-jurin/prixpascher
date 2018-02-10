@@ -17,7 +17,7 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ProductsViewHolder> {
+public class ProductsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
     private List<ProductVO> products;
     OnItemClickListener mItemClickListener;
@@ -35,7 +35,8 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
     }
 
     @Override
-    public void onBindViewHolder(ProductsViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder myHolder, int position) {
+        ProductsViewHolder holder = (ProductsViewHolder) myHolder;
         if (holder.thumb != null) {
             Utils.MyPicasso.with(context)
                     .load(products.get(position).getImage())

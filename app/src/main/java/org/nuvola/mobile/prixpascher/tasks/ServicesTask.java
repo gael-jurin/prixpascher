@@ -23,6 +23,7 @@ import org.nuvola.mobile.prixpascher.dto.ContactMailVO;
 import org.nuvola.mobile.prixpascher.dto.PriceAlertVO;
 import org.nuvola.mobile.prixpascher.dto.ProductAnnonceVO;
 import org.nuvola.mobile.prixpascher.dto.ProductVO;
+import org.nuvola.mobile.prixpascher.dto.ReviewVO;
 import org.nuvola.mobile.prixpascher.models.AnnounceStatus;
 import org.nuvola.mobile.prixpascher.models.AnnounceType;
 import org.nuvola.mobile.prixpascher.models.City;
@@ -53,6 +54,7 @@ public class ServicesTask extends AsyncTask<Void, Void, Boolean> {
     private ProductVO product;
     private ProductAnnonceVO annonce;
     private ContactMailVO contact;
+    private ReviewVO review;
 
     private ProgressDialog dialog;
 
@@ -77,6 +79,10 @@ public class ServicesTask extends AsyncTask<Void, Void, Boolean> {
 
         if (taskable instanceof ProductAnnonceVO) {
             annonce = (ProductAnnonceVO) taskable;
+        }
+
+        if (taskable instanceof ReviewVO) {
+            review = (ReviewVO) taskable;
         }
 
         if (taskable instanceof ContactMailVO) {
@@ -293,6 +299,52 @@ public class ServicesTask extends AsyncTask<Void, Void, Boolean> {
             } catch (Exception ex) {
                 dialog.dismiss();
                 // showDialog(context.getResources().getString(R.string.error_alert));
+                Log.e("Debug", "error: " + ex.getMessage(), ex);
+                return false;
+            }
+        }
+
+        if (serviceType.equals(ServiceType.RATING)) {
+            try {
+                HttpEntity<ReviewVO> requestEntity = new HttpEntity<>(review);
+                ResponseEntity<ProductVO> resEntity = Utils.MyRestemplate.getInstance(context).exchange(
+                        context.getResources().getString(R.string.review_send_url),
+                        HttpMethod.POST,
+                        requestEntity, ProductVO.class);
+
+                if (resEntity != null) {
+                    if (!resEntity.getStatusCode().equals(HttpStatus.OK)) {
+                        showDialog(context.getResources().getString(
+                                R.string.http_call_error));
+                    } else {
+                        showDialog(context.getResources().getString(R.string.review_success_msg));
+                    }
+                }
+            } catch (Exception ex) {
+                dialog.dismiss();
+                Log.e("Debug", "error: " + ex.getMessage(), ex);
+                return false;
+            }
+        }
+
+        if (serviceType.equals(ServiceType.RATING)) {
+            try {
+                HttpEntity<ReviewVO> requestEntity = new HttpEntity<>(review);
+                ResponseEntity<ProductVO> resEntity = Utils.MyRestemplate.getInstance(context).exchange(
+                        context.getResources().getString(R.string.review_send_url),
+                        HttpMethod.POST,
+                        requestEntity, ProductVO.class);
+
+                if (resEntity != null) {
+                    if (!resEntity.getStatusCode().equals(HttpStatus.OK)) {
+                        showDialog(context.getResources().getString(
+                                R.string.http_call_error));
+                    } else {
+                        showDialog(context.getResources().getString(R.string.review_success_msg));
+                    }
+                }
+            } catch (Exception ex) {
+                dialog.dismiss();
                 Log.e("Debug", "error: " + ex.getMessage(), ex);
                 return false;
             }
