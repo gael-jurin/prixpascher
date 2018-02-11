@@ -1,7 +1,7 @@
 package org.nuvola.mobile.prixpascher.fragments;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.gc.materialdesign.views.ButtonFlat;
 
+import org.nuvola.mobile.prixpascher.AnnouncesActivity;
 import org.nuvola.mobile.prixpascher.ChangePassActivity;
 import org.nuvola.mobile.prixpascher.ProductsActivity;
 import org.nuvola.mobile.prixpascher.R;
@@ -33,25 +34,36 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class ProfileFragment extends Fragment {
 
-    Button btnEdit,btnLogout;
-    ButtonFlat btnShowMyProducts,
-            btnChangePass, btnUpdateProduct;
-	EditText displayName, email, website, address, phone, userName;
-	ImageView avt;
+    @BindView(R.id.btn_update) Button btnEdit;
+    @BindView(R.id.btn_logout) Button btnLogout;
+    @BindView(R.id.btn_change_pass) ButtonFlat btnChangePass;
+    @BindView(R.id.btn_update_products) ButtonFlat btnUpdateProduct;
+    @BindView(R.id.btn_show_my_products) ButtonFlat btnShowMyProducts;
+    @BindView(R.id.btn_show_my_announces) ButtonFlat btnShowMyAnnounces;
+	@BindView(R.id.user_name) EditText userName;
+	@BindView(R.id.product_feed) EditText feed;
+	@BindView(R.id.address) EditText address;
+	@BindView(R.id.websites) EditText website;
+	@BindView(R.id.display_name) EditText displayName;
+	@BindView(R.id.email) EditText email;
+	@BindView(R.id.avt) ImageView avt;
+
 	ProfileComunicator listener;
 	ProgressDialog loadingDialog;
 	User userProfile;
 	public static final String TAG = "ProfileFragment";
 	ProgressDialog prgDialog;
 
-	@Override
-	public void onAttach(Activity activity) {
-		// TODO Auto-generated method stub
-		super.onAttach(activity);
-		listener = (ProfileComunicator) getActivity();
-	}
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        listener = (ProfileComunicator) getActivity();
+    }
 
 	public static final ProfileFragment newInstance() {
 		// TODO Auto-generated constructor stub
@@ -71,7 +83,7 @@ public class ProfileFragment extends Fragment {
 		if (userProfile != null) {
 			displayName.setText(userProfile.getFullName());
 			website.setText(userProfile.getWebsite());
-			phone.setText(userProfile.getPhone());
+            feed.setText(userProfile.getWebsite());
 			address.setText(userProfile.getAddress());
 			email.setText(userProfile.getEmail());
 			userName.setText(userProfile.getUserName());
@@ -130,6 +142,18 @@ public class ProfileFragment extends Fragment {
                     startActivity(intent);
 				}
 			});
+
+            btnShowMyAnnounces.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    // TODO Auto-generated method stub
+                    Intent intent = new Intent(getActivity(),
+                            AnnouncesActivity.class);
+                    intent.putExtra(constants.USER_ID_KEY, userProfile.getId());
+                    startActivity(intent);
+                }
+            });
 
 			btnUpdateProduct.setOnClickListener(new View.OnClickListener() {
 
@@ -287,22 +311,11 @@ public class ProfileFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		View view = inflater.inflate(R.layout.profile_fragment_layout, null);
-		btnLogout = view.findViewById(R.id.btn_logout);
-		btnEdit = view.findViewById(R.id.btn_update);
+		ButterKnife.bind(this, view);
 		// btnShowMarkProducts = (Button) view
 		// .findViewById(R.id.btn_show_mark_products);
-		btnShowMyProducts = view.findViewById(R.id.btn_show_my_products);
-		displayName = view.findViewById(R.id.display_name);
-		email = view.findViewById(R.id.email);
-		address = view.findViewById(R.id.address);
-		phone = view.findViewById(R.id.trackingDate);
-		website = view.findViewById(R.id.websites);
-		avt = view.findViewById(R.id.avt);
-		userName = view.findViewById(R.id.user_name);
-		btnChangePass = view.findViewById(R.id.btn_change_pass);
-		btnUpdateProduct = view.findViewById(R.id.btn_update_products);
+
 		return view;
 	}
 }

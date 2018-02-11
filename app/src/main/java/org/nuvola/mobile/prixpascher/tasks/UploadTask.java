@@ -6,13 +6,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ImageView;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -26,23 +26,28 @@ public class UploadTask extends AsyncTask<Void, Void, Boolean> {
     private String fb_id = null;
     private String user_id = "0";
     private String photoPath1 = null;
+    private String photoId = "";
     private Context context;
     private UploadType type;
+    private UploadCompletedListener mListener;
 
     ProgressDialog dialog;
     File tmpFile;
-
-    ImageView btnPickPhoto_1, btnPickPhoto_2, btnPickPhoto_3;
 
     public UploadTask(UploadType type) {
         this.type = type;
     }
 
-    public UploadTask(UploadType type, String fb_id, String user_id, Context context) {
+    public UploadTask(UploadType type, String fb_id, String user_id,
+                      File tmpFile, Context context, UploadCompletedListener mListener) {
         this.fb_id = fb_id;
         this.user_id = user_id;
         this.context = context;
         this.type = type;
+        this.mListener = mListener;
+        this.tmpFile = tmpFile;
+        this.photoId = user_id + "_" + tmpFile.getName();
+        this.photoPath1 = tmpFile.getAbsolutePath();
     }
 
     @Override
@@ -51,13 +56,19 @@ public class UploadTask extends AsyncTask<Void, Void, Boolean> {
         dialog.dismiss();
     }
 
-    protected void onPostExecute() {
+    protected void onPostExecute(Boolean result) {
         dialog.dismiss();
+        if (mListener != null) {
+            mListener.onUploadCompleted(result);
+        }
     };
 
     @Override
     protected void onPreExecute() {
-        // TODO Auto-generated method stub
+        if (tmpFile == null) {
+            cancel(true);
+        }
+
         super.onPreExecute();
         dialog = new ProgressDialog(context);
         dialog.setMessage(context.getResources().getString(
@@ -68,6 +79,37 @@ public class UploadTask extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... params) {
+        if (UploadType.OFFER.equals(type)) {
+            String handleInserUrl = context.getResources().getString(
+                    R.string.gallery_post_url) // TODO : Use HTTPS upload too
+                    + photoId;
+            try {
+                HttpClient client = new DefaultHttpClient();
+                HttpPost post = new HttpPost(handleInserUrl);
+                MultipartEntityBuilder reqEntityBuilder = MultipartEntityBuilder.create();
+
+                FileBody fileUpload;
+                if (photoPath1 != null) {
+                    fileUpload = new FileBody(new File(photoPath1), ContentType.MULTIPART_FORM_DATA, "");
+                    reqEntityBuilder.addPart("photo1", fileUpload);
+                }
+
+                post.setEntity(reqEntityBuilder.build());
+                HttpResponse response = client.execute(post);
+                HttpEntity resEntity = response.getEntity();
+                final String response_str = EntityUtils.toString(resEntity);
+                if (response.getStatusLine().getStatusCode() == 200) {
+                    Log.i("RESPONSE", response_str);
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (Exception ex) {
+                Log.e("Debug", "error: " + ex.getMessage(), ex);
+                return false;
+            }
+        }
+
         if (UploadType.PRODUCT.equals(type)) {
             String handleInserUrl = context.getResources().getString(
                     R.string.products_json_url)
@@ -75,27 +117,15 @@ public class UploadTask extends AsyncTask<Void, Void, Boolean> {
             try {
                 HttpClient client = new DefaultHttpClient();
                 HttpPost post = new HttpPost(handleInserUrl);
-                MultipartEntity reqEntity = new MultipartEntity();
+                MultipartEntityBuilder reqEntityBuilder = MultipartEntityBuilder.create();
 
                 FileBody fileUpload;
                 if (photoPath1 != null) {
                     fileUpload = new FileBody(new File(photoPath1));
-                    reqEntity.addPart("photo1", fileUpload);
+                    reqEntityBuilder.addPart("photo1", fileUpload);
                 }
 
-                // String titleText = title.getText().toString();
-                // String priceText = price.getText().toString();
-                // String contentText = content.getText().toString();
-                // reqEntity.addPart("user_id", new StringBody(user_id + ""));
-                // reqEntity.addPart("fb_id", new StringBody(fb_id));
-                // reqEntity.addPart("title", new StringBody(titleText));
-                // reqEntity.addPart("price", new StringBody(priceText));
-                // reqEntity.addPart("content", new StringBody(contentText));
-                // reqEntity.addPart("city", new StringBody(city_selected + ""));
-                // reqEntity.addPart("categories", new StringBody(categories_selected + ""));
-                // reqEntity.addPart("county",new StringBody(county_selected + ""));
-                // reqEntity.addPart("aim", new StringBody(aim_selected + ""));
-                post.setEntity(reqEntity);
+                post.setEntity(reqEntityBuilder.build());
                 HttpResponse response = client.execute(post);
                 HttpEntity resEntity = response.getEntity();
                 final String response_str = EntityUtils.toString(resEntity);
@@ -136,7 +166,7 @@ public class UploadTask extends AsyncTask<Void, Void, Boolean> {
             try {
                 HttpClient client = new DefaultHttpClient();
                 HttpPost post = new HttpPost(handleInserUrl);
-                MultipartEntity reqEntity = new MultipartEntity();
+                MultipartEntityBuilder reqEntityBuilder = MultipartEntityBuilder.create();
 
                 UserSessionManager userSessionManager = new UserSessionManager(
                         context);
@@ -147,7 +177,7 @@ public class UploadTask extends AsyncTask<Void, Void, Boolean> {
 				/*reqEntity.addPart("id", new StringBody(user.getId() + ""));
 				reqEntity.addPart("old_pass", new StringBody(oldPassText));
 				reqEntity.addPart("new_pass", new StringBody(newPassText));*/
-                post.setEntity(reqEntity);
+                post.setEntity(reqEntityBuilder.build());
                 HttpResponse response = client.execute(post);
                 HttpEntity resEntity = response.getEntity();
                 final String jsonString = EntityUtils.toString(resEntity);

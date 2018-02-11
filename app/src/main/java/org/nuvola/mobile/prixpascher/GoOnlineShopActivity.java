@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.webkit.WebView;
 
+import org.nuvola.mobile.prixpascher.business.CustomWebViewClient;
 import org.nuvola.mobile.prixpascher.confs.constants;
 
 import butterknife.BindView;
@@ -28,6 +29,7 @@ public class GoOnlineShopActivity extends ActionBarParentActivity {
             productUrl = getIntent().getExtras().getString(constants.COMMON_KEY);
 
             content.getSettings().setJavaScriptEnabled(true);
+            content.setWebViewClient(new CustomWebViewClient());
             content.loadUrl(productUrl);
         }
 

@@ -1,6 +1,6 @@
 package org.nuvola.mobile.prixpascher.dto;
 
-public class EmailVo {
+public class EmailVO {
     private String from;
     private String to;
     private String cc;
@@ -42,40 +42,40 @@ public class EmailVo {
     }
 
     public static final class Builder {
-        private EmailVo EmailVo;
+        private EmailVO EmailVO;
 
         public Builder(String to) {
-            this.EmailVo = new EmailVo();
-            this.EmailVo.to = to;
+            this.EmailVO = new EmailVO();
+            this.EmailVO.to = to;
         }
 
         public Builder from(String from) {
-            this.EmailVo.from = from;
+            this.EmailVO.from = from;
             return this;
         }
 
         public Builder subject(String subject) {
-            EmailVo.subject = subject;
+            EmailVO.subject = subject;
             return this;
         }
 
         public Builder message(String message) {
-            EmailVo.message = message;
+            EmailVO.message = message;
             return this;
         }
 
         public Builder cc(String cc) {
-            EmailVo.cc = cc;
+            EmailVO.cc = cc;
             return this;
         }
 
         public Builder bcc(String bcc) {
-            EmailVo.bcc = bcc;
+            EmailVO.bcc = bcc;
             return this;
         }
 
-        public EmailVo build() {
-            return this.EmailVo;
+        public EmailVO build() {
+            return this.EmailVO;
         }
     }
 }

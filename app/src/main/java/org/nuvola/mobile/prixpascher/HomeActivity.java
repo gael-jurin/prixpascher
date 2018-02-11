@@ -85,7 +85,7 @@ public class HomeActivity extends ActionBarParentActivity implements
 				android.R.layout.simple_list_item_1, getResources()
 						.getStringArray(R.array.drawer_menus));
 
-		drawerItems = new ArrayList<>();
+        drawerItems = new ArrayList<>();
 		drawerItems.add(new DrawerMenuItem(getResources().getString(
 				R.string.login_label), R.drawable.ic_small_avatar));
 		drawerItems.add(new DrawerMenuItem(drawerMenuTitles.getItem(0),

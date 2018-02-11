@@ -15,12 +15,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.clockbyte.admobadapter.AdmobRecyclerAdapterWrapper;
+import com.gc.materialdesign.views.ButtonFlat;
+import com.google.android.gms.ads.MobileAds;
+
+import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 import org.nuvola.mobile.prixpascher.ProductActivity;
 import org.nuvola.mobile.prixpascher.R;
 import org.nuvola.mobile.prixpascher.adapters.ProductsAdapter;
+import org.nuvola.mobile.prixpascher.business.EmptyRecyclerView;
 import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.dto.ProductVO;
@@ -40,26 +50,36 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ProductsFragment extends Fragment {
-    public static String TAG = "ProductsFragment";
+import static com.facebook.FacebookSdk.getApplicationContext;
 
+public class ProductsFragment extends Fragment {
+    static Toolbar toolbar;
+
+    public static String TAG = "ProductsFragment";
     List<ProductVO> productsList = new ArrayList<>();
+    long productsCount = 0;
     SearchFilterVO searchFilter = new SearchFilterVO();
     int COUNT_ITEM_LOAD_MORE = 40;
     int first = 0;
     boolean loadingMore = true;
-    int user_id = 0, user_post = 0, pastVisiblesItems, visibleItemCount, totalItemCount;
 
+    int user_id = 0, user_post = 0, pastVisiblesItems, visibleItemCount, totalItemCount;
     @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
-    @BindView(R.id.rv) RecyclerView rv;
+    @BindView(R.id.rv)
+    EmptyRecyclerView rv;
     @BindView(R.id.btnAll) Button btnAll;
-    @BindView(R.id.btnBest) Button btnBest;
+    @BindView(R.id.btnFilter) Button btnFilter;
     @BindView(R.id.btnPromo) Button btnPromo;
     @BindView(R.id.prgLoadMore) LinearLayout loadMorePrg;
-    ProductsAdapter adapter;
-    static Toolbar toolbar;
+    private ProductsAdapter adapter;
+    private AdmobRecyclerAdapterWrapper adapterWrapper;
     private LoadMoreDataTask loadMoreDataTask = new LoadMoreDataTask();
     private PullToRefreshDataTask pullToRefreshDataTask = new PullToRefreshDataTask();
+    private DiscreteSeekBar priceBar;
+    private Spinner citiesSpinner;
+    private Spinner categoriesSpinner;
+    private MaterialDialog filterDialog;
+    private String categ_selected;
 
     @Override
     public void onAttach(Context context) {
@@ -82,7 +102,7 @@ public class ProductsFragment extends Fragment {
 
     @SuppressWarnings("deprecation")
     private void setButtonFocus(Button btn, int drawable) {
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
             btn.setBackgroundDrawable(getActivity().getResources().getDrawable(
                     drawable));
         } else {
@@ -97,31 +117,43 @@ public class ProductsFragment extends Fragment {
         View view = inflater.inflate(R.layout.product_list_container_layout, null);
         ButterKnife.bind(this, view);
 
+        MobileAds.initialize(getApplicationContext(), getString(R.string.admob_publisher_id));
+
         final LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
 
-        resetSearch();
-        searchFilter.setCategory(null); // Only on create
+        resetSearch(false);
+        searchFilter.setCategory(null);
 
         adapter = new ProductsAdapter(getActivity(), productsList);
         adapter.SetOnItemClickListener(new ProductsAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
+                int originalContentPosition = adapterWrapper
+                        .getAdapterCalculator().getOriginalContentPosition(position,
+                                adapterWrapper.getFetchedAdsCount(), adapter.getItemCount());
+                Intent intent = new Intent(getActivity(), ProductActivity.class);
+                intent.putExtra(constants.COMMON_KEY, productsList.get(originalContentPosition)
+                        .getId());
                 if (user_id == 0) {
-                    Intent intent = new Intent(getActivity(), ProductActivity.class);
-                    intent.putExtra(constants.COMMON_KEY, productsList.get(position)
-                            .getId());
                     startActivity(intent);
                 } else {
-                    Intent intent = new Intent(getActivity(), ProductActivity.class);
-                    intent.putExtra(constants.COMMON_KEY, productsList.get(position)
-                            .getId());
                     intent.putExtra(constants.USER_ID_KEY, user_id);
                     startActivity(intent);
                 }
             }
         });
-        rv.setAdapter(adapter);
+
+        adapterWrapper = new AdmobRecyclerAdapterWrapper(getContext(),
+                getString(R.string.affiliate_admob_unit_id));
+        adapterWrapper.setAdapter(adapter);
+        adapterWrapper.setLimitOfAds(10);
+        adapterWrapper.setNoOfDataBetweenAds(50);
+        adapterWrapper.setFirstAdIndex(10);
+
+        rv.setAdapter(adapterWrapper);
+        // rv.setEmptyView(view.findViewById(R.id.empty_view)); TODO Fix this component style
+
         rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -129,9 +161,10 @@ public class ProductsFragment extends Fragment {
                 visibleItemCount = llm.getChildCount();
                 totalItemCount = llm.getItemCount();
                 pastVisiblesItems = llm.findFirstVisibleItemPosition();
-                if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                int page = visibleItemCount + pastVisiblesItems;
+                if (page == totalItemCount && page <= productsCount) {
                     loadingMore = true;
-                    first += COUNT_ITEM_LOAD_MORE;
+                    first += 1;
 
                     searchFilter.setPage(first);
                     searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
@@ -159,6 +192,8 @@ public class ProductsFragment extends Fragment {
                         Log.e(TAG, e.getMessage());
                     }
                     searchFilter.setSearchText(title);
+                    searchFilter.setDefaultSort(SortField.PRICE);
+                    searchFilter.setDefaultOrder(true);
                 }
             }
 
@@ -211,12 +246,11 @@ public class ProductsFragment extends Fragment {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 setButtonFocus(btnAll, R.drawable.tab_categories_pressed);
-                setButtonFocus(btnBest, R.drawable.tab_categories_normal);
+                setButtonFocus(btnFilter, R.drawable.tab_categories_normal);
                 setButtonFocus(btnPromo, R.drawable.tab_categories_normal);
+                resetSearch(false);
                 first = 0;
 
-                searchFilter.setPage(first);
-                searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
                 searchFilter.setPromotion(false);
                 searchFilter.setDefaultSort(SortField.MOST_UPDATED);
 
@@ -234,7 +268,10 @@ public class ProductsFragment extends Fragment {
                 // TODO Auto-generated method stub
                 setButtonFocus(btnPromo, R.drawable.tab_categories_pressed);
                 setButtonFocus(btnAll, R.drawable.tab_categories_normal);
-                setButtonFocus(btnBest, R.drawable.tab_categories_normal);
+                setButtonFocus(btnFilter, R.drawable.tab_categories_normal);
+                if (filterDialog != null) {
+                    resetSearch(false);
+                }
                 first = 0;
 
                 searchFilter.setPage(first);
@@ -249,25 +286,73 @@ public class ProductsFragment extends Fragment {
             }
         });
 
-        btnBest.setOnClickListener(new OnClickListener() {
+        btnFilter.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                setButtonFocus(btnBest, R.drawable.tab_categories_pressed);
+                setButtonFocus(btnFilter, R.drawable.tab_categories_pressed);
                 setButtonFocus(btnAll, R.drawable.tab_categories_normal);
                 setButtonFocus(btnPromo, R.drawable.tab_categories_normal);
-                first = 0;
 
-                searchFilter.setPage(first);
-                searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
-                searchFilter.setPromotion(false);
-                searchFilter.setDefaultSort(SortField.MOST_VIEWED);
+                MaterialDialog.Builder filterDialogBuilder = new MaterialDialog.Builder(getActivity());
+                filterDialogBuilder.customView(R.layout.filter_dialog_layout, true);
 
-                loadingMore = false;
-                productsList.clear();
-                adapter.notifyDataSetChanged();
-                loadMoreDataTask = new LoadMoreDataTask();
-                loadMoreDataTask.execute();
+                if (filterDialog == null) {
+                    filterDialog = filterDialogBuilder.build();
+                    categ_selected = Category.electromenager.name();
+
+                    categoriesSpinner  = (Spinner) filterDialog.findViewById(R.id.categories_spinner);
+                    final String[] category_name = Category.filterMobCategoryValues();
+                    final ArrayAdapter<String> cadapter = new ArrayAdapter<>(
+                            getActivity(),
+                            android.R.layout.simple_list_item_1, category_name);
+                    categoriesSpinner.setAdapter(cadapter);
+                    categoriesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                            categ_selected = category_name[arg2];
+                            categ_selected = categ_selected.replaceAll(" ", "_");
+                            cadapter.notifyDataSetChanged();
+                        }
+                        @Override
+                        public void onNothingSelected(
+                                AdapterView<?> arg0) {
+                        }
+                    });
+                }
+                filterDialog.setCanceledOnTouchOutside(true);
+
+                priceBar = (DiscreteSeekBar) filterDialog.findViewById(R.id.priceBar);
+                priceBar.setMax(25000);
+                priceBar.setScrollbarFadingEnabled(true);
+                priceBar.setIndicatorPopupEnabled(true);
+
+                LinearLayout citiesFilter  = (LinearLayout) filterDialog.findViewById(R.id.cities_filter);
+                citiesFilter.setVisibility(View.GONE);
+                ButtonFlat apply = (ButtonFlat) filterDialog.findViewById(R.id.btn_filter);
+
+                apply.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        first = 0;
+                        searchFilter.setPage(first);
+                        searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
+                        searchFilter.setDefaultOrder(true);
+                        searchFilter.setDefaultSort(SortField.PRICE);
+
+                        searchFilter.setMinPrice(Double.valueOf(priceBar.getProgress()));
+                        searchFilter.setCategory(Category.valueOf(categ_selected));
+
+                        loadingMore = false;
+                        productsList.clear();
+                        adapter.notifyDataSetChanged();
+                        loadMoreDataTask = new LoadMoreDataTask();
+                        loadMoreDataTask.execute();
+                        filterDialog.dismiss();
+                    }
+
+                });
+                filterDialog.show();
             }
         });
 
@@ -313,7 +398,7 @@ public class ProductsFragment extends Fragment {
     private List<ProductVO> feedJson(boolean refresh) {
         if (refresh) {
             productsList.clear();
-            resetSearch();
+            resetSearch(refresh);
             searchFilter.setPage(0);
         }
 
@@ -324,13 +409,14 @@ public class ProductsFragment extends Fragment {
                     HttpMethod.POST,
                     requestEntity, ProductsResponse.class);
             productsList.addAll(products.getBody().getPayload());
+            productsCount = products.getBody().getTotalElements();
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
         return productsList;
     }
 
-    private void resetSearch() {
+    private void resetSearch(boolean refresh) {
         searchFilter.setSearchText("*");
         searchFilter.setPage(first);
         searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
@@ -338,7 +424,12 @@ public class ProductsFragment extends Fragment {
         searchFilter.setUserId(null);
         searchFilter.setBrand(null);
         searchFilter.setCity(null);
-        // searchFilter.setCategory(null);
+        searchFilter.setMaxPrice(null);
+        filterDialog = null;
+        if (!refresh) {
+            searchFilter.setDefaultSort(SortField.MOST_VIEWED);
+            searchFilter.setDefaultOrder(null);
+        }
         loadMoreDataTask = new LoadMoreDataTask();
     }
 
@@ -362,7 +453,6 @@ public class ProductsFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
-            // TODO Auto-generated method stub
             super.onPreExecute();
             loadMorePrg.setVisibility(View.VISIBLE);
             loadingMore = true;

@@ -2,14 +2,14 @@ package org.nuvola.mobile.prixpascher.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.squareup.picasso.Picasso;
+
 import org.nuvola.mobile.prixpascher.R;
+import org.nuvola.mobile.prixpascher.business.EmptyRecyclerView;
 import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.dto.ProductVO;
 
@@ -17,7 +17,7 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ProductsViewHolder> {
+public class ProductsAdapter extends EmptyRecyclerView.Adapter<EmptyRecyclerView.ViewHolder> {
     private Context context;
     private List<ProductVO> products;
     OnItemClickListener mItemClickListener;
@@ -35,7 +35,8 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
     }
 
     @Override
-    public void onBindViewHolder(ProductsViewHolder holder, int position) {
+    public void onBindViewHolder(EmptyRecyclerView.ViewHolder myHolder, int position) {
+        ProductsViewHolder holder = (ProductsViewHolder) myHolder;
         if (holder.thumb != null) {
             Utils.MyPicasso.with(context)
                     .load(products.get(position).getImage())
@@ -73,7 +74,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
         products.addAll(list);
     }
 
-    public class ProductsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ProductsViewHolder extends EmptyRecyclerView.ViewHolder implements View.OnClickListener {
            CardView cv;
            TextView title;
            TextView price;
@@ -107,7 +108,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.Produc
     }
 
     public interface OnItemClickListener {
-        void onItemClick(View view , int position);
+        void onItemClick(View view, int position);
     }
 
     public void SetOnItemClickListener(final OnItemClickListener mItemClickListener) {

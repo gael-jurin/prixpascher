@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.nuvola.mobile.prixpascher.R;
+import org.nuvola.mobile.prixpascher.business.EmptyRecyclerView;
 import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.dto.ProductAnnonceVO;
 import org.nuvola.mobile.prixpascher.models.AnnounceType;
@@ -23,7 +23,7 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 
-public class DealDevisAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class DealDevisAdapter extends EmptyRecyclerView.Adapter<EmptyRecyclerView.ViewHolder> {
     private Context context;
     private List<ProductAnnonceVO> annonces;
     OnItemClickListener mItemClickListener;
@@ -41,7 +41,7 @@ public class DealDevisAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(EmptyRecyclerView.ViewHolder holder, int position) {
         DealsViewHolder myHolder = (DealsViewHolder) holder;
         if (myHolder.thumb != null) {
             Utils.MyPicasso.with(context)
@@ -104,7 +104,7 @@ public class DealDevisAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    public class DealsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class DealsViewHolder extends EmptyRecyclerView.ViewHolder implements View.OnClickListener {
         CardView cv;
         TextView title;
         TextView price;

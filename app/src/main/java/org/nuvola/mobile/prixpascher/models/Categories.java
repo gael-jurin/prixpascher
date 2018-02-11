@@ -47,7 +47,7 @@ public class Categories implements Parcelable {
 		dest.writeString(name);
 	}
 
-	public static final Parcelable.Creator<Categories> CREATOR = new Parcelable.Creator<Categories>() {
+	public static final Creator<Categories> CREATOR = new Creator<Categories>() {
 		@Override
 		public Categories createFromParcel(Parcel in) {
 			// TODO Auto-generated method stub

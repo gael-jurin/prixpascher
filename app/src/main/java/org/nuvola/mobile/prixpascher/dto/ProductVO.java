@@ -33,6 +33,7 @@ public class ProductVO implements Serializable, Taskable {
     private Date trackingDate;
     private String detail;
     private String specification;
+    private List<ReviewVO> reviews;
     private List<PriceHistoryVO> prices;
     private List<AlertEmailVO> alerts;
 
@@ -82,6 +83,14 @@ public class ProductVO implements Serializable, Taskable {
 
     public void setPrices(List<PriceHistoryVO> prices) {
         this.prices = prices;
+    }
+
+    public List<ReviewVO> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<ReviewVO> reviews) {
+        this.reviews = reviews;
     }
 
     public List<AlertEmailVO> getAlerts() {

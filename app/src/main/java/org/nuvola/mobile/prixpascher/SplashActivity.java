@@ -13,10 +13,7 @@ import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterConfig;
 
-import org.nuvola.mobile.prixpascher.business.BadgeUtils;
 import org.nuvola.mobile.prixpascher.confs.constants;
-
-import java.util.HashSet;
 
 import io.cloudboost.CloudApp;
 
@@ -62,7 +59,7 @@ public class SplashActivity extends Activity {
 		SharedPreferences sharePre = getApplicationContext().getSharedPreferences(
 				SHARED_PREF_DATA, PRIVATE_MODE);
 		// BadgeUtils.clearBadge(this);
-		SharedPreferences.Editor editor = sharePre.edit();
+		// SharedPreferences.Editor editor = sharePre.edit();
 		// editor.putStringSet("PROMOS", BadgeUtils.promos);
 		// editor.putStringSet("DEVIS", BadgeUtils.devis);
 		// BadgeUtils.offers = new HashSet<>();

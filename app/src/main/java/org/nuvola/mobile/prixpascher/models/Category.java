@@ -143,6 +143,10 @@ public enum Category {
         return categories;
     }
 
+    public static String[] names() {
+        return Arrays.toString(Category.values()).replaceAll("_", " ").replaceAll("^.|.$", "").split(", ");
+    }
+
     public static List<Category> filterValues() {
         List<Category> filterValues = new ArrayList<>();
         for (Category category: values()) {
@@ -184,6 +188,16 @@ public enum Category {
         }
         Collections.sort(filterValues, ALPHABETICAL_ORDER);
         return filterValues;
+    }
+
+    public static String[] filterMobCategoryValues() {
+        List<String> filterValues = new ArrayList();
+        for (Category category: indexableCategories()) {
+            filterValues.add(category.name().replaceAll("_", " "));
+        }
+        String[] array = new String[filterValues.size()];
+        filterValues.toArray(array);
+        return array;
     }
 
     public static List<String> detailCategories() {

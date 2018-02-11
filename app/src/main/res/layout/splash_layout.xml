@@ -36,15 +36,6 @@
         </TextView>
     </RelativeLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
-        android:text="@string/copyright"
-        android:textColor="#FFFFFF" />
-
     <TextView android:text="@string/registering_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

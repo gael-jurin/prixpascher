@@ -4,6 +4,7 @@ import org.nuvola.mobile.prixpascher.models.ShopStatus;
 import org.nuvola.mobile.prixpascher.models.ShopType;
 
 import java.util.Date;
+import java.util.List;
 
 public class ShopInfoVO {
     private String id;
@@ -19,6 +20,7 @@ public class ShopInfoVO {
     private String bannerScript;
     private String feed;
     private Boolean afilliate;
+    private List<ContactVO> storeContacts;
 
     public String getId() {
         return id;
@@ -122,5 +124,13 @@ public class ShopInfoVO {
 
     public void setWebsite(String website) {
         this.website = website;
+    }
+
+    public List<ContactVO> getStoreContacts() {
+        return storeContacts;
+    }
+
+    public void setStoreContacts(List<ContactVO> storeContacts) {
+        this.storeContacts = storeContacts;
     }
 }

@@ -46,6 +46,7 @@ import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.dto.PriceHistoryVO;
 import org.nuvola.mobile.prixpascher.dto.ProductAnnonceVO;
 import org.nuvola.mobile.prixpascher.dto.ProductVO;
+import org.nuvola.mobile.prixpascher.dto.ReviewVO;
 import org.nuvola.mobile.prixpascher.dto.UserVO;
 import org.nuvola.mobile.prixpascher.models.Category;
 import org.nuvola.mobile.prixpascher.models.User;
@@ -271,8 +272,26 @@ public class ProductActivity extends ActionBarParentActivity {
                         final MaterialDialog rankDialog = rankDialogBuilder.build();
                         final RatingBar ratingBar = (RatingBar) rankDialog.findViewById(R.id.dialog_ratingbar);
                         ButtonFlat updateButton = (ButtonFlat) rankDialog.findViewById(R.id.rank_dialog_button);
-
                         comment = (EditText) rankDialog.findViewById(R.id.comment);
+
+                        updateButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                UserVO userVO = new UserVO();
+                                userVO.setId(logedUser.getId());
+                                userVO.setProviderUserId(logedUser.getFbId());
+                                userVO.setEmail(logedUser.getEmail());
+
+                                ReviewVO reviewVO = new ReviewVO();
+                                reviewVO.setmNumStars((int) ratingBar.getRating());
+                                reviewVO.setComment(comment.getText().toString());
+                                reviewVO.setProductId(productId);
+                                reviewVO.setUser(userVO);
+                                new ServicesTask(ServiceType.RATING, ProductActivity.this, reviewVO)
+                                        .execute();
+                                rankDialog.dismiss();
+                            }
+                        });
 
                         rankDialog.show();
                     }
@@ -478,6 +497,13 @@ public class ProductActivity extends ActionBarParentActivity {
                     break;
                 }
             }*/
+
+            float ratingVal = 0;
+            for (ReviewVO reviews: product.getReviews()) {
+                ratingVal += reviews.getmNumStars();
+            }
+            ratingVal = ratingVal / product.getReviews().size();
+            ratingBar.setRating(ratingVal);
 
             String priceText = NumberFormat.getInstance(Locale.FRANCE).format(jsonObj.getPrice());
             if (priceText != null && !priceText.equalsIgnoreCase("")) {

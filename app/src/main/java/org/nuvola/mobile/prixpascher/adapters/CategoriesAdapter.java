@@ -18,7 +18,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerViewHolders>
 	private OnItemClickListener mItemClickListener;
 
 	public interface OnItemClickListener {
-        void onItemClick(View view , int position);
+        void onItemClick(View view, int position);
     }
 
 	public CategoriesAdapter(Context context, List<DrawerMenuItem> itemList) {

@@ -5,5 +5,6 @@ public enum ServiceType {
     COMMENT,
     ASK_OFFER,
     REPLY_OFFER,
+    RATING,
     RENEWAL;
 }

@@ -60,6 +60,14 @@ public class InNotificationActivity extends ActionBarParentActivity implements C
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
+
+        /*TutoShowcase.from(this)
+                .setContentView(R.layout.notifs_tab_layout)
+                .on(coordinator)
+                .displaySwipableLeft()
+                .delayed(500)
+                .animated(true)
+                .showOnce("NotifActivityDemo");*/
     }
 
     @Override
