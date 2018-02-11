@@ -75,6 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="5dp"
+                android:editable="false"
                 app:met_primaryColor="@color/base_color" />
 
             <LinearLayout
@@ -95,8 +96,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginTop="5dp"
-                    app:met_primaryColor="@color/base_color"
-                    />
+                    android:editable="false"
+                    app:met_primaryColor="@color/base_color" />
 
             </LinearLayout>
 
@@ -118,6 +119,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginTop="5dp"
+                    android:editable="false"
                     app:met_primaryColor="@color/base_color" />
             </LinearLayout>
 
@@ -139,6 +141,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginTop="5dp"
+                    android:editable="false"
                     app:met_primaryColor="@color/base_color" />
             </LinearLayout>
 
@@ -160,6 +163,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginTop="5dp"
+                    android:editable="false"
                     app:met_primaryColor="@color/base_color" />
             </LinearLayout>
 
@@ -173,14 +177,15 @@
                     style="@style/common_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/phone" />
+                    android:text="@string/feed" />
 
                 <com.rengwuxian.materialedittext.MaterialEditText
-                    android:id="@+id/trackingDate"
+                    android:id="@+id/product_feed"
                     style="@style/common_text"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginTop="5dp"
+                    android:editable="false"
                     app:met_primaryColor="@color/base_color" />
             </LinearLayout>
 
@@ -210,7 +215,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="10dp"
-                android:text="@string/product" />
+                android:text="@string/products" />
+
+            <com.gc.materialdesign.views.ButtonFlat
+                android:id="@+id/btn_show_my_announces"
+                style="@style/common_button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/announces" />
         </LinearLayout>
     </LinearLayout>
 

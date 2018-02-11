@@ -17,15 +17,23 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.gc.materialdesign.views.ButtonFlat;
+
+import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 import org.nuvola.mobile.prixpascher.adapters.ProductsAdapter;
 import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.dto.ProductVO;
 import org.nuvola.mobile.prixpascher.dto.SearchFilterVO;
+import org.nuvola.mobile.prixpascher.models.Category;
 import org.nuvola.mobile.prixpascher.models.ProductsResponse;
+import org.nuvola.mobile.prixpascher.models.SortField;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -39,27 +47,36 @@ import butterknife.ButterKnife;
 
 public class SearchActivity extends ActionBarParentActivity {
     List<ProductVO> productsList = new ArrayList<>();
+    long productsCount = 0;
     SearchFilterVO searchFilter = new SearchFilterVO();
     ProductsAdapter adapter;
-    String TAG = "SearchActivity";
 
+    String TAG = "SearchActivity";
     int COUNT_ITEM_LOAD_MORE = 40;
     int first = 0, pastVisiblesItems, visibleItemCount, totalItemCount;
-    boolean loadingMore = true;
 
+    boolean loadingMore = true;
     @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.rv) RecyclerView rv;
     @BindView(R.id.btnAll) Button btnAll;
-    @BindView(R.id.btnBest) Button btnBest;
+    @BindView(R.id.btnFilter) Button btnFilter;
     @BindView(R.id.btnPromo) Button btnPromo;
     @BindView(R.id.prgLoadMore) LinearLayout loadMorePrg;
-    @BindView(R.id.toolbar) Toolbar toolbar;
 
+    @BindView(R.id.toolbar) Toolbar toolbar;
     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+    private DiscreteSeekBar priceBar;
+    private Spinner citiesSpinner;
+    private Spinner categoriesSpinner;
+    private MaterialDialog filterDialog;
+    private String categ_selected;
+    private LoadMoreDataTask loadMoreDataTask = new LoadMoreDataTask();
+    private PullToRefreshDataTask pullToRefreshDataTask = new PullToRefreshDataTask();
 
     @SuppressWarnings("deprecation")
     private void setButtonFocus(Button btn, int drawable) {
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
             btn.setBackgroundDrawable(getResources().getDrawable(drawable));
         } else {
             btn.setBackground(getResources().getDrawable(drawable));
@@ -95,6 +112,14 @@ public class SearchActivity extends ActionBarParentActivity {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+
+        loadMoreDataTask.cancel(true);
+        pullToRefreshDataTask.cancel(true);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
     }
@@ -107,6 +132,8 @@ public class SearchActivity extends ActionBarParentActivity {
             Log.i(TAG, title);
             if (title != null && title != "") {
                 searchFilter.setSearchText(title);
+                searchFilter.setDefaultSort(SortField.PRICE);
+                searchFilter.setDefaultOrder(true);
             }
         }
 
@@ -121,6 +148,8 @@ public class SearchActivity extends ActionBarParentActivity {
                 String title = bundle.getString(constants.TITLE_KEY);
                 if (title != null && title != "") {
                     searchFilter.setSearchText(title);
+                    searchFilter.setDefaultSort(SortField.PRICE);
+                    searchFilter.setDefaultOrder(true);
                 }
             }
         }
@@ -130,17 +159,16 @@ public class SearchActivity extends ActionBarParentActivity {
             public void onClick(View v) {
                 
                 setButtonFocus(btnAll, R.drawable.tab_categories_pressed);
-                setButtonFocus(btnBest, R.drawable.tab_categories_normal);
+                setButtonFocus(btnFilter, R.drawable.tab_categories_normal);
                 setButtonFocus(btnPromo, R.drawable.tab_categories_normal);
+                resetSearch();
                 first = 0;
-
-                searchFilter.setPage(first);
-                searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
 
                 loadingMore = false;
                 productsList.clear();
                 adapter.notifyDataSetChanged();
-                new LoadMoreDataTask().execute();
+                loadMoreDataTask = new LoadMoreDataTask();
+                loadMoreDataTask.execute();
             }
         });
 
@@ -150,34 +178,83 @@ public class SearchActivity extends ActionBarParentActivity {
                 
                 setButtonFocus(btnPromo, R.drawable.tab_categories_pressed);
                 setButtonFocus(btnAll, R.drawable.tab_categories_normal);
-                setButtonFocus(btnBest, R.drawable.tab_categories_normal);
+                setButtonFocus(btnFilter, R.drawable.tab_categories_normal);
+                resetSearch();
                 first = 0;
-                searchFilter.setPage(first);
-                searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
 
                 loadingMore = false;
                 productsList.clear();
                 adapter.notifyDataSetChanged();
-                new LoadMoreDataTask().execute();
+                loadMoreDataTask = new LoadMoreDataTask();
+                loadMoreDataTask.execute();
             }
         });
 
-        btnBest.setOnClickListener(new OnClickListener() {
+        btnFilter.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                
-                setButtonFocus(btnBest, R.drawable.tab_categories_pressed);
+                // TODO Auto-generated method stub
+                setButtonFocus(btnFilter, R.drawable.tab_categories_pressed);
                 setButtonFocus(btnAll, R.drawable.tab_categories_normal);
                 setButtonFocus(btnPromo, R.drawable.tab_categories_normal);
-                first = 0;
 
-                searchFilter.setPage(first);
-                searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
+                MaterialDialog.Builder filterDialogBuilder = new MaterialDialog.Builder(SearchActivity.this);
+                filterDialogBuilder.customView(R.layout.filter_dialog_layout, true);
 
-                loadingMore = false;
-                productsList.clear();
-                adapter.notifyDataSetChanged();
-                new LoadMoreDataTask().execute();
+                priceBar = (DiscreteSeekBar) filterDialog.findViewById(R.id.priceBar);
+                priceBar.setMax(25000);
+                priceBar.setScrollbarFadingEnabled(true);
+                priceBar.setIndicatorPopupEnabled(true);
+
+                if (filterDialog == null) {
+                    filterDialog = filterDialogBuilder.build();
+                    categ_selected = Category.electromenager.name();
+
+                    categoriesSpinner  = (Spinner) filterDialog.findViewById(R.id.categories_spinner);
+                    final String[] category_name = Category.filterMobCategoryValues();
+                    final ArrayAdapter<String> cadapter = new ArrayAdapter<>(
+                            SearchActivity.this,
+                            android.R.layout.simple_list_item_1, category_name);
+                    categoriesSpinner.setAdapter(cadapter);
+                    categoriesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                            categ_selected = category_name[arg2];
+                            categ_selected = categ_selected.replaceAll(" ", "_");
+                            cadapter.notifyDataSetChanged();
+                        }
+                        @Override
+                        public void onNothingSelected(
+                                AdapterView<?> arg0) {
+                        }
+                    });
+                }
+                LinearLayout citiesFilter  = (LinearLayout) filterDialog.findViewById(R.id.cities_filter);
+                citiesFilter.setVisibility(View.GONE);
+                ButtonFlat apply = (ButtonFlat) filterDialog.findViewById(R.id.btn_filter);
+
+                apply.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        first = 0;
+                        searchFilter.setPage(first);
+                        searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
+                        searchFilter.setDefaultOrder(true);
+                        searchFilter.setDefaultSort(SortField.PRICE);
+
+                        searchFilter.setMinPrice(Double.valueOf(priceBar.getProgress()));
+                        searchFilter.setCategory(Category.valueOf(categ_selected));
+
+                        loadingMore = false;
+                        productsList.clear();
+                        adapter.notifyDataSetChanged();
+                        loadMoreDataTask = new LoadMoreDataTask();
+                        loadMoreDataTask.execute();
+                        filterDialog.dismiss();
+                    }
+
+                });
+                filterDialog.show();
             }
         });
 
@@ -199,18 +276,20 @@ public class SearchActivity extends ActionBarParentActivity {
                 visibleItemCount = llm.getChildCount();
                 totalItemCount = llm.getItemCount();
                 pastVisiblesItems = llm.findFirstVisibleItemPosition();
-                if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                int page = visibleItemCount + pastVisiblesItems;
+                if (page == totalItemCount && page <= productsCount) {
                     loadingMore = true;
-                    first += COUNT_ITEM_LOAD_MORE;
+                    first += 1;
 
                     searchFilter.setPage(first);
                     searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                        new LoadMoreDataTask()
-                                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        loadMoreDataTask = new LoadMoreDataTask();
+                        loadMoreDataTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     } else {
-                        new LoadMoreDataTask().execute();
+                        loadMoreDataTask = new LoadMoreDataTask();
+                        loadMoreDataTask.execute();
                     }
                 }
             }
@@ -223,10 +302,11 @@ public class SearchActivity extends ActionBarParentActivity {
                 swipeRefreshLayout.setRefreshing(productsList != null && productsList.size() != 0);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    new PullToRefreshDataTask()
-                            .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    pullToRefreshDataTask = new PullToRefreshDataTask();
+                    pullToRefreshDataTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 } else {
-                    new PullToRefreshDataTask().execute();
+                    pullToRefreshDataTask = new PullToRefreshDataTask();
+                    pullToRefreshDataTask.execute();
                 }
             }
         });
@@ -252,7 +332,6 @@ public class SearchActivity extends ActionBarParentActivity {
         } catch (Exception e) {
             loadingMore = false;
             Log.e(TAG, e.getMessage());
-            // mPullToRefreshLayout.setRefreshComplete();
             swipeRefreshLayout.setRefreshing(false);
         }
     }
@@ -270,8 +349,8 @@ public class SearchActivity extends ActionBarParentActivity {
                     getResources().getString(R.string.products_json_url),
                     HttpMethod.POST,
                     requestEntity, ProductsResponse.class);
-
             productsList.addAll(products.getBody().getPayload());
+            productsCount = products.getBody().getTotalElements();
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
@@ -340,14 +419,12 @@ public class SearchActivity extends ActionBarParentActivity {
         protected void onPostExecute(List<ProductVO> result) {
             parseAndPrepend();
             swipeRefreshLayout.setRefreshing(false);
-            // mPullToRefreshLayout.setRefreshComplete();
             super.onPostExecute(result);
         }
 
         @Override
         protected void onCancelled() {
             swipeRefreshLayout.setRefreshing(false);
-            //mPullToRefreshLayout.setRefreshComplete();
         }
     }
 
@@ -356,9 +433,7 @@ public class SearchActivity extends ActionBarParentActivity {
         searchFilter.setSize(COUNT_ITEM_LOAD_MORE);
         searchFilter.setType(null);
         searchFilter.setUserId(null);
-        searchFilter.setBrand(null);
-        searchFilter.setCity(null);
-        searchFilter.setCategory(null);
+        searchFilter.setDefaultOrder(null);
     }
 
 }

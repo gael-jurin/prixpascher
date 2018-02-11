@@ -211,6 +211,7 @@ public class ActionBarParentActivity extends AppCompatActivity implements Notifi
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+				BadgeUtils.setBadge(getApplicationContext(), new_hot_number);
                 if (new_hot_number == 0)
                     alertCount.setVisibility(View.INVISIBLE);
                 else {

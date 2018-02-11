@@ -131,7 +131,7 @@ public class User implements Parcelable {
 		// TODO Auto-generated constructor stub
 	}
 
-	public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
+	public static final Creator<User> CREATOR = new Creator<User>() {
 		@Override
 		public User createFromParcel(Parcel in) {
 			// TODO Auto-generated method stub

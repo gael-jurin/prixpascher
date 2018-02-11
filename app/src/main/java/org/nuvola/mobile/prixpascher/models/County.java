@@ -47,7 +47,7 @@ public class County implements Parcelable {
 		dest.writeString(name);
 	}
 
-	public static final Parcelable.Creator<County> CREATOR = new Parcelable.Creator<County>() {
+	public static final Creator<County> CREATOR = new Creator<County>() {
 		@Override
 		public County createFromParcel(Parcel in) {
 			// TODO Auto-generated method stub

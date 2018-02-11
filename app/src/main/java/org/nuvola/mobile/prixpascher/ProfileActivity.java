@@ -19,13 +19,22 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class ProfileActivity extends ActionBarParentActivity {
 	ProgressDialog dialogPrg;
+
 	public static String TAG = "ProfileActivity";
-	// TextView displayName,
-	TextView userName, website, address, productFeed;
-	ImageView avt;
-	Button btnShowItem;
+	// @BindView(R.id.display_name) TextView displayName,
+	@BindView(R.id.user_name) TextView userName;
+	@BindView(R.id.websites) TextView website;
+	@BindView(R.id.address) TextView address;
+	@BindView(R.id.product_feed) TextView productFeed;
+	@BindView(R.id.avt) ImageView avt;
+	@BindView(R.id.btn_show_my_item) Button btnShowItem;
+	@BindView(R.id.btn_show_my_item2) Button btnShowItem2;
+
 	private MerchantVO merchant;
 	private String user_id;
 
@@ -35,19 +44,14 @@ public class ProfileActivity extends ActionBarParentActivity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.profile_layout);
+		ButterKnife.bind(this);
+
 		dialogPrg = new ProgressDialog(this);
 		dialogPrg.setCanceledOnTouchOutside(false);
 		user_id = getIntent().getStringExtra(constants.COMMON_KEY);
 		Log.i(TAG, "user id la" + user_id);
 
 		dialogPrg.show();
-		// displayName = findViewById(R.id.display_name);
-		userName = findViewById(R.id.user_name);
-		address = findViewById(R.id.address);
-		productFeed = findViewById(R.id.trackingDate);
-		website = findViewById(R.id.websites);
-		avt = findViewById(R.id.avt);
-		btnShowItem = findViewById(R.id.btn_show_my_item);
 
 		getSupportActionBar().setHomeButtonEnabled(true);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);

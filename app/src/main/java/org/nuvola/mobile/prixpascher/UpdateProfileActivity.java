@@ -222,7 +222,7 @@ public class UpdateProfileActivity extends ActionBarParentActivity {
     public void pickPhoto() {
         // TODO: launch the photo picker
         Intent intent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(Intent.createChooser(intent, "Select"),
                 SELECT_PICTURE);
     }

@@ -327,29 +327,6 @@ public class ServicesTask extends AsyncTask<Void, Void, Boolean> {
             }
         }
 
-        if (serviceType.equals(ServiceType.RATING)) {
-            try {
-                HttpEntity<ReviewVO> requestEntity = new HttpEntity<>(review);
-                ResponseEntity<ProductVO> resEntity = Utils.MyRestemplate.getInstance(context).exchange(
-                        context.getResources().getString(R.string.review_send_url),
-                        HttpMethod.POST,
-                        requestEntity, ProductVO.class);
-
-                if (resEntity != null) {
-                    if (!resEntity.getStatusCode().equals(HttpStatus.OK)) {
-                        showDialog(context.getResources().getString(
-                                R.string.http_call_error));
-                    } else {
-                        showDialog(context.getResources().getString(R.string.review_success_msg));
-                    }
-                }
-            } catch (Exception ex) {
-                dialog.dismiss();
-                Log.e("Debug", "error: " + ex.getMessage(), ex);
-                return false;
-            }
-        }
-
         dialog.dismiss();
         return true;
     }

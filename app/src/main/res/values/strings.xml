@@ -43,9 +43,8 @@
     <string name="download_in_progress">Download in progress</string>
     <string name="download_cancel">Download cancel</string>
     <string name="please_wait_msg">Please wait...</string>
-    <string name="upload_product_msg">Please wait, this may take 1-2 minutes</string>
+    <string name="upload_product_msg">Please wait, the upload may take 1-2 minutes</string>
     <!-- END -->
-
 
     <!-- TEXT LABEL -->
     <string name="shop_label">Boutiques</string>
@@ -58,7 +57,7 @@
     <string name="title_label">Titre</string>
     <string name="content_label">Content</string>
     <string name="upload_label">Submit your product</string>
-    <string name="what_you_want">Select images</string>
+    <string name="what_you_want">Joindre Photo/Scan</string>
     <string name="incorrect_info">Remplir tous les champs du formulaire!</string>
     <string name="incorrect_offer">Prix et Qté obligatoires !</string>
     <string name="type_message">Please type your message</string>
@@ -78,7 +77,8 @@
     <string name="announce_offer_label">{faw-handshake_o}</string>
     <string name="tap_to_change_avt">Changer votre avatar</string>
     <string name="follow_label">Suivre</string>
-    <string name="product">Produits</string>
+    <string name="products">Produits</string>
+    <string name="announces">Annonces</string>
     <string name="similar_products">Produits Similaires</string>
     <string name="open_offers">Autres offres</string>
     <string name="bookmarked_product">Mark Products</string>
@@ -101,6 +101,7 @@
     <string name="email">Login email</string>
     <string name="website">Site Web</string>
     <string name="phone">Tel</string>
+    <string name="feed">Catalogue de produits</string>
     <string name="address">Adresse</string>
     <string name="update_label">Sauvegarder</string>
     <string name="edit_label">{faw-pencil}</string>
@@ -159,7 +160,9 @@
     <string name="images_json_url">https://www.prixpascher.ma/api/bucket/picture/</string>
     <string name="images_thumb_url">https://www.prixpascher.ma/thumb/</string>
     <string name="products_json_url">https://www.prixpascher.ma/api/products/products/list</string>
+    <string name="gallery_post_url">http://www.prixpascher.ma/api/bucket/upload/</string>
     <string name="announces_json_url">https://www.prixpascher.ma/api/announces</string>
+    <string name="user_announces_url">https://www.prixpascher.ma/api/announces/mobile/user</string>
     <string name="announce_root_json_url">https://www.prixpascher.ma/annonce/api/annonce/</string>
     <string name="offer_root_json_url">https://www.prixpascher.ma/api/offer/</string>
     <string name="offers_user_json_url">https://www.prixpascher.ma/api/offers/user</string>
@@ -203,9 +206,9 @@
     <string name="result_label">Articles trouvés</string>
     <string name="about_us_content">
     <![CDATA[
-   		<center>Copyright &copy; Nuvola Org.</center>
+   		<center>Copyright &copy; Nuvola Org</center>
    		<center>
-   		   All Rights Reserved.
+   		   2018 - All Rights Reserved.
    		</center>
     ]]>
     </string>
@@ -217,7 +220,8 @@
     <string name="update_products_msg">Vos produits seront réactualisés et visibles au top dans 1 Jour</string>
     <string name="verified_msg">One verified code have been send to your email, please check it and fill in the next form</string>
     <string name="success_action">Successfully</string>
-    <string name="failed_action">Failed</string>
+    <string name="failed_action">An error occurred, please try again later</string>
+    <string name="upload_failed">Une erreur s\'est produite lors de l\'envoi de la pièce jointe. Veuillez re éssayer</string>
     <string name="seller">Seller</string>
     <string name="update_at">Update At</string>
     <string name="use_facebook_account">Login via facebook account</string>
@@ -230,7 +234,7 @@
     <string name="devis_success_msg">Votre offre a été envoyé avec succès !</string>
     <string name="review_success_msg">Votre avis a été envoyé avec succès !</string>
     <string name="delete_successfull">Delete successfully</string>
-    <string name="confirm_del">Are you sure you want delete this ?</string>
+    <string name="confirm_del">Etes vous sur de vouloir supprimer ?</string>
     <string name="enquiry_alert">You cannot send enquiry to your self !</string>
     <string name="set_as_thumbnail">Set As Thumbnail</string>
     <string name="update_description">Update Description</string>
@@ -240,6 +244,8 @@
         <item>SD card</item>
         <item>Camera</item>
     </string-array>
+    <string name="sd_card">Choisir une image</string>
+    <string name="camera">Prendre une photo</string>
 
     <!--update 10-5-2015-->
     <string name="condition_msg">Condition</string>

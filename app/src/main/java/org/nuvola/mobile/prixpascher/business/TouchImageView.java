@@ -985,7 +985,7 @@ public class TouchImageView extends ImageView {
 		}
 	}
 
-	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+	@TargetApi(VERSION_CODES.JELLY_BEAN)
 	private void compatPostOnAnimation(Runnable runnable) {
 		if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
 			postOnAnimation(runnable);

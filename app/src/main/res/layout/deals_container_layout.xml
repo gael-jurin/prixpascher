@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -10,10 +11,36 @@
         android:layout_height="wrap_content"
         android:layout_weight="1">
 
-        <android.support.v7.widget.RecyclerView
+        <org.nuvola.mobile.prixpascher.business.EmptyRecyclerView
             android:id="@+id/rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:dividerHeight="5dp" />
+
     </android.support.v4.widget.SwipeRefreshLayout>
-</LinearLayout>
+
+    <ImageView
+        android:id="@+id/empty_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_empty_set" />
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/btnClear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_delete"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/background_transparent"
+        style="@style/MenuButtonsStyle"
+        fab:fab_colorRipple="#99FFFFFF"
+        fab:fab_size="normal"
+        fab:fab_label="Vider ces notifications" />
+
+</RelativeLayout>

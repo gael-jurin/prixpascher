@@ -32,8 +32,6 @@ import org.nuvola.mobile.prixpascher.models.Categories;
 import org.nuvola.mobile.prixpascher.models.County;
 import org.nuvola.mobile.prixpascher.models.User;
 import org.nuvola.mobile.prixpascher.tasks.JSONFetchTask;
-import org.nuvola.mobile.prixpascher.tasks.UploadTask;
-import org.nuvola.mobile.prixpascher.tasks.UploadType;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -300,7 +298,7 @@ public class UploadActivity extends ActionBarParentActivity {
 				});
 
 		btnPickPhoto_1 = (ImageView) findViewById(R.id.btn_pick_photo_1);
-		btnPickPhoto_1.setOnClickListener(new View.OnClickListener() {
+		btnPickPhoto_1.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				showChoosePhotoMethod();
@@ -398,7 +396,7 @@ public class UploadActivity extends ActionBarParentActivity {
 	public void pickPhoto() {
 		// TODO: launch the photo picker
 		Intent intent = new Intent(Intent.ACTION_PICK,
-				android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+				MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 		startActivityForResult(Intent.createChooser(intent, "Select"),
 				SELECT_PICTURE);
 	}
@@ -542,10 +540,10 @@ public class UploadActivity extends ActionBarParentActivity {
 			if (user != null) {
 				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 					Log.i(TAG + "user_id", user.getId() + "kasjd");
-					new UploadTask(UploadType.PRODUCT, user.getFbId(), user.getId(), this)
-							.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+					// new UploadTask(UploadType.PRODUCT, user.getFbId(), user.getId(), this)
+					// 		.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 				} else {
-					new UploadTask(UploadType.PRODUCT, user.getFbId(), user.getId(), this).execute();
+					// new UploadTask(UploadType.PRODUCT, user.getFbId(), user.getId(), this).execute();
 				}
 			} else {
 				Intent intent = new Intent(this, AuthenticationActivity.class);
@@ -561,10 +559,10 @@ public class UploadActivity extends ActionBarParentActivity {
 			User user = sessionManager.getUserSession();
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
 				Log.i(TAG + "user_id", user.getId() + "kasjd");
-				new UploadTask(UploadType.PRODUCT, user.getFbId(), user.getId(), this)
-						.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+				// new UploadTask(UploadType.PRODUCT, user.getFbId(), user.getId(), this)
+				//		.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 			} else {
-				new UploadTask(UploadType.PRODUCT, user.getFbId(), user.getId(), this).execute();
+				// new UploadTask(UploadType.PRODUCT, user.getFbId(), user.getId(), this).execute();
 			}
 			Log.i("FB AUT FRAGMENT", "Logged in...");
 		} else if (AccessToken.getCurrentAccessToken() == null) {

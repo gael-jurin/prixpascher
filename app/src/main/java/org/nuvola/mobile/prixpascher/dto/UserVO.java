@@ -17,6 +17,7 @@ public class UserVO {
     private String accessToken;
     private String photo;
     private String primaryShop;
+    private String primaryShopId;
     private ShopType primaryShopClasse;
     private TypeAnnonceur typeAnnonceur;
     private String userGroupChain;
@@ -132,5 +133,13 @@ public class UserVO {
 
     public void setUserGroupChain(String userGroupChain) {
         this.userGroupChain = userGroupChain;
+    }
+
+    public void setPrimaryShopId(String primaryShopId) {
+        this.primaryShopId = primaryShopId;
+    }
+
+    public String getPrimaryShopId() {
+        return primaryShopId;
     }
 }

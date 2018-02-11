@@ -193,7 +193,7 @@ public class Products implements Parcelable {
 		dest.writeString(promoted);
 	}
 
-	public static final Parcelable.Creator<Products> CREATOR = new Parcelable.Creator<Products>() {
+	public static final Creator<Products> CREATOR = new Creator<Products>() {
 		@Override
 		public Products createFromParcel(Parcel in) {
 			// TODO Auto-generated method stub

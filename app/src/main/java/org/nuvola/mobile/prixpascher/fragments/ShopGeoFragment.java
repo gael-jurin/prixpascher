@@ -27,9 +27,6 @@ import org.springframework.http.ResponseEntity;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ShopGeoFragment extends Fragment implements OnMapReadyCallback {
     MapView mapView;
     GoogleMap googleMap;

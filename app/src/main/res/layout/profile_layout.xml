@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -42,13 +41,22 @@
                     android:orientation="horizontal">
 
                     <com.gc.materialdesign.views.ButtonFlat
+                        android:id="@+id/btn_show_my_item2"
+                        style="@style/common_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/announces" />
+
+                    <com.gc.materialdesign.views.ButtonFlat
                         android:id="@+id/btn_show_my_item"
                         style="@style/common_button"
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="10dp"
-                        android:text="@string/product" />
+                        android:text="@string/products" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -123,13 +131,14 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/phone"
                     style="@style/common_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/phone" />
 
                 <com.rengwuxian.materialedittext.MaterialEditText
-                    android:id="@+id/trackingDate"
+                    android:id="@+id/product_feed"
                     style="@style/common_text"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
