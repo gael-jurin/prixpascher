@@ -299,7 +299,7 @@ public class ProductsFragment extends Fragment {
 
                 if (filterDialog == null) {
                     filterDialog = filterDialogBuilder.build();
-                    categ_selected = Category.electromenager.name();
+                    categ_selected = Category.___.name();
 
                     categoriesSpinner  = (Spinner) filterDialog.findViewById(R.id.categories_spinner);
                     final String[] category_name = Category.filterMobCategoryValues();
@@ -341,7 +341,8 @@ public class ProductsFragment extends Fragment {
                         searchFilter.setDefaultSort(SortField.PRICE);
 
                         searchFilter.setMinPrice(Double.valueOf(priceBar.getProgress()));
-                        searchFilter.setCategory(Category.valueOf(categ_selected));
+                        searchFilter.setCategory(categ_selected.equals(Category.___.name()) ?
+                                null : Category.valueOf(categ_selected));
 
                         loadingMore = false;
                         productsList.clear();

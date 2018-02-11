@@ -7,11 +7,24 @@ android {
 
     defaultConfig {
         applicationId "org.nuvola.mobile.prixpascher"
-        minSdkVersion 16
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
+    }
+
+    productFlavors {
+        // Define separate dev and prod product flavors.
+        dev {
+            // dev utilizes minSDKVersion = 21 to allow the Android gradle plugin
+            // to pre-dex each module and produce an APK that can be tested on
+            // Android Lollipop without time consuming dex merging processes.
+            minSdkVersion 21
+        }
+        prod {
+            // The actual minSdkVersion for the application.
+            minSdkVersion 17
+        }
     }
 
     compileOptions {
@@ -63,7 +76,6 @@ dependencies {
     compile "com.mikepenz:iconics-core:3.0.0"
     compile "com.mikepenz:fontawesome-typeface:4.7.0.2"
 
-    provided 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
     compile 'org.springframework.android:spring-android-rest-template:2.0.0.M3'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.3.2'
     compile 'com.jakewharton:butterknife:8.4.0'
@@ -96,8 +108,6 @@ dependencies {
     compile 'org.adw.library:discrete-seekbar:1.0.1'
 
     compile 'com.twitter.sdk.android:twitter-core:3.1.1'
-    /*compile 'com.twitter.sdk.android:tweet-ui:3.1.1'
-    compile 'com.twitter.sdk.android:tweet-composer:3.1.1'*/
     compile 'com.twitter.sdk.android:twitter-mopub:3.1.1'
 
     compile 'com.afollestad.material-dialogs:core:0.8.5.3'
@@ -111,10 +121,10 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
     compile 'com.github.clans:fab:1.6.4'
-    compile group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.3'
+    compile 'org.apache.httpcomponents:httpcore:4.3'
+    compile 'org.apache.httpcomponents:httpmime:4.3'
     compile files('libs/AppRate_1.1.jar')
     compile files('libs/Parse-1.7.1.jar')
-    compile fileTree(include: ['*.jar'], dir: 'libs')
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -288,8 +288,8 @@ public class AnnouncesFragment extends Fragment {
 
                 if (filterDialog == null) {
                     filterDialog = filterDialogBuilder.build();
-                    city_selected = City.Casablanca.name();
-                    categ_selected = Category.image_son.name();
+                    city_selected = City.___.name();
+                    categ_selected = Category.___.name();
 
                     categoriesSpinner  = (Spinner) filterDialog.findViewById(R.id.categories_spinner);
                     final String[] category_name = Category.filterMobCategoryValues();
@@ -347,7 +347,10 @@ public class AnnouncesFragment extends Fragment {
                         searchFilter.setDefaultSort(SortField.PRICE);
 
                         searchFilter.setMinPrice(Double.valueOf(priceBar.getProgress()));
-                        searchFilter.setCategory(Category.valueOf(categ_selected));
+                        searchFilter.setCity(city_selected.equals(City.___.name()) ?
+                                null : City.valueOf(city_selected));
+                        searchFilter.setCategory(categ_selected.equals(Category.___.name()) ?
+                                null : Category.valueOf(categ_selected));
 
                         loadingMore = false;
                         announces.clear();

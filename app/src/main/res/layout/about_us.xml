@@ -11,9 +11,22 @@
         android:layout_weight="1"
         android:padding="5dp" >
 
-        <WebView
-            android:id="@+id/content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <WebView
+                android:id="@+id/content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="80dp"
+                android:src="@drawable/ic_logo"
+                android:layout_gravity="center"/>
+        </LinearLayout>
     </ScrollView>
 </LinearLayout>

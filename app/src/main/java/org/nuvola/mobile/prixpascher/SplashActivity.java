@@ -1,10 +1,14 @@
 package org.nuvola.mobile.prixpascher;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -65,5 +69,56 @@ public class SplashActivity extends Activity {
 		// BadgeUtils.offers = new HashSet<>();
 		// editor.putStringSet("OFFERS", BadgeUtils.offers);
 		// editor.commit();
+
+		try {
+			// Get the app's shared preferences
+			SharedPreferences app_preferences = PreferenceManager.getDefaultSharedPreferences(this);
+			int counter = app_preferences.getInt("counter", 0);
+
+			int RunEvery = 10;
+
+			if(counter != 0  && counter % RunEvery == 0 )
+			{
+				AlertDialog.Builder alert = new AlertDialog.Builder(
+						SplashActivity.this);
+				alert.setTitle("Evaluer PPC !");
+				alert.setIcon(R.drawable.ic_logo);
+				alert.setMessage("Merci de prendre un moment pour noter PrixPasCher.");
+
+				alert.setPositiveButton("Cancel",
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+												int whichButton) {
+							}
+						});
+
+				alert.setNegativeButton("Rate it",
+						new DialogInterface.OnClickListener() {
+
+							public void onClick(DialogInterface dialog, int which) {
+
+								final String appName = getApplicationContext().getPackageName();
+								try {
+									startActivity(new Intent(Intent.ACTION_VIEW,
+											Uri.parse("market://details?id="
+													+ appName)));
+								} catch (android.content.ActivityNotFoundException anfe) {
+									startActivity(new Intent(
+											Intent.ACTION_VIEW,
+											Uri.parse("http://play.google.com/store/apps/details?id="
+													+ appName)));
+								}
+
+							}
+						});
+				alert.show();
+			}
+
+			SharedPreferences.Editor editor = app_preferences.edit();
+			editor.putInt("counter", ++counter);
+			editor.commit();
+
+		} catch (Exception e) {
+		}
 	}
 }

@@ -218,6 +218,7 @@ public class NotifOffersFragment extends Fragment {
                                         adapter.notifyDataSetChanged();
                                         swipeRefreshLayout.setRefreshing(false);
                                     }
+                                    btnClear.setVisibility(deals.size() == 0 ? View.GONE : View.VISIBLE);
                                 }
                             }
                         });

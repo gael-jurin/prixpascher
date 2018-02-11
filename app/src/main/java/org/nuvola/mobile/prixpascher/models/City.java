@@ -3,6 +3,7 @@ package org.nuvola.mobile.prixpascher.models;
 import java.util.Arrays;
 
 public enum City {
+    ___("0;0;0"),
     Casablanca("20000;376;183"),
     Rabat("10000;400;171"),
     Mohammedia("20800;303;177"),

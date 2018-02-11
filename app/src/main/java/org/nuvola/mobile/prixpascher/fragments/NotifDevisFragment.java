@@ -220,6 +220,7 @@ public class NotifDevisFragment extends Fragment {
                                         adapter.notifyDataSetChanged();
                                         swipeRefreshLayout.setRefreshing(false);
                                     }
+                                    btnClear.setVisibility(deals.size() == 0 ? View.GONE : View.VISIBLE);
                                 }
                             }
                         });

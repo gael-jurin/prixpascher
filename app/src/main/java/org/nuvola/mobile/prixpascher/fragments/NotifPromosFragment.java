@@ -179,6 +179,7 @@ public class NotifPromosFragment extends Fragment {
                         adapter.notifyDataSetChanged();
                         Intent broadcastIntent = new Intent("inbox");
                         getActivity().sendBroadcast(broadcastIntent);
+                        btnClear.setVisibility(deals.size() == 0 ? View.GONE : View.VISIBLE);
                     }
                 }).setNegativeButton(
                 getResources().getString(R.string.cancel_label),
@@ -213,6 +214,7 @@ public class NotifPromosFragment extends Fragment {
                                     adapter.notifyDataSetChanged();
                                     swipeRefreshLayout.setRefreshing(false);
                                 }
+                                btnClear.setVisibility(deals.size() == 0 ? View.GONE : View.VISIBLE);
                             }
                         }});
             loadMoreDataTask.execute();

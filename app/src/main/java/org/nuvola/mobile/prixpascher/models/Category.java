@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public enum Category {
+    ___(null, new String[]{}, new String[]{""}),
     all(null, new String[]{}, new String[]{""}),
     telephonie(null, new String[]{}, new String[]{""}),
     android(telephonie, new String[]{"accessoires_phone", "smartwatch"}, new String[]{"chargeur" ,"powerbank", "pochette", "coque", "film", "protection"}),
@@ -192,7 +193,7 @@ public enum Category {
 
     public static String[] filterMobCategoryValues() {
         List<String> filterValues = new ArrayList();
-        for (Category category: indexableCategories()) {
+        for (Category category: filterCategories()) {
             filterValues.add(category.name().replaceAll("_", " "));
         }
         String[] array = new String[filterValues.size()];
@@ -233,6 +234,17 @@ public enum Category {
         }
         Collections.sort(indexableCategories, ALPHABETICAL_ORDER);
         return indexableCategories;
+    }
+
+    public static List<Category> filterCategories() {
+        List<Category> filterCategories =  new ArrayList<>();
+        for (Category category: values()) {
+            if (!category.equals(all) && category.getParent() == null) {
+                filterCategories.add(category);
+            }
+        }
+        Collections.sort(filterCategories, ALPHABETICAL_ORDER);
+        return filterCategories;
     }
 
     public static Category matchingValueOf(String name) {
