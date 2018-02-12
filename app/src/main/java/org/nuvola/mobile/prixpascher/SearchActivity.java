@@ -201,14 +201,9 @@ public class SearchActivity extends ActionBarParentActivity {
                 MaterialDialog.Builder filterDialogBuilder = new MaterialDialog.Builder(SearchActivity.this);
                 filterDialogBuilder.customView(R.layout.filter_dialog_layout, true);
 
-                priceBar = (DiscreteSeekBar) filterDialog.findViewById(R.id.priceBar);
-                priceBar.setMax(25000);
-                priceBar.setScrollbarFadingEnabled(true);
-                priceBar.setIndicatorPopupEnabled(true);
-
                 if (filterDialog == null) {
                     filterDialog = filterDialogBuilder.build();
-                    categ_selected = Category.electromenager.name();
+                    categ_selected = Category.___.name();
 
                     categoriesSpinner  = (Spinner) filterDialog.findViewById(R.id.categories_spinner);
                     final String[] category_name = Category.filterMobCategoryValues();
@@ -229,6 +224,13 @@ public class SearchActivity extends ActionBarParentActivity {
                         }
                     });
                 }
+                filterDialog.setCanceledOnTouchOutside(true);
+
+                priceBar = (DiscreteSeekBar) filterDialog.findViewById(R.id.priceBar);
+                priceBar.setMax(25000);
+                priceBar.setScrollbarFadingEnabled(true);
+                priceBar.setIndicatorPopupEnabled(true);
+
                 LinearLayout citiesFilter  = (LinearLayout) filterDialog.findViewById(R.id.cities_filter);
                 citiesFilter.setVisibility(View.GONE);
                 ButtonFlat apply = (ButtonFlat) filterDialog.findViewById(R.id.btn_filter);
@@ -243,7 +245,8 @@ public class SearchActivity extends ActionBarParentActivity {
                         searchFilter.setDefaultSort(SortField.PRICE);
 
                         searchFilter.setMinPrice(Double.valueOf(priceBar.getProgress()));
-                        searchFilter.setCategory(Category.valueOf(categ_selected));
+                        searchFilter.setCategory(categ_selected.equals(Category.___.name()) ?
+                                null : Category.valueOf(categ_selected));
 
                         loadingMore = false;
                         productsList.clear();
@@ -345,12 +348,16 @@ public class SearchActivity extends ActionBarParentActivity {
             }
 
             HttpEntity<SearchFilterVO> requestEntity = new HttpEntity<>(searchFilter);
-            ResponseEntity<ProductsResponse> products = Utils.MyRestemplate.getInstance(this).exchange(
-                    getResources().getString(R.string.products_json_url),
-                    HttpMethod.POST,
-                    requestEntity, ProductsResponse.class);
-            productsList.addAll(products.getBody().getPayload());
-            productsCount = products.getBody().getTotalElements();
+            try {
+                ResponseEntity<ProductsResponse> products = Utils.MyRestemplate.getInstance(this).exchange(
+                        getResources().getString(R.string.products_json_url),
+                        HttpMethod.POST,
+                        requestEntity, ProductsResponse.class);
+                productsList.addAll(products.getBody().getPayload());
+                productsCount = products.getBody().getTotalElements();
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+            }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }

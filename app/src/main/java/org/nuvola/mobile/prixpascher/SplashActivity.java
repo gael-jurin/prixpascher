@@ -17,7 +17,10 @@ import com.twitter.sdk.android.core.Twitter;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterConfig;
 
+import org.nuvola.mobile.prixpascher.business.BadgeUtils;
 import org.nuvola.mobile.prixpascher.confs.constants;
+
+import java.util.HashSet;
 
 import io.cloudboost.CloudApp;
 
@@ -62,18 +65,22 @@ public class SplashActivity extends Activity {
 		// TODO: The badge will be cleared once the notifications has expired
 		SharedPreferences sharePre = getApplicationContext().getSharedPreferences(
 				SHARED_PREF_DATA, PRIVATE_MODE);
-		// BadgeUtils.clearBadge(this);
-		// SharedPreferences.Editor editor = sharePre.edit();
-		// editor.putStringSet("PROMOS", BadgeUtils.promos);
-		// editor.putStringSet("DEVIS", BadgeUtils.devis);
-		// BadgeUtils.offers = new HashSet<>();
-		// editor.putStringSet("OFFERS", BadgeUtils.offers);
-		// editor.commit();
 
 		try {
-			// Get the app's shared preferences
-			SharedPreferences app_preferences = PreferenceManager.getDefaultSharedPreferences(this);
-			int counter = app_preferences.getInt("counter", 0);
+			int counter = sharePre.getInt("counter", 0);
+
+			if (counter == 0) {
+				//Init Device
+				BadgeUtils.clearBadge(this);
+				SharedPreferences.Editor editor = sharePre.edit();
+				BadgeUtils.promos = new HashSet<>();
+				editor.putStringSet("PROMOS", BadgeUtils.promos);
+				BadgeUtils.devis = new HashSet<>();
+				editor.putStringSet("DEVIS", BadgeUtils.devis);
+				BadgeUtils.offers = new HashSet<>();
+				editor.putStringSet("OFFERS", BadgeUtils.offers);
+				editor.commit();
+			}
 
 			int RunEvery = 10;
 
@@ -114,7 +121,7 @@ public class SplashActivity extends Activity {
 				alert.show();
 			}
 
-			SharedPreferences.Editor editor = app_preferences.edit();
+			SharedPreferences.Editor editor = sharePre.edit();
 			editor.putInt("counter", ++counter);
 			editor.commit();
 
