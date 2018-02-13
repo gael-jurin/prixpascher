@@ -22,7 +22,6 @@
 -keep class okhttp3.** { *; }
 -dontwarn okhttp3.*
 
--keep class com.google.gson.** { *; }
 -keep class com.google.inject.** { *; }
 -keep class org.apache.http.** { *; }
 -keep class org.apache.james.mime4j.** { *; }
@@ -44,6 +43,8 @@
 
 -dontwarn com.squareup.okhttp.**
 
+-keep class android.support.v7.widget.SearchView { *; }
+
 -keep class com.crashlytics.** { *; }
 -dontwarn com.crashlytics.**
 
@@ -52,9 +53,19 @@
 
 #SpringFramework
 -keepclassmembers class org.nuvola.mobile.prixpascher.business.** { *; }
+-keepclassmembers class org.nuvola.mobile.prixpascher.dto.** { *; }
+-keepclassmembers class org.nuvola.mobile.prixpascher.models.** { *; }
+-keepclassmembers enum * { *; }
 
 -keep class com.fasterxml.jackson.annotation.** { *; }
-
 -dontwarn com.fasterxml.jackson.databind.**
 
 -dontwarn org.springframework.**
+-keep class org.springframework.** { *; }
+-keep class org.codehaus.jackson.** { *; }
+
+#Font detection
+-keep class .R
+-keep class **.R$* {
+    <fields>;
+}

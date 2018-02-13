@@ -117,9 +117,9 @@ public class ShopGeoFragment extends Fragment implements OnMapReadyCallback {
 
     private List<ShopInfoVO> loadLocalisation() {
         try {
-            SToken base = new SToken();
-            base.setSerialToken(getString(R.string.serial));
-            HttpEntity<SToken> requestEntity = new HttpEntity<>(base);
+            SToken token = new SToken();
+            token.setSerialToken(getString(R.string.serial));
+            HttpEntity<SToken> requestEntity = new HttpEntity<>(token);
             ResponseEntity<ShopInfoVO[]> resEntity = Utils.MyRestemplate.getInstance(getActivity()).exchange(
                     getContext().getResources().getString(R.string.shop_json_url),
                     HttpMethod.POST,
