@@ -16,6 +16,7 @@ import org.nuvola.mobile.prixpascher.R;
 import org.nuvola.mobile.prixpascher.business.EmptyRecyclerView;
 import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.dto.OfferVO;
+import org.nuvola.mobile.prixpascher.models.OfferStatus;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -57,14 +58,20 @@ public class DealOffersAdapter extends EmptyRecyclerView.Adapter<EmptyRecyclerVi
         }
 
         if (myHolder.details != null) {
-            final String details = offers.get(position).getInfos();
+            String details = offers.get(position).getInfos() == null ? "" : offers.get(position).getInfos();
+            details += offers.get(position).getOfferStatus().equals(OfferStatus.ACCEPTED) ?
+                    "\n\n Statut : Acceptée par le client "
+                    + offers.get(position).getProductAnnonce().getContactPhone() != null ?
+                            "\n\n Contact : " + offers.get(position).getProductAnnonce().getContactPhone() : ""
+                    : "\n\n Statut : Envoyée au client";
             if (details != null && details.trim().length() > 5) {
                 myHolder.details.setVisibility(View.VISIBLE);
+                final String finalDetails = details;
                 myHolder.details.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         AlertDialog.Builder buidler = new AlertDialog.Builder(context);
-                        buidler.setMessage(details);
+                        buidler.setMessage(finalDetails);
                         buidler.setPositiveButton(context.getResources().getString(R.string.ok_label),
                                 new DialogInterface.OnClickListener() {
                                     @Override

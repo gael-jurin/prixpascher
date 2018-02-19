@@ -56,7 +56,7 @@
                         android:layout_height="40dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="10dp"
-                        android:text="@string/products" />
+                        android:text="@string/offers" />
                 </LinearLayout>
             </LinearLayout>
 

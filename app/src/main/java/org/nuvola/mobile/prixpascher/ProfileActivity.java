@@ -15,6 +15,7 @@ import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.dto.MerchantVO;
 import org.nuvola.mobile.prixpascher.dto.UserVO;
+import org.nuvola.mobile.prixpascher.fragments.RateItDialogFragment;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,6 +57,8 @@ public class ProfileActivity extends ActionBarParentActivity {
 		getSupportActionBar().setHomeButtonEnabled(true);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		changeActionBarTitle(getResources().getString(R.string.profile_label));
+
+		RateItDialogFragment.show(this, getFragmentManager());
 
 		new LoadUserDataTask().execute();
 	}

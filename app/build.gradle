@@ -8,8 +8,8 @@ android {
     defaultConfig {
         applicationId "org.nuvola.mobile.prixpascher"
         targetSdkVersion 26
-        versionCode 5
-        versionName "1.2"
+        versionCode 7
+        versionName "1.2.2"
         multiDexEnabled true
     }
 

@@ -24,6 +24,8 @@
     <permission android:name="org.nuvola.mobile.prixpascher.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
+    <uses-feature android:name="android.hardware.telephony"
+        android:required="false" />
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
@@ -87,6 +89,16 @@
         <activity
             android:screenOrientation="portrait"
             android:name="org.nuvola.mobile.prixpascher.AnnouncesActivity"
+            android:exported="false"
+            android:launchMode="singleTop" >
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".SearchActivity" />
+        </activity>
+
+        <activity
+            android:screenOrientation="portrait"
+            android:name="org.nuvola.mobile.prixpascher.OffersActivity"
             android:exported="false"
             android:launchMode="singleTop" >
             <meta-data

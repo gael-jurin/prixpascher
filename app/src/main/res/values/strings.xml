@@ -77,10 +77,11 @@
     <string name="announce_offer_label">{faw-handshake_o}</string>
     <string name="tap_to_change_avt">Changer votre avatar</string>
     <string name="follow_label">Suivre</string>
-    <string name="products">Produits</string>
-    <string name="announces">Annonces</string>
+    <string name="products">Mes Produits</string>
+    <string name="offers">Mes Offres</string>
+    <string name="announces">Mes Annonces</string>
     <string name="similar_products">Produits Similaires</string>
-    <string name="open_offers">Autres offres</string>
+    <string name="open_offers">Autres Offres</string>
     <string name="bookmarked_product">Mark Products</string>
     <string name="logout">{faw-sign_out}</string>
     <string name="close_label">Fermer</string>
@@ -273,4 +274,12 @@
     <string name="location">Location</string>
     <string name="registering_message">performing autoregistration...</string>
     <string name="show_notification">Afficher</string>
+    <string name="rate_title">Evaluer PPC !</string>
+    <string name="rate_message">Cher Utilisateur, Merci de prendre un moment pour noter PrixPasCher.</string>
+    <string name="rate_positive">D\'accord</string>
+    <string name="rate_remind_later">Plus tard</string>
+    <string name="rate_never">Non, Merci</string>
+    <string name="Oventes">Offres-Vente</string>
+    <string name="Devachat">Devis-Achat</string>
+    <string name="Prodeals">Promos-Deals</string>
 </resources>

@@ -94,9 +94,9 @@ public class InNotificationActivity extends ActionBarParentActivity implements C
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFrag(NotifPromosFragment.newInstance(), "Promos-Deals");
-        adapter.addFrag(NotifDevisFragment.newInstance(), "Devis-Achat");
-        adapter.addFrag(NotifOffersFragment.newInstance(), "Offres-Vente");
+        adapter.addFrag(NotifPromosFragment.newInstance(), getString(R.string.Prodeals));
+        adapter.addFrag(NotifDevisFragment.newInstance(), getString(R.string.Devachat));
+        adapter.addFrag(NotifOffersFragment.newInstance(), getString(R.string.Oventes));
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(3);
     }

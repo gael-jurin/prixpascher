@@ -52,7 +52,7 @@ public class DealProductsAdapter extends EmptyRecyclerView.Adapter<EmptyRecycler
         }
 
         if (products.get(position).getPrice() != null && myHolder.price != null) {
-            if (products.get(position).getPromoted()) {
+            if (products.get(position).getPromoted() &&  !products.get(position).getPrices().isEmpty()) {
                 Double delta = products.get(position).getPrice() -
                         products.get(position).getPrices().get(0).getPrice();
                 if (delta < 1) {

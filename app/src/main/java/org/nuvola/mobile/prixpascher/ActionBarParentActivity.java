@@ -212,9 +212,10 @@ public class ActionBarParentActivity extends AppCompatActivity implements Notifi
             @Override
             public void run() {
 				BadgeUtils.setBadge(getApplicationContext(), new_hot_number);
-                if (new_hot_number == 0)
-                    alertCount.setVisibility(View.INVISIBLE);
-                else {
+				if (new_hot_number == 0) {
+					alertCount.setVisibility(View.INVISIBLE);
+					alertCount.setText("");
+				} else {
                     alertCount.setVisibility(View.VISIBLE);
                     alertCount.setText(Integer.toString(new_hot_number));
                 }

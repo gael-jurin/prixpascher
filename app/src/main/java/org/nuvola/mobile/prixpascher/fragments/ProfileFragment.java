@@ -21,7 +21,7 @@ import com.gc.materialdesign.views.ButtonFlat;
 
 import org.nuvola.mobile.prixpascher.AnnouncesActivity;
 import org.nuvola.mobile.prixpascher.ChangePassActivity;
-import org.nuvola.mobile.prixpascher.ProductsActivity;
+import org.nuvola.mobile.prixpascher.OffersActivity;
 import org.nuvola.mobile.prixpascher.R;
 import org.nuvola.mobile.prixpascher.UpdateProfileActivity;
 import org.nuvola.mobile.prixpascher.business.UserSessionManager;
@@ -137,7 +137,7 @@ public class ProfileFragment extends Fragment {
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
                     Intent intent = new Intent(getActivity(),
-                            ProductsActivity.class);
+                            OffersActivity.class);
                     intent.putExtra(constants.USER_ID_KEY, userProfile.getId());
                     startActivity(intent);
 				}

@@ -50,8 +50,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.facebook.FacebookSdk.getApplicationContext;
-
 public class ProductsFragment extends Fragment {
     static Toolbar toolbar;
 
@@ -117,7 +115,7 @@ public class ProductsFragment extends Fragment {
         View view = inflater.inflate(R.layout.product_list_container_layout, null);
         ButterKnife.bind(this, view);
 
-        MobileAds.initialize(getApplicationContext(), getString(R.string.admob_publisher_id));
+        MobileAds.initialize(getContext(), getString(R.string.admob_publisher_id));
 
         final LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);

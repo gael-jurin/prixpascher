@@ -88,7 +88,7 @@ public class FcmListenerService extends FirebaseMessagingService {
 
         notificationManager.notify(unOpenCount, notificationBuilder.build());
 
-        SharedPreferences sharePre = getApplicationContext().getSharedPreferences(
+        SharedPreferences sharePre = getApplication().getApplicationContext().getSharedPreferences(
                 SHARED_PREF_DATA, PRIVATE_MODE);
         Set<String> notifs = sharePre.getStringSet("PROMOS", new HashSet<String>());
         Set<String> devis = sharePre.getStringSet("DEVIS", new HashSet<String>());

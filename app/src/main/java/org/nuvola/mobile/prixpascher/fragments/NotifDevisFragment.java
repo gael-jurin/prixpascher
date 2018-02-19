@@ -38,7 +38,6 @@ import java.util.Set;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.facebook.FacebookSdk.getApplicationContext;
 import static org.nuvola.mobile.prixpascher.business.UserSessionManager.PRIVATE_MODE;
 import static org.nuvola.mobile.prixpascher.business.UserSessionManager.SHARED_PREF_DATA;
 
@@ -60,8 +59,7 @@ public class NotifDevisFragment extends Fragment {
 
     AdmobRecyclerAdapterWrapper adapterWrapper;
     private AsyncTask<Void, Void, ProductAnnonceVO> loadMoreDataTask;
-    private SharedPreferences sharePre = getApplicationContext().getSharedPreferences(
-            SHARED_PREF_DATA, PRIVATE_MODE);
+    private SharedPreferences sharePre;
 
     public static NotifDevisFragment newInstance() {
         NotifDevisFragment fragment = new NotifDevisFragment();
@@ -76,6 +74,7 @@ public class NotifDevisFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharePre = getContext().getSharedPreferences(SHARED_PREF_DATA, PRIVATE_MODE);
     }
 
     @Override
@@ -95,7 +94,7 @@ public class NotifDevisFragment extends Fragment {
         View view = inflater.inflate(R.layout.deals_container_layout, null);
         ButterKnife.bind(this, view);
 
-        MobileAds.initialize(getApplicationContext(), getString(R.string.admob_publisher_id));
+        MobileAds.initialize(getContext(), getString(R.string.admob_publisher_id));
 
         final LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
@@ -116,15 +115,12 @@ public class NotifDevisFragment extends Fragment {
                 int originalContentPosition = adapterWrapper
                         .getAdapterCalculator().getOriginalContentPosition(position,
                                 adapterWrapper.getFetchedAdsCount(), adapter.getItemCount());
+                Intent intent = new Intent(getActivity(), AnnounceActivity.class);
+                intent.putExtra(constants.COMMON_KEY, deals.get(originalContentPosition)
+                        .getId());
                 if (user_id == 0) {
-                    Intent intent = new Intent(getActivity(), AnnounceActivity.class);
-                    intent.putExtra(constants.COMMON_KEY, deals.get(originalContentPosition)
-                            .getId());
                     startActivity(intent);
                 } else {
-                    Intent intent = new Intent(getActivity(), AnnounceActivity.class);
-                    intent.putExtra(constants.COMMON_KEY, deals.get(originalContentPosition)
-                            .getId());
                     intent.putExtra(constants.USER_ID_KEY, user_id);
                     startActivity(intent);
                 }
@@ -202,8 +198,6 @@ public class NotifDevisFragment extends Fragment {
         UserSessionManager sessionManager = new UserSessionManager(getActivity());
         User user = sessionManager.getUserSession();
         if (user != null) {
-            SharedPreferences sharePre = getApplicationContext().getSharedPreferences(
-                    SHARED_PREF_DATA, PRIVATE_MODE);
             final Set<String> notifs = sharePre.getStringSet("DEVIS", new HashSet<String>());
             for (final String pid : notifs) {
                 loadMoreDataTask =  new AnnounceFetchTask(getResources().getString(

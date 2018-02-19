@@ -52,8 +52,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.facebook.FacebookSdk.getApplicationContext;
-
 public class AnnouncesFragment extends Fragment {
     static Toolbar toolbar;
 
@@ -123,7 +121,7 @@ public class AnnouncesFragment extends Fragment {
         final LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(llm);
 
-        MobileAds.initialize(getApplicationContext(), getString(R.string.admob_publisher_id));
+        MobileAds.initialize(getContext(), getString(R.string.admob_publisher_id));
 
         resetSearch();
         searchFilter.setType(null); // Only on create

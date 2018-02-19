@@ -24,6 +24,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -36,6 +37,7 @@ import org.nuvola.mobile.prixpascher.business.UserSessionManager;
 import org.nuvola.mobile.prixpascher.business.Utils;
 import org.nuvola.mobile.prixpascher.confs.constants;
 import org.nuvola.mobile.prixpascher.dto.OfferVO;
+import org.nuvola.mobile.prixpascher.dto.UserVO;
 import org.nuvola.mobile.prixpascher.models.User;
 import org.nuvola.mobile.prixpascher.tasks.OfferFetchTask;
 import org.springframework.http.HttpMethod;
@@ -67,7 +69,8 @@ public class OfferActivity extends ActionBarParentActivity {
     @BindView(R.id.btnCallSeller) FloatingActionButton btnCallSeller;
     @BindView(R.id.btnAccept) FloatingActionButton btnAccept;
     @BindView(R.id.btnMenu) FloatingActionMenu btnMenu;
-    // @BindView(R.id.ratingBarClick) RatingBar ratingBar;
+    @BindView(R.id.concurrentPanel)
+    LinearLayout concurrentPanel;
     @BindView(R.id.concurrentOffers) RecyclerView concurrentOffers;
 
     private FullScreenImageAdapter imageAdapter;
@@ -108,22 +111,6 @@ public class OfferActivity extends ActionBarParentActivity {
             // updateButtonWrapper.setVisibility(LinearLayout.INVISIBLE);
             // updateButtonWrapper.setLayoutParams(new LinearLayout.LayoutParams(0, 0));
         }
-
-        // Send email alert request();
-        btnAccept.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                UserSessionManager sessionManager = new UserSessionManager(OfferActivity.this);
-                logedUser = sessionManager.getUserSession();
-                if (logedUser != null) {
-                    Utils.showCommingSoon(OfferActivity.this);
-                } else {
-                    Intent intent = new Intent(OfferActivity.this,
-                            AuthenticationActivity.class);
-                    startActivity(intent);
-                }
-            }
-        });
 
         if (getIntent().getExtras() != null
                 && getIntent().getExtras().containsKey(constants.COMMON_KEY)) {
@@ -240,6 +227,21 @@ public class OfferActivity extends ActionBarParentActivity {
             email = "";
             phoneText = "";
 
+            btnAccept.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    UserSessionManager sessionManager = new UserSessionManager(OfferActivity.this);
+                    logedUser = sessionManager.getUserSession();
+                    if (logedUser != null) {
+                        Utils.showCommingSoon(OfferActivity.this);
+                    } else {
+                        Intent intent = new Intent(OfferActivity.this,
+                                AuthenticationActivity.class);
+                        startActivity(intent);
+                    }
+                }
+            });
+
             btnCallSeller.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -249,6 +251,21 @@ public class OfferActivity extends ActionBarParentActivity {
                     }
                 }
             });
+
+            UserSessionManager sessionManager = new UserSessionManager(this);
+            User user = sessionManager.getUserSession();
+            if (user != null) {
+                UserVO userVO = new UserVO();
+                userVO.setId(user.getId());
+                userVO.setProviderUserId(user.getFbId());
+                if (userVO.getId().equals(offer.getAnnonceur().getId())) {
+                    btnMenu.setVisibility(View.GONE);
+                    concurrentPanel.setVisibility(View.GONE);
+                } else {
+                    btnMenu.setVisibility(View.VISIBLE);
+                    concurrentPanel.setVisibility(View.VISIBLE);
+                }
+            }
 
             String titleText = jsonObj.getProductAnnonce().getTitle();
             title.setText(titleText);
