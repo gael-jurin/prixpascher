@@ -290,7 +290,6 @@ public class Utils {
         connectivityReceiver = new NetworkStateReceiver();
         context.registerReceiver(connectivityReceiver, intentFilter);
 
-        /*register connection status listener*/
         MarketApp.getInstance().setConnectivityListener((ConnectivityReceiverListener) context);
     }
 

@@ -77,7 +77,16 @@
             style="@style/MenuButtonsStyle"
             fab:fab_colorRipple="#99FFFFFF"
             fab:fab_size="mini"
-            fab:fab_label="@string/send_enquiry" />
+            fab:fab_label="@string/devis_label" />
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/btnShare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_share"
+            style="@style/MenuButtonsStyle"
+            fab:fab_colorRipple="#99FFFFFF"
+            fab:fab_size="mini"
+            fab:fab_label="Acheter IcI" />
 
     </com.github.clans.fab.FloatingActionMenu>
 </RelativeLayout>

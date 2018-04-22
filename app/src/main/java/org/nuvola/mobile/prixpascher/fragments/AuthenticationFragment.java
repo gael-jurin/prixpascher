@@ -27,6 +27,7 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.gc.materialdesign.views.ButtonFlat;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.onesignal.OneSignal;
 import com.twitter.sdk.android.core.Callback;
 import com.twitter.sdk.android.core.Result;
 import com.twitter.sdk.android.core.TwitterAuthToken;
@@ -35,6 +36,7 @@ import com.twitter.sdk.android.core.TwitterException;
 import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.identity.TwitterLoginButton;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.nuvola.mobile.prixpascher.HomeActivity;
 import org.nuvola.mobile.prixpascher.R;
@@ -48,16 +50,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-
-import io.cloudboost.CloudException;
-import io.cloudboost.CloudNotification;
-import io.cloudboost.CloudNotificationCallback;
-import io.cloudboost.CloudObject;
-import io.cloudboost.CloudObjectArrayCallback;
-import io.cloudboost.CloudObjectCallback;
-import io.cloudboost.CloudQuery;
 
 @SuppressLint("NewApi")
 public class AuthenticationFragment extends Fragment {
@@ -90,7 +83,7 @@ public class AuthenticationFragment extends Fragment {
         List<String> permissions = new ArrayList<>();
         permissions.add("public_profile");
         permissions.add("email");
-        permissions.add("user_about_me");
+        // permissions.add("user_about_me");
         facebookLoginButton.setReadPermissions(permissions);
 
         callbackManager = CallbackManager.Factory.create();
@@ -318,30 +311,29 @@ public class AuthenticationFragment extends Fragment {
     private void registerForNotification(final UserVO mobileUser) {
         final String[] channels = {"global", "affiliates"};
         if (mobileUser.getTypeAnnonceur().equals(TypeAnnonceur.PROFESSIONAL)) {
-            String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-            CloudQuery query = new CloudQuery("Device");
-            query.equalTo("deviceToken", refreshedToken);
+            final String refreshedToken = FirebaseInstanceId.getInstance().getToken();
             try {
-                query.find(new CloudObjectArrayCallback() {
+                OneSignal.getTags(new OneSignal.GetTagsHandler() {
                     @Override
-                    public void done(CloudObject[] x, CloudException t) throws CloudException {
-                        CloudObject obj = x[0];
+                    public void tagsAvailable(JSONObject tags) {
                         try {
-                            obj.set("userid", mobileUser.getProviderUserId());
-                            obj.set("channels", channels);
-                            obj.save(new CloudObjectCallback() {
-                                @Override
-                                public void done(CloudObject x, CloudException t) throws CloudException {
-                                    Log.i(TAG, "OK");
-                                }
-                            });
-                        } catch (Exception e) {
-                            Log.e(TAG, e.getMessage());
+                            if (tags == null) {
+                                OneSignal.sendTag("deviceToken", refreshedToken);
+                            }
+                            String deviceToken = tags != null ? (String) tags.get("deviceToken")
+                                    : refreshedToken;
+                            if (refreshedToken.equals(deviceToken)) {
+                                OneSignal.setEmail(mobileUser.getEmail());
+                                OneSignal.sendTag("userId", mobileUser.getProviderUserId());
+                                OneSignal.sendTag("affiliate", mobileUser.getProviderUserId());
+                            }
+                        } catch (JSONException e) {
+                            Log.e("Error", e.getMessage());
                         }
                     }
                 });
-            } catch (CloudException e) {
-                Log.e(TAG, e.getMessage());
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
             }
         } else {
             unsubscribeForNotification();
@@ -349,30 +341,9 @@ public class AuthenticationFragment extends Fragment {
     }
 
     private void unsubscribeForNotification() {
-        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        final String[] channels = {"global"};
-        CloudQuery query = new CloudQuery("Device");
-        query.equalTo("deviceToken", refreshedToken);
         try {
-            query.find(new CloudObjectArrayCallback() {
-                @Override
-                public void done(CloudObject[] x, CloudException t) throws CloudException {
-                    CloudObject obj = x[0];
-                    try {
-                        obj.set("channels", channels);
-                        obj.setExpires(Calendar.getInstance());
-                        obj.save(new CloudObjectCallback() {
-                            @Override
-                            public void done(CloudObject x, CloudException t) throws CloudException {
-                                Log.i(TAG, "OK");
-                            }
-                        });
-                    } catch (Exception e) {
-                        Log.e(TAG, e.getMessage());
-                    }
-                }
-            });
-        } catch (CloudException e) {
+            OneSignal.deleteTag("affiliate");
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
     }

@@ -29,13 +29,13 @@ public class BadgeUtils {
             offers = new HashSet<>();
         }
 
-        setBadgeSamsung(context, count);
-        setBadgeSony(context, count);
+        // setBadgeSamsung(context, count);
+        // setBadgeSony(context, count);
     }
 
     public static void clearBadge(Context context) {
-        setBadgeSamsung(context, 0);
-        clearBadgeSony(context);
+        // setBadgeSamsung(context, 0);
+        // clearBadgeSony(context);
         counter = 0;
         promos = new HashSet<>();
         devis = new HashSet<>();

@@ -14,8 +14,6 @@ import com.twitter.sdk.android.core.TwitterConfig;
 
 import org.nuvola.mobile.prixpascher.confs.constants;
 
-import io.cloudboost.CloudApp;
-
 public class SplashActivity extends Activity {
 	private TextView mInformationTextView;
 
@@ -36,7 +34,6 @@ public class SplashActivity extends Activity {
 			}
 		}, constants.SPLASH_TIME_OUT);
 
-		CloudApp.init("wpcjpusfglac", "72940f58-6bd9-48ef-af68-bdb9a7f7d060");
 		mInformationTextView = findViewById(R.id.informationTextView);
 
 		TwitterConfig config = new TwitterConfig.Builder(this)

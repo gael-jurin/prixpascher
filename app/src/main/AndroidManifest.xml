@@ -39,6 +39,7 @@
         android:icon="@drawable/ic_logo"
         android:label="@string/app_name"
         android:largeHeap="true"
+        android:supportsRtl="true"
         android:theme="@style/AppTheme" >
 
         <receiver
@@ -294,11 +295,7 @@
             </intent-filter>
         </service>
 
-        <service
-            android:name="org.nuvola.mobile.prixpascher.cloud.FcmListenerService">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
+        <meta-data android:name="com.onesignal.BadgeCount" android:value="ENABLE" />
+        <meta-data android:name="com.onesignal.NotificationOpened.DEFAULT" android:value="DISABLE" />
     </application>
 </manifest>

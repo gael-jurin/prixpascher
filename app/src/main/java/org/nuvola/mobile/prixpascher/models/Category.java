@@ -78,6 +78,7 @@ public enum Category {
     jouets(equipement, new String[]{"poussettes"}, new String[]{"maxi", "youpala"}),
     poussettes(equipement, new String[]{"jouets"}, new String[]{"vtech", "playmobil"}),
     maison(equipement, new String[]{"maison"}, new String[]{"lit", "matelas", "salon", "tapis"}),
+    voyage(equipement, new String[]{"voyage"}, new String[]{"bagagerie", "valise", "trolley"}),
     peche(equipement, new String[]{"peche"}, new String[]{"leurre", "moulinet"}),
     vehicule(null, new String[]{}, new String[]{""}),
     immobilier(null, new String[]{}, new String[]{""});
@@ -121,7 +122,7 @@ public enum Category {
         categories.put(accessoires_mode, Arrays.asList(homme_montres, femme_montres, femme_lunettes,
                 homme_lunettes, homme_parfums, femme_parfums, sacs, bijoux));
         categories.put(sport, Arrays.asList(men_baskets, ladies_baskets, men_survets, ladies_survets, fitness));
-        categories.put(equipement, Arrays.asList(poussettes, jouets));
+        categories.put(equipement, Arrays.asList(jouets, poussettes, maison, voyage));
 
         return categories;
     }

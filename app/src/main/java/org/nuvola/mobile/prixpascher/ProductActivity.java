@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +23,7 @@ import android.view.animation.Animation;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -36,6 +38,7 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.robertsimoes.shareable.Shareable;
 
 import org.json.JSONObject;
 import org.nuvola.mobile.prixpascher.adapters.FullScreenImageAdapter;
@@ -84,6 +87,7 @@ public class ProductActivity extends ActionBarParentActivity {
     @BindView(R.id.btnAddToCart) FloatingActionButton btnAddToCart;
     @BindView(R.id.btnAlert) FloatingActionButton btnAlert;
     @BindView(R.id.btnAskDevis) FloatingActionButton btnAskDevis;
+    @BindView(R.id.btnShare) FloatingActionButton btnShare;
     @BindView(R.id.btnMenu) FloatingActionMenu btnMenu;
     @BindView(R.id.ratingBarClick) RatingBar ratingBar;
     @BindView(R.id.similarProducts) RecyclerView similarProducts;
@@ -221,6 +225,62 @@ public class ProductActivity extends ActionBarParentActivity {
                             AuthenticationActivity.class);
                     startActivity(intent);
                 }
+            }
+        });
+
+        btnShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MaterialDialog.Builder shareDialogBuilder = new MaterialDialog.Builder(ProductActivity.this);
+                shareDialogBuilder.customView(R.layout.share_layout, true);
+
+                final MaterialDialog shareDialog = shareDialogBuilder.build();
+                Button fshareBtn = (Button) shareDialog.findViewById(R.id.fshare);
+                Button tshareBtn = (Button) shareDialog.findViewById(R.id.tshare);
+                Button gshareBtn = (Button) shareDialog.findViewById(R.id.gshare);
+
+                fshareBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Shareable shareInstance = new Shareable.Builder(ProductActivity.this)
+                                .message(product.getTitle())
+                                .image(Uri.parse(product.getImage()))
+                                .socialChannel(Shareable.Builder.FACEBOOK)
+                                .url("http://prixpascher.ma/article/" + productId)
+                                .build();
+                        shareInstance.share();
+                        shareDialog.dismiss();
+                    }
+                });
+
+                tshareBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Shareable shareInstance = new Shareable.Builder(ProductActivity.this)
+                                .message(product.getTitle())
+                                .image(Uri.parse(product.getImage()))
+                                .socialChannel(Shareable.Builder.TWITTER)
+                                .url("http://prixpascher.ma/article/" + productId)
+                                .build();
+                        shareInstance.share();
+                        shareDialog.dismiss();
+                    }
+                });
+
+                gshareBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Shareable shareInstance = new Shareable.Builder(ProductActivity.this)
+                                .message(product.getTitle())
+                                .image(Uri.parse(product.getImage()))
+                                .socialChannel(Shareable.Builder.GOOGLE_PLUS)
+                                .url("http://prixpascher.ma/article/" + productId)
+                                .build();
+                        shareInstance.share();
+                        shareDialog.dismiss();
+                    }
+                });
+                shareDialog.show();
             }
         });
 

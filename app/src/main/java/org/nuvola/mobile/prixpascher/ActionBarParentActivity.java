@@ -78,7 +78,6 @@ public class ActionBarParentActivity extends AppCompatActivity implements Notifi
         LocalBroadcastManager.getInstance(this).registerReceiver(new NotificationFiredReceiver(),
                 new IntentFilter("inbox"));
 
-        /*register Notification fired listener*/
 		MarketApp.getInstance().setNotificationFiredListener(this);
 	}
 
@@ -207,7 +206,10 @@ public class ActionBarParentActivity extends AppCompatActivity implements Notifi
 	}
 
     public void updateHotCount(final int new_hot_number) {
-        if (alertCount == null) return;
+        if (alertCount == null) {
+			BadgeUtils.setBadge(getApplicationContext(), 0);
+			return;
+        }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
